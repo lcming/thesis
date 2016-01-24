@@ -53,7 +53,7 @@
 \vspace*{10ex}
 \huge 適用於異質系統架構的數位訊號處理器設計 \\
 \vspace*{1ex}
-\huge Design of Digital Signal Processor for Heterogeneous System Architecture  \\
+\huge DeAr: An Efficient DSP Datapath Design for Heterogeneous System Architecture  \\
 
 \null
 \vfill
@@ -131,19 +131,22 @@ Acknowledgements Page
         The standard creates concepts of unified memory space and architectural queuing language that alleviate burdens on data transfer and task dispatching, becoming the potential mainstream of computer architecture in the future \cite{mainstream}.
 
     \subsection{Goal and Contribution}
-        To improve performance and energy efficiency as well as maintain flexibility for digital signal processing platforms, we propose a hybrid VLIW-TTA DSP, and present a framework which integrates the processor with HSA platforms which are able to reduce communication overhead between CPU and DSP. Prominent micro-architectural features of the proposed DSP include:
+        To improve performance and energy efficiency as well as maintain flexibility for digital signal processing platforms, 
+        we present DeAr: A Dual-thread Architecture design for DSP datapath that combines advantages of both VLIW and TTA.
+        We also illustrate a framework which integrates DeAr with HSA platforms, which are able to reduce communication overhead between CPU and DSP. 
+        Prominent features of DeAr include:
         \begin{itemize}
-            \item The VLIW-style data-path activates multiple functional units in a cycle. High operations per cycle (OPC) can be achieved with proper scheduling.
-            \item TTA-style transport-triggered scheduling aggressively forwards data from accumulators to functional units. Unnecessary data write-back can be avoided so energy dissipation in register file is consequently reduced.
+            \item The VLIW-style datapath enables two threads to execute concurrently. High operations per cycle (OPC) can be achieved with proper compiler scheduling.
+            \item TTA-style transport-triggered scheduling aggressively forwards data from accumulators to functional units. Unnecessary data write back (WB) can be avoided so energy dissipation in register file is consequently reduced.
             \item Banked organization of register file eliminates redundant connections from ports to registers. Compared with the conventional centralized organization, both power consumption and circuit area are saved.
             \item Register file access is regularized to a queue/stack operation (i.e. push or pop) instead of conventional random access, which requires more bits to specify a register address. Density of VLIW-style code can be improved.
-            \item The data-path is suitable for clustering and it can be scaled up to SIMD or vector-processing architectures.
+            \item DeAr is suitable for clustering and it can be scaled up to SIMD or vector-processing architectures to meet the throughput requirement.
         \end{itemize}
-        In addition, to evaluate the proposed processor with existing architectures, we selected several classical DSP kernels \cite{dspstone} \cite{bdti} as the benchmark and use the UMC 65nm CMOS technology to implement the hardware.
+        In addition, to evaluate DeAr with existing architectures, we selected several classical DSP kernels \cite{dspstone} \cite{bdti} as the benchmark and use the UMC 65nm CMOS technology to implement the hardware.
 
         The main contribution of this work is achieve at two levels: micro-architecture and HSA level. 
-        On the micro-architecture side, with equal resources of functional unit and register file, the proposed hybrid processor outperformed by 30\% in MOPS\/mW and improve 50\% in code density while remaining competitive computational throughput, compared with the conventional VLIW architecture.
-        On the HSA side, we present a completed code generation flow for the proposed DSP which meets the requirements from HSA standard, and illustrate the system framework of HSA platforms that run with the proposed VLIW processor.
+        On the micro-architecture side, with equal resources of functional unit and register file, DeAr outperformed by 30\% in MOPS\/mW and improve 50\% in code density while remaining competitive computational throughput, compared with the conventional VLIW architecture.
+        On the HSA side, we present a completed code generation flow for DeAr which meets the requirements from HSA standard, and illustrate a system framework for exploiting the power of DeAr in an HSA platform.
  
     \subsection{Organization}
         The remainder of this thesis is organized as follows: In Chapter 2, we briefly review work related to our architecture. In Chapter 3, we introduces background knowledge about this work. In Chapter 4, we look into the details of the proposed design. In Chapter 5, we provide experimental results that demonstrate the capabilities of this architecture. Finally, Chapter 6 present conclusions and future work of the thesis.
@@ -177,10 +180,40 @@ Acknowledgements Page
 
 \section{Background}
 
-    \subsection{Digital Signal Processors}
-        \subsubsection{Application-Specific Instruction Set Processor}
-        \subsubsection{Very Long Instruction Word Processor}
-        \subsubsection{Transport-Triggered Architecture}
+    \subsection{Digital Signal Processor}
+        A digital signal processor (DSP) is an optimized computer design that aims at accelerating digital signal processing, such as baseband demodulation or video codec.
+        In principle, a programmer extracts routines or algorithms from an application and accelerate them with a DSP.
+        Such pieces of code that executed by DSPs are also known as DSP kernels.
+        Unlike general purpose computers, which usually feature powerful ISA and novel branch predictors that help them dealing with control intensive tasks very well,
+        DSPs simply focus on computation intensive tasks delivered by another unit (general purpose processor, analog to digital converter, etc.), 
+        and thus its hardware can be simplified and optimized for better power efficiency, which enable them to be widely used in mobile devices and embedded systems.
+        \\
+        The single-issue Reduced Instruction Set Computer (RISC), introduced in 1980s \cite{risc}, becomes a popular DSP design template owing to its simplicity.
+        The key concept of RISC is designing an ISA with primitive and orthogonal instructions which demand simpler datapath.
+        By taking the advantage of the regularity in the datapath, pipelining technique can thus be adopt to achieve the application requirement.
+        \\
+        However, two main drawbacks still exist in single-issue RISC. 
+        The first is lack of instruction-level parallelism (ILP). 
+        Functional units are not able to work concurrently due to the limitation of single-issue datapath.
+        This can be resolved by designing a multi-issue datapath with either hardware (i.e., superscalar) or software scheduling (i.e., VLIW).
+        In the field of DSP design, adopting the VLIW architecture is a preferable strategy, 
+        because hardware simplicity matters than portability and many optimization approaches can be applied in compilation stages. 
+        Figure~\ref{fig:vliw} illustrates a typical VLIW architecture, where multiple instructions can be executed at a cycle.
+        The number of ports on RF is scaled up with the issue-width, and the compiler is responsible for performing static scheduling to avoid resources conflict among operations.
+        \\
+        The second drawback is redundant write back (WB). 
+        In digital signal processing, intermediate results are often read exactly once, which implies lots of RF storage of them is redundant.
+        Several approaches have been proposed to address this issue.
+        Figure~\ref{fig:cascade} shows a processor with a special composite FU that cascades primitive FUs. 
+        Intermediate results can be forwarded from one to its follower with an optimized order which targets specific applications.
+        Such a processor class is referred to as application-specific instruction set processor (ASIP).
+        \\
+        Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an inter-connection network (ICN).
+        Such an architecture makes a significant distinction from RISC because only a "move" instruction is needed.
+        
+        %\subsubsection{Application-Specific Instruction Set Processor}
+        %\subsubsection{Very Long Instruction Word Processor}
+        %\subsubsection{Transport-Triggered Architecture}
 
     \subsection{Register Files Organization}
         %\subsubsection{Centralized Register Files}
@@ -194,10 +227,12 @@ Acknowledgements Page
 \section{Design and Implementation}
     \subsection{System Overview}
     \subsection{Micro-architecture Design}
-        \begin{figure}[!ht]
-            \caption{Micro-architecture of the proposed DSP}
+        Figure~\ref{fig:micro}
+        \begin{figure}[!ht] 
+            \caption{Micro-architecture of DeAr}
             \centering
             \includegraphics[width=0.8\textwidth]{./figs/micro.eps}
+            \label{fig:micro}
         \end{figure}
     \subsection{Software Design}
         \subsubsection{Compiler Front-end}
