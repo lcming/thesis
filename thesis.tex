@@ -42,6 +42,15 @@
 \usepackage{subcaption}
 \usepackage{rotating}
 
+% algo
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+%\usepackage{amsmath}
+
+
 \begin{document}
 \begin{CJK}{UTF8}{bkai}
 
@@ -103,6 +112,9 @@ Acknowledgements Page
 \addcontentsline{toc}{section}{List of Tables}
 \listoftables  % List of tables
 \clearpage
+\addcontentsline{toc}{section}{List of Algorithms}
+\listofalgorithms  % List of tables
+\clearpage
 
 \doublespacing
 %\setlength{\parskip}{12pt}
@@ -122,7 +134,7 @@ Acknowledgements Page
         On the contrary, ASIP benefits from optimized data-path for the specific ISA or algorithm by sacrificing its flexibility so good energy efficiency is achieved. 
         Consequently, improving energy efficiency while keeping hardware flexibility for DSP on mobile devices becomes a challenge.	\\
 
-        On the other hand, heterogeneous computing, which refers to systems equipped with multiple types of processors, has opened a new era for digital signal processing. 
+        On the other hand, heterogeneous computing, which is referred to systems equipped with multiple types of processors, has opened a new era for digital signal processing. 
         Such an integration of different processors gains performance improvement by taking advantage of particular processing activities to handle certain types of tasks.
         Nowadays, a digital signal processing platform typically contains a CPU that handles control intensive tasks and a DSP that perform computation intensive ones.
         Nevertheless, in such heterogeneous DSP platforms, there is still a drawback owing to the communication latency between processors. 
@@ -180,37 +192,56 @@ Acknowledgements Page
 
 \section{Background}
 
-    \subsection{Digital Signal Processor}
+    \subsection{Evolution of Digital Signal Processors}
         A digital signal processor (DSP) is an optimized computer design that aims at accelerating digital signal processing, such as baseband demodulation or video codec.
-        In principle, a programmer extracts routines or algorithms from an application and accelerate them with a DSP.
-        Such pieces of code that executed by DSPs are also known as DSP kernels.
+        In principle, a programmer extracts routines or algorithms from applications and accelerates them with a DSP.
+        Such pieces of code that executed by DSPs are also referred to DSP kernels.
         Unlike general purpose computers, which usually feature powerful ISA and novel branch predictors that help them dealing with control intensive tasks very well,
         DSPs simply focus on computation intensive tasks delivered by another unit (general purpose processor, analog to digital converter, etc.), 
         and thus its hardware can be simplified and optimized for better power efficiency, which enable them to be widely used in mobile devices and embedded systems.
         \\
-        The single-issue Reduced Instruction Set Computer (RISC), introduced in 1980s \cite{risc}, becomes a popular DSP design template owing to its simplicity.
+        The single-issue reduced instruction set computer (RISC), introduced in 1980s \cite{risc}, becomes a popular template for DSP owing to its simplicity.
         The key concept of RISC is designing an ISA with primitive and orthogonal instructions which demand simpler datapath.
         By taking the advantage of the regularity in the datapath, pipelining technique can thus be adopt to achieve the application requirement.
-        \\
-        However, two main drawbacks still exist in single-issue RISC. 
+        However, two drawbacks still exist in single-issue RISC. 
         The first is lack of instruction-level parallelism (ILP). 
-        Functional units are not able to work concurrently due to the limitation of single-issue datapath.
+        Functional units are not able to work concurrently due to the limitation of the single-issue datapath.
         This can be resolved by designing a multi-issue datapath with either hardware (i.e., superscalar) or software scheduling (i.e., VLIW).
         In the field of DSP design, adopting the VLIW architecture is a preferable strategy, 
         because hardware simplicity matters than portability and many optimization approaches can be applied in compilation stages. 
-        Figure~\ref{fig:vliw} illustrates a typical VLIW architecture, where multiple instructions can be executed at a cycle.
+        Figure~\ref{fig:vliw} illustrates a basic VLIW datapah, where multiple instructions can be executed at a cycle.
         The number of ports on RF is scaled up with the issue-width, and the compiler is responsible for performing static scheduling to avoid resources conflict among operations.
+        \begin{figure}[!ht] 
+            \caption{A basic VLIW datapah}
+            \centering
+            \includegraphics[width=0.5\textwidth]{./figs/vliw.eps}
+            \label{fig:vliw}
+        \end{figure}
         \\
-        The second drawback is redundant write back (WB). 
+        The second drawback is plenty of redundant write back (WB). 
         In digital signal processing, intermediate results are often read exactly once, which implies lots of RF storage of them is redundant.
         Several approaches have been proposed to address this issue.
-        Figure~\ref{fig:cascade} shows a processor with a special composite FU that cascades primitive FUs. 
+        Figure~\ref{fig:cascade} shows a datapath with a customized composite FU that cascades primitive FUs. 
         Intermediate results can be forwarded from one to its follower with an optimized order which targets specific applications.
-        Such a processor class is referred to as application-specific instruction set processor (ASIP).
+        Processor with such customization is referred to application-specific instruction set processor (ASIP).
+        \begin{figure}[!ht] 
+            \caption{A datapath with a composite functional unit}
+            \centering
+            \includegraphics[width=0.6\textwidth]{./figs/cascade.eps}
+            \label{fig:cascade}
+        \end{figure}
         \\
-        Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an inter-connection network (ICN).
-        Such an architecture makes a significant distinction from RISC because only a "move" instruction is needed.
-        
+        Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
+        Such an architecture makes a significant distinction from RISC because only a "move" instruction is needed. 
+        All computation can be completed by moving operands on the interconnection network, avoiding WB as much as possible.
+
+        \begin{figure}[!ht] 
+            \caption{Transport triggered architecutre (TTA)}
+            \centering
+            \includegraphics[width=0.8\textwidth]{./figs/tta.eps}
+            \label{fig:tta}
+        \end{figure}
+      
         %\subsubsection{Application-Specific Instruction Set Processor}
         %\subsubsection{Very Long Instruction Word Processor}
         %\subsubsection{Transport-Triggered Architecture}
@@ -227,7 +258,7 @@ Acknowledgements Page
 \section{Design and Implementation}
     \subsection{System Overview}
     \subsection{Micro-architecture Design}
-        Figure~\ref{fig:micro}
+        Figure~\ref{fig:micro} demonstrates the micro-architecture of DeAr datapath.
         \begin{figure}[!ht] 
             \caption{Micro-architecture of DeAr}
             \centering
@@ -235,8 +266,94 @@ Acknowledgements Page
             \label{fig:micro}
         \end{figure}
     \subsection{Software Design}
-        \subsubsection{Compiler Front-end}
-        \subsubsection{Finalizer Back-end}
+        \subsubsection{Software framework for DeAr}
+            To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
+            Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
+            The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
+            With CLOC \cite{cloc} tool provided by HSAfoundation, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
+            Next, in Line~\ref{line:tran}, we run the transformation $T$ (elaborated in \ref{sec:trans}) on $H$ and obtain a particular data structure $\bar{G}$ that represent the DSP kernel.
+            After that, from Line~\ref{line:optstart} to Line~\ref{line:optend}, we perform the key part of DeAr software, operation scheduling and optimization (elaborated in \ref{sec:sando}).
+            The optimization flag $\lambda$ in Line~\ref{line:forlambda} determines the number of iterations to be used.
+            For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, and it schedules operations with a limited randomness.
+            Finally, the scheduler select the scheduling result with the least cycle count, $C_{golden}$ among iterations and generates the final code $X_{golden}$ for DeAr as the output.
+
+            %%%%%%%%%%%% framework algo 
+            \begin{algorithm}[h]
+              \caption{Software framework for DeAr}
+              \begin{algorithmic}[1]
+                    \Require 
+                        High-level DSP kernel code in OpenCL, Optimization flag $\lambda$
+                    \Ensure 
+                        Binary code of DeAr
+
+                  \State Convert the kernel code to HSAIL, expressed by $H$;
+                  \label{line:tohsail}
+                  %\State Perform SSA transformation on HSAIL;
+                  %\label{tossa}
+                  %\State Convert SSA code to DFG, $G = ( V_{op} , E_{op} )$, where $V_{op}$ is the set of operations and $E_{op}$ is the set of their dependencies;
+                  %\label{todfg}
+                  %\State Perform hierarchization on $G$, and get $\bar{G} = ( V_{bt} , E_{bt} )$, where $V_{bt}$ is a set of binary trees and $E_{bt}$ is the set of their dependencies;
+                  \State Perform the transformation $T$ on $H$, and obtain $T(H) = \bar{G}$ which holds scheduling heuristics of the kernel;
+                  \label{line:tran}
+                  \State $C_{golden} \leftarrow  \infty$;
+                  \label{line:optstart}
+                  \For {$i=1$ to $f(\lambda)$}
+                    \label{line:forlambda}
+                    \State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$;
+                    \If {$C_i < C_{golden}$}
+                      \State $C_{golden} \leftarrow C_i$;
+                      \State $X_{golden} \leftarrow X_i$;
+                    \EndIf
+                  \EndFor
+                  \State Return $X_{golden}$;
+                  \label{line:optend}
+              \end{algorithmic}
+              \label{alg:framework}
+            \end{algorithm}
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+
+
+        
+        \subsubsection{Transformation}
+        \label{sec:trans}
+        \subsubsection{Scheduling and Optimization}
+        Algorithm~\ref{alg:inter}
+        \label{sec:sando}
+
+\begin{algorithm}[h]
+  \caption{Inter-tree scheduling}
+  \begin{algorithmic}[1]
+        \Require 
+            Binary trees set of a DFG, ;    
+        \Ensure 
+            Uncompleted binary code; Rest of the last tree;
+    \For{each $i\in [1,9]$}
+      \State initialize a tree $T_{i}$ with only a leaf (the root);
+      \State $T=T\cup T_{i};$
+    \EndFor
+    \ForAll {$c$ such that $c\in RecentMBatch(E_{n-1})$}
+      \label{code:TrainBase:getc}
+      \State $T=T\cup PosSample(c)$;
+      \label{code:TrainBase:pos}
+    \EndFor;
+    \For{$i=1$; $i<n$; $i++$ }
+      \State $//$ Your source here;
+    \EndFor
+    \For{$i=1$ to $n$}
+      \State $//$ Your source here;
+    \EndFor
+    \State $//$ Reusing recent base classifiers.
+    \label{code:recentStart}
+    \While {$(|E_n| \leq L_1 )and( D \neq \phi)$}
+      \State Selecting the most recent classifier $c_i$ from $D$;
+      \State $D=D-c_i$;
+      \State $E_n=E_n+c_i$;
+    \EndWhile
+    \label{code:recentEnd}
+  \end{algorithmic}
+  \label{alg:inter}
+\end{algorithm}
+
 
 \section{Performance Evaluation}
     \subsection{Operation per Cycle}
