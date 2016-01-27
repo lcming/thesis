@@ -271,13 +271,13 @@ Acknowledgements Page
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
             The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
             With CLOC \cite{cloc} tool provided by HSAfoundation, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
-            Next, in Line~\ref{line:tran}, we run the transformation $T$ (elaborated in \ref{sec:trans}) on $H$ and obtain a particular data structure $\bar{G}$ that represent the DSP kernel.
+            Next, in Line~\ref{line:tran}, we run the HSAIL transformation $T$ (elaborated in \ref{sec:trans}) on $H$ and obtain a hierarchical data flow graph $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds scheduling heuristics of the kernel.
             After that, from Line~\ref{line:optstart} to Line~\ref{line:optend}, we perform the key part of DeAr software, operation scheduling and optimization (elaborated in \ref{sec:sando}).
             The optimization flag $\lambda$ in Line~\ref{line:forlambda} determines the number of iterations to be used.
             For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, and it schedules operations with a limited randomness.
             Finally, the scheduler select the scheduling result with the least cycle count, $C_{golden}$ among iterations and generates the final code $X_{golden}$ for DeAr as the output.
 
-            %%%%%%%%%%%% framework algo 
+            %-----------------framework algo -------------
             \begin{algorithm}[h]
               \caption{Software framework for DeAr}
               \begin{algorithmic}[1]
@@ -293,7 +293,7 @@ Acknowledgements Page
                   %\State Convert SSA code to DFG, $G = ( V_{op} , E_{op} )$, where $V_{op}$ is the set of operations and $E_{op}$ is the set of their dependencies;
                   %\label{todfg}
                   %\State Perform hierarchization on $G$, and get $\bar{G} = ( V_{bt} , E_{bt} )$, where $V_{bt}$ is a set of binary trees and $E_{bt}$ is the set of their dependencies;
-                  \State Perform the transformation $T$ on $H$, and obtain $T(H) = \bar{G}$ which holds scheduling heuristics of the kernel;
+                  \State Perform the HSAIL transformation $T$ on $H$, and obtain a hierarchical data flow graph $T(H) = \bar{G}$, which holds scheduling heuristics;
                   \label{line:tran}
                   \State $C_{golden} \leftarrow  \infty$;
                   \label{line:optstart}
@@ -310,12 +310,30 @@ Acknowledgements Page
               \end{algorithmic}
               \label{alg:framework}
             \end{algorithm}
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+            %-----------------------------------------
 
+        \subsubsection{Hierarchical Data Flow Graph}
+        \label{sec:hdfg}
 
         
-        \subsubsection{Transformation}
+        \subsubsection{HSAIL Transformation}
         \label{sec:trans}
+        The HSAIL transformation, which converts HSAIL to HDFG before scheduling operations, performs steps as below:
+        \begin{enumerate}
+            \item \textbf{Rewriting HSAIL in SSA form} \\
+                Single static assignment (SSA) \cite{ssa} is another form of IR which simplifies work of compiler optimization.
+                SSA form specifies that each variable must be assigned exactly once, which is the key distinction from HSAIL.
+                The conversion from normal HSAIL to SSA form is initialized by performing reaching definition analysis \cite{rda}.
+                Next, for each assignment in the code, we give a new name for the LHS variable, and update corresponding RHS variables in other assignments indicated by reaching definition analysis.
+            \item \textbf{Converting SSA form to DFG, $G = ( V_{op} , E_{op} )$} \\
+                With the SSA form, we can analyze dependencies among assignments and construct the data flow graph (DFG) without burden.
+                Now, each assignment to some variable $X$ denotes an operation, which dominates operations with $X$ appearing in their LHS.
+                These operations and their dependencies are stored in a set of vertices $V_{op}$ and a set of edges $E_{op}$ respectively.
+                As a result, the DFG, $G = ( V_{op} , E_{op} )$, is constructed.
+            \item \textbf{Hierarchizing DFG to HDFG,  $\bar{G} = ( V_{bt} , E_{bt} )$} \\
+        \end{enumerate}
+
+
         \subsubsection{Scheduling and Optimization}
         Algorithm~\ref{alg:inter}
         \label{sec:sando}
