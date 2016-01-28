@@ -1,6 +1,7 @@
 TAR=thesis
 FILES=$(wildcard $(TAR).*)
 EDIT=$(TAR).tex $(TAR).bib
+TEMP=$(filter-out $(EDIT),$(FILES)) $(TAR)-blx.bib
 $(TAR): $(TAR).tex $(TAR).bib
 	-pdflatex $(TAR)
 	-bibtex $(TAR)
@@ -11,4 +12,4 @@ $(TAR): $(TAR).tex $(TAR).bib
 .PHONY: clean
 
 clean:
-	rm -f $(filter-out $(EDIT),$(FILES)) $(TAR)-blx.bib
+	rm -f $(TEMP)
