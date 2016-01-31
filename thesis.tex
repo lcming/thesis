@@ -45,11 +45,32 @@
 % algo
 \usepackage{algorithm}
 \usepackage{algorithmicx}
+\usepackage{amsmath}
 \usepackage{algpseudocode}
+\algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
-%\usepackage{amsmath}
+\newcommand{\var}[1]{\text{\texttt{#1}}}
+\newcommand{\func}[1]{\text{\textsl{#1}}}
 
+\makeatletter
+\newcounter{phase}[algorithm]
+\newlength{\phaserulewidth}
+\newcommand{\setphaserulewidth}{\setlength{\phaserulewidth}}
+\newcommand{\phase}[1]{%
+    \vspace{-1.25ex}
+        % Top phase rule
+    \Statex\leavevmode\llap{\rule{\dimexpr\labelwidth+\labelsep}{\phaserulewidth}}\rule{\linewidth}{\phaserulewidth}
+    \Statex\strut\refstepcounter{phase}\textit{Phase~\thephase~--~#1}% Phase text
+            % Bottom phase rule
+    \vspace{-1.25ex}\Statex\leavevmode\llap{\rule{\dimexpr\labelwidth+\labelsep}{\phaserulewidth}}\rule{\linewidth}{\phaserulewidth}}
+\setphaserulewidth{.7pt}
+\makeatother
+
+
+% math
+\usepackage{textcomp}
 
 \begin{document}
 \begin{CJK}{UTF8}{bkai}
@@ -60,7 +81,7 @@
 \Huge \underline{碩~士~論~文} \\
 %\Large （初稿）\\
 \vspace*{10ex}
-\huge 適用於異質系統架構的數位訊號處理器設計 \\
+\huge DeAr: 適用於異質系統架構之高效率數位訊號處理器資料路徑設計 \\
 \vspace*{1ex}
 \huge DeAr: An Efficient DSP Datapath Design for Heterogeneous System Architecture  \\
 
@@ -68,12 +89,17 @@
 \vfill
 
 \Large
-\begin{tabular}{r@{\centering} @{}l}
-    系\ 所\ 別：~&電機工程學系碩士班\ \ \ 組別：系統組	\\ [1.5ex]
-    學號姓名：~&103061568~李齊明~(Chi-Ming~Lee)      \\ [1.5ex]
-    指導教授：~&許雅三~博士~(Prof.~Yarsun~Hsu)       \\
-	
+\begin{tabular}{rl}
+    \makebox[4em][s]{系\hspace{\fill}所\hspace{\fill}別}：&電機工程學系碩士班\ \ \large{組別：系統組}\\ [1.5ex]
+    \makebox[4em][s]{學號姓名}：&103061568~李齊明~(Chi-Ming~Lee)\\ [1.5ex]
+    \makebox[4em][s]{指導教授}：&許雅三~博士~(Prof.~Yarsun~Hsu)
 \end{tabular}
+%\begin{tabular}{r@{\centering} @{}l}
+%    系\ 所\ 別：~&電機工程學系碩士班\ \ \ 組別：系統組	\\ [1.5ex]
+%    學號姓名：~&103061568~李齊明~(Chi-Ming~Lee)      \\ [1.5ex]
+%    指導教授：~&許雅三~博士~(Prof.~Yarsun~Hsu)       \\
+%	
+%\end{tabular}
 
 \vspace*{2ex}
 \Large 中華民國 105 年 6 月
@@ -271,41 +297,41 @@ Acknowledgements Page
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
             The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
             With CLOC \cite{cloc} tool provided by HSAfoundation, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
-            Next, in Line~\ref{line:tran}, we run the HSAIL transformation $T$ (elaborated in \ref{sec:trans}) on $H$ and obtain a hierarchical data flow graph $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds scheduling heuristics of the kernel.
-            After that, from Line~\ref{line:optstart} to Line~\ref{line:optend}, we perform the key part of DeAr software, operation scheduling and optimization (elaborated in \ref{sec:sando}).
+            Next, in Line~\ref{line:tran}, we run the HSAIL transformation (elaborated in \ref{sec:trans}) on HSAIL code and obtain a hierarchical data flow graph (HDFG), $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds crucial scheduling heuristics.
+            After that, in Line~\ref{line:optstart} to \ref{line:optend}, we perform the key part of DeAr software, operation scheduling and optimization (elaborated in \ref{sec:sando}).
             The optimization flag $\lambda$ in Line~\ref{line:forlambda} determines the number of iterations to be used.
             For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, and it schedules operations with a limited randomness.
             Finally, the scheduler select the scheduling result with the least cycle count, $C_{golden}$ among iterations and generates the final code $X_{golden}$ for DeAr as the output.
 
             %-----------------framework algo -------------
             \begin{algorithm}[h]
-              \caption{Software framework for DeAr}
+              \caption{\textproc{Software Framework for DeAr}}
               \begin{algorithmic}[1]
                     \Require 
                         High-level DSP kernel code in OpenCL, Optimization flag $\lambda$
                     \Ensure 
                         Binary code of DeAr
 
-                  \State Convert the kernel code to HSAIL, expressed by $H$;
+                  \State Convert the kernel code to HSAIL code
                   \label{line:tohsail}
                   %\State Perform SSA transformation on HSAIL;
                   %\label{tossa}
                   %\State Convert SSA code to DFG, $G = ( V_{op} , E_{op} )$, where $V_{op}$ is the set of operations and $E_{op}$ is the set of their dependencies;
                   %\label{todfg}
                   %\State Perform hierarchization on $G$, and get $\bar{G} = ( V_{bt} , E_{bt} )$, where $V_{bt}$ is a set of binary trees and $E_{bt}$ is the set of their dependencies;
-                  \State Perform the HSAIL transformation $T$ on $H$, and obtain a hierarchical data flow graph $T(H) = \bar{G}$, which holds scheduling heuristics;
+                  \State Perform the HSAIL transformation on HSIL code, and obtain a HDFG, $\bar{G}$
                   \label{line:tran}
-                  \State $C_{golden} \leftarrow  \infty$;
+                  \State $C_{golden} \Leftarrow  \infty$
                   \label{line:optstart}
                   \For {$i=1$ to $f(\lambda)$}
                     \label{line:forlambda}
-                    \State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$;
+                    \State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$
                     \If {$C_i < C_{golden}$}
-                      \State $C_{golden} \leftarrow C_i$;
-                      \State $X_{golden} \leftarrow X_i$;
+                      \State $C_{golden} \Leftarrow C_i$
+                      \State $X_{golden} \Leftarrow X_i$
                     \EndIf
                   \EndFor
-                  \State Return $X_{golden}$;
+                  \State Return $X_{golden}$
                   \label{line:optend}
               \end{algorithmic}
               \label{alg:framework}
@@ -314,64 +340,239 @@ Acknowledgements Page
 
         \subsubsection{Hierarchical Data Flow Graph}
         \label{sec:hdfg}
+            A data flow grahp (DFG), which presents dependencies among operations, is key information for 
 
         
         \subsubsection{HSAIL Transformation}
         \label{sec:trans}
-        The HSAIL transformation, which converts HSAIL to HDFG before scheduling operations, performs steps as below:
-        \begin{enumerate}
-            \item \textbf{Rewriting HSAIL in SSA form} \\
-                Single static assignment (SSA) \cite{ssa} is another form of IR which simplifies work of compiler optimization.
+        The whole process of the HSAIL transformation contains two phases elaborated as below:
+        \begin{itemize}
+            \item \textbf{Phase 1: Convert HSAIL to DFG by SSA} \\
+                Algorithm~\ref{alg:2dfg} illustrates how this phase works.
+                Single static assignment (SSA) \cite{ssa} is another form of IR which simplifies work of compiler significantly, 
+                and thus deriving the SSA form of the code becomes the first step.
                 SSA form specifies that each variable must be assigned exactly once, which is the key distinction from HSAIL.
-                The conversion from normal HSAIL to SSA form is initialized by performing reaching definition analysis \cite{rda}.
-                Next, for each assignment in the code, we give a new name for the LHS variable, and update corresponding RHS variables in other assignments indicated by reaching definition analysis.
-            \item \textbf{Converting SSA form to DFG, $G = ( V_{op} , E_{op} )$} \\
-                With the SSA form, we can analyze dependencies among assignments and construct the data flow graph (DFG) without burden.
-                Now, each assignment to some variable $X$ denotes an operation, which dominates operations with $X$ appearing in their LHS.
-                These operations and their dependencies are stored in a set of vertices $V_{op}$ and a set of edges $E_{op}$ respectively.
-                As a result, the DFG, $G = ( V_{op} , E_{op} )$, is constructed.
-            \item \textbf{Hierarchizing DFG to HDFG,  $\bar{G} = ( V_{bt} , E_{bt} )$} \\
-        \end{enumerate}
+                \\
+                The conversion from normal HSAIL to SSA form is initialized by performing reaching definition analysis \cite{rda} as shown in Line~\ref{line:rda}.
+                Next, for each assignment in the code, we give a new name to the LHS variable, and update corresponding new names of RHS variables indicated by reaching definition analysis.
+                These iterations which derive the SSA form correspond to Line~\ref{line:forhsails}-\ref{line:forhsaile}.
+                Now, each assignment to some variable $X$ denotes an operation, which dominates operations with $X$ appearing in their RHS variables.
+                As a result, we can construct the DFG without burden by iterating the new code, as shown in Line~\ref{line:forssas}-\ref{line:forssae}.
+                Operations and their dependencies are stored in a set of vertices $V_{op}$ and a set of edges $E_{op}$ respectively, 
+                and thus the DFG, $G = ( V_{op} , E_{op} )$, is constructed.
+            \item \textbf{Phase 2: Hierarchize DFG to HDFG} \\
+                As discussed in~\ref{sec:hdfg}, an HDFG is an enhanced version of a DFG which provides necessary heuristics for DeAr scheduler.
+                Hierarchizing a DFG to an HDFG can be achieved by traversing the DFG, details of which are shown in Algorithm~\ref{alg:tohdfg}.
+                In Line~\ref{line:forroots}-\ref{line:forroote}, the algorithm firstly iterates all root operations (i.e., $\textrm{deg}^+(op)=0$ ) in $G$,
+                and call the first subroutine, \textproc{Build Binary Tree }, on each root operations.
+                Line~\ref{line:bbts}-\ref{line:bbte} show the details of \textproc{Build Binary Tree }.
+                A binary tree $bt$ is initialized by building a super node $sn$ on the input operation $op$ with the second subroutine, \textproc{Build Super Node }, 
+                which groups cascaded operations ending with $op$, as shown in Line~\ref{line:bsns}-\ref{line:bsne}.
+                After that, the third subroutine \textproc{Grow Binary Tree }, described in Line~\ref{line:gbts}-\ref{line:gbte}, will expand $bt$ by including neighboring operations if each of operations has exactly one out-edge (i.e., $\textrm{deg}^+(op)=1$), as shown in Line~\ref{line:growifs}-\ref{line:growife}. 
+                \\
+                On the contrary, if the aforementioned condition is not met with any of $op_{left}, op_{right}$, 
+                it will call \textproc{Build Binary Tree } on both to build new binary trees, $bt_{left}, bt_{right}$,
+                and record the new dependencies, $bt_{left} \rightarrow bt, bt_{right} \rightarrow bt$.
+                This step is demonstrated in Line~\ref{line:growelses}-\ref{line:growelsee}. 
+                \\
+                The recursion proceeds by cross-calling between \textproc{Build Binary Tree } and \textproc{Grow Binary Tree } until the whole DFG is traversed.
+                Binary trees and their dependencies are stored in a set vertices $V_{bt}$ and a set of edges $E_{bt}$ respectively.
+                Finally, the HDFG, $\bar{G} = ( V_{bt} , E_{bt} )$, is constructed and returned.
+        \end{itemize}
 
+        %----------hsail to dfg algo--------------
+        \begin{algorithm}[h]    \caption{\textproc{Convert HSAIL to DFG by SSA}}
+        \begin{algorithmic}[1]
+            \Require    HSAIL code
+            \Ensure     $G = ( V_{op} , E_{op} )$   \Comment{ DFG }
+            \State      Peform reaching definition analysis     \label{line:rda}
+            \For        {each assignment (operation) in the HSAIL code}     \label{line:forhsails}
+                \State      Give a new name to the LHS variable
+                \State      Update RHS variables with corresponding new names in other assignments
+                \EndFor                                                     \label{line:forhsaile}
+            \State      Initialize $G \textrm{, where } V_{op} = \emptyset \textrm{ and } E_{op} = \emptyset $
+            \For        {each assignment (operation) in the new HSAIL code} \label{line:forssas}    \Comment{SSA form}
+                \State      Insert the LHS variable $x$ to $V_{op}$
+                \For        {each variable $y$ in the RHS}
+                    \State      Insert a new edge ($x$, $y$)
+                \EndFor
+            \EndFor                                                         \label{line:forssae}
+        \end{algorithmic}
+        \label{alg:2dfg}
+        \end{algorithm}
+        %----------------------------------------
 
+        %----------DFG to HDFG algo--------------
+        \begin{algorithm}[h]    \caption{\textproc{Hierarchize DFG to HDFG}}
+        \begin{algorithmic}[1]
+            \Require    $G = ( V_{op} , E_{op} )$ \Comment{ DFG }
+            \Ensure     $\bar{G} = ( V_{bt} , E_{bt} )$ \Comment{ HDFG }
+            \State      Initialize $\bar{G} \textrm{, where } V_{bt} = \emptyset \textrm{ and } E_{bt} = \emptyset $
+            \For        {each of $  op \ni \sum_{op \in V_{op}}\textrm{deg}^+(op) = 0 $}  \label{line:forroots}   \Comment{For each root vertex}
+                \State      $v_{bt} \Leftarrow $\Call{Build Binary Tree }{$op$}
+                \State      Insert $v_{bt}$ to $V_{bt}$
+            \EndFor                                                                    \label{line:forroote}
+            \Statex %---------------------------
+            \Function   {Build Binary Tree }{$op$}         \label{line:bbts}
+                \State      Initialize a birary tree $bt$
+                \State      $sn \Leftarrow$ \Call{Build Super Node }{$op$}
+                \State      Set $sn$ as the root of $bt$
+                \State      \Call{Grow Binary Tree }{$sn$}
+                \State      \Return {$bt$}
+            \EndFunction                                \label{line:bbte}
+            \Statex %--------------------------
+            \Function   {Grow Binary Tree }{$sn$}          \label{line:gbts}
+                \If         { $\textrm{deg}^-(sn.tail) = 2$ }     \Comment{A branch in the DFG}
+                    \State      $op_{left}, op_{right} \Leftarrow op \ni (op \rightarrow sn.tail) \in E_{op}$ 
+                    \If         {$\textrm{deg}^+(op_{left}) = \textrm{deg}^+(op_{right}) =1$}  \label{line:deg}  \label{line:growifs}
+                        \State      $sn.left\_child \Leftarrow$ \Call{Build Super Node }{$op_{left}$}
+                        \State      \Call{Grow Binary Tree }{$sn_{left}$}
+                        \State      $sn.left\_child \Leftarrow$ \Call{Build Super Node }{$op_{right}$}
+                        \State      \Call{Grow Binary Tree }{$sn_{right}$}     \label{line:growife}
+                    \Else       \label{line:growelses}
+                        \State      $bt_{new} \Leftarrow$ \Call{Build Binary Tree }{$op_{left}$}
+                        \State      Insert the new tree $bt_{new}$ to $V_{bt}$
+                        \State      Insert the new edge $(bt_{new} \rightarrow v_{bt})$ to $bt$
+                        \State      $bt_{new} \Leftarrow$ \Call{Build Binary Tree }{$op_{right}$}
+                        \State      Insert the new tree $bt_{new}$ to $V_{bt}$
+                        \State      Insert the new edge $(bt_{new} \rightarrow v_{bt})$ to $bt$ \label{line:growelsee}
+                        \EndIf                          \label{line:gbte}
+                \EndIf
+            \EndFunction
+            \Statex %-----------------------
+            \Function   {Build Super Node }{$op$}  \label{line:bsns}
+                \State  Initialize a super node $sn$ 
+                \State  $sn$.head $\Leftarrow op$
+                \While{$\textrm{deg}^-(op) = 1$}
+                    \State   $op \Leftarrow op_{next} \ni (op_{next} \rightarrow op) \in E_{op}$ 
+                \EndWhile
+                \State  $sn$.tail $\Leftarrow op$
+                \State      \Return {$sn$}
+            \EndFunction                        \label{line:bsne}
+        \end{algorithmic}
+        \label{alg:tohdfg}
+        \end{algorithm}
+        %--------------------------------------
+
+    
         \subsubsection{Scheduling and Optimization}
         Algorithm~\ref{alg:inter}
         \label{sec:sando}
 
+        %-------Schedule Binary Tree----------
 \begin{algorithm}[h]
-  \caption{Inter-tree scheduling}
-  \begin{algorithmic}[1]
-        \Require 
-            Binary trees set of a DFG, ;    
-        \Ensure 
-            Uncompleted binary code; Rest of the last tree;
-    \For{each $i\in [1,9]$}
-      \State initialize a tree $T_{i}$ with only a leaf (the root);
-      \State $T=T\cup T_{i};$
-    \EndFor
-    \ForAll {$c$ such that $c\in RecentMBatch(E_{n-1})$}
-      \label{code:TrainBase:getc}
-      \State $T=T\cup PosSample(c)$;
-      \label{code:TrainBase:pos}
-    \EndFor;
-    \For{$i=1$; $i<n$; $i++$ }
-      \State $//$ Your source here;
-    \EndFor
-    \For{$i=1$ to $n$}
-      \State $//$ Your source here;
-    \EndFor
-    \State $//$ Reusing recent base classifiers.
-    \label{code:recentStart}
-    \While {$(|E_n| \leq L_1 )and( D \neq \phi)$}
-      \State Selecting the most recent classifier $c_i$ from $D$;
-      \State $D=D-c_i$;
-      \State $E_n=E_n+c_i$;
-    \EndWhile
-    \label{code:recentEnd}
-  \end{algorithmic}
-  \label{alg:inter}
-\end{algorithm}
+    \caption{\textproc{Schedule Binary Tree }}
+    \begin{algorithmic}[1]
+        \Require    $sn$
+        \Ensure     $list_{op}$
+        \If{$sn$ is NOT a leaf node}        \label{line:sbts}
+            \State $size_{left} \Leftarrow$ \Call{Stack Size }{$sn.left\_child$}
+            \State $size_{right} \Leftarrow$ \Call{Stack Size }{$sn.right\_child$}
+            \If{$size_{left} > size_{right}$}
+                \State \Call{Schedule Binary Tree }{$sn.left\_child$}
+            \Else
+                \State \Call{Schedule Binary Tree }{$sn.right\_child$}
+            \EndIf
+        \EndIf
+        \State \Call{Schedule Super Node }{$sn$}   \label{line:sbte}
+        \State Erase $sn$ from the binary tree
 
+        \Statex
+    \Function   {Stack Size }{$sn$}  \label{line:gsss}
+        \If{$sn$ is a leaf node}
+            \State $size \Leftarrow 0$
+        \Else
+            \State $size \Leftarrow \text{\textproc{Max}(\ \textproc{Stack Size }($sn.left\_child$), \textproc{Stack Size }($sn.right\_child$)\ )} + 1$
+        \EndIf
+        \State \Return{$size$}
+    \EndFunction                    \label{line:gsse}
+    
+    \Statex
+    \Function   {Schedule Super Node }{$sn$}  \label{line:ssns}
+       \State   $op \Leftarrow$ $sn.tail$
+       \Do   
+           \State Insert $op$ to $list_{op}$
+           \State $op \Leftarrow op_{next}$
+       \DoWhile{$op \neq sn.head$}
+    \EndFunction                            \label{line:ssne}
+
+    \end{algorithmic}
+    \label{alg:inter}
+\end{algorithm}
+        %-----------------------------------
+
+        %-----------Inter-tree-------------
+\begin{algorithm}[h]
+    \caption{\textproc{Inter-tree Scheduling for Dual-thread}}
+    \begin{algorithmic}[1]
+        \Require    HDFG $\bar{G} = (V_{bt}, E_{bt})$
+        \Ensure     Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
+        \State $X_{inter} \Leftarrow NULL$       \Comment{Initialize $X_{inter}$}
+        \While{$V_{bt} \neq \emptyset$}
+            \If{$work\_queue_{thread1} = \emptyset$}
+                \State Select a binary tree $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$ randomly
+                \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$bt.root$}
+                \State Push $list_{op}$ into $work\_queue_{thread1}$
+                \State Erase $bt$ and its edges from $\bar{G}$
+            \EndIf
+            \If{$work\_queue_{thread2} = \emptyset$}
+                \State Select a binary tree $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$ randomly
+                \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$bt.root$}
+                \State Push $list_{op}$ into $work\_queue_{thread2}$
+                \State Erase $bt$ and its edges from $\bar{G}$
+            \EndIf
+            \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{Gen Code by DP}{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
+        \EndWhile
+        \If{$work\_queue_{thread1} \neq \emptyset$}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
+            \State Clear $work\_queue_{thread1}$
+        \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread2}$}
+            \State Clear $work\_queue_{thread2}$
+        \Else
+            \State $bt_{remain} \Leftarrow NULL$
+        \EndIf
+        \State \Return{$X_{inter}$, $bt_{remain}$}
+    \end{algorithmic}
+    \label{alg:inter}
+\end{algorithm}
+        %------------------------------------------
+
+        %----------------Intra-tree---------------
+\begin{algorithm}[h]
+    \caption{\textproc{Intra-tree Sscheduling for Dual-thread}}
+    \begin{algorithmic}[1]
+        \Require    Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
+        \Ensure     Final binary code $X_{final}$
+        \State $X_{tail}, X_{body} \Leftarrow NULL$
+        \While{$bt_{remain} \neq \emptyset$}
+            \State $list_{op} \Leftarrow$ \Call{Schedule Super Node }{$X_{remain}.root$}
+            \State Push $list_{op}$ into $work\_queue_{thread1}$
+            \State $X_{tail} \Leftarrow$ \Call{Gen Code }{$list_{op}$} $\oplus X_{tail}$
+            \State Erase $X_{remain}.root$ and obtain two sub-trees, $sbt_{left}, sbt_{right}$
+            \Statex
+            \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$sbt_{left}.root$}
+            \State Push $list_{op}$ into $work\_queue_{thread1}$
+            \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$sbt_{right}.root$}
+            \State Push $list_{op}$ into $work\_queue_{thread2}$
+            \State $X_{body} \Leftarrow X_{body} \oplus$ \Call{Gen Code by DP }{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
+            \Statex
+            \If{$work\_queue_{thread1} \neq \emptyset$}
+                \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
+                \State Clear $work\_queue_{thread1}$
+            \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
+                \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread2}$}
+                \State Clear $work\_queue_{thread2}$
+            \Else
+                \State $bt_{remain} \Leftarrow NULL$
+            \EndIf
+        \EndWhile
+        \State $X_{final} \Leftarrow X_{inter} \oplus X_{body} \oplus X_{tail}$
+        \State \Return{$X_{final}$}
+    \end{algorithmic}
+    \label{alg:intra}
+\end{algorithm}
+        %-------------------------------------------
 
 \section{Performance Evaluation}
     \subsection{Operation per Cycle}

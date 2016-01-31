@@ -9,7 +9,11 @@ $(TAR): $(TAR).tex $(TAR).bib
 	pdflatex $(TAR)
 	evince $(TAR).pdf
 
-.PHONY: clean
+
+.PHONY: clean test
+
+test: $(TAR).tex
+	-pdflatex $(TAR)
 
 clean:
 	rm -f $(TEMP)
