@@ -94,11 +94,6 @@
     \makebox[4em][s]{學號姓名}：&103061568~李齊明~(Chi-Ming~Lee)\\ [1.5ex]
     \makebox[4em][s]{指導教授}：&許雅三~博士~(Prof.~Yarsun~Hsu)
 \end{tabular}
-%\begin{tabular}{r@{\centering} @{}l}
-%    系\ 所\ 別：~&電機工程學系碩士班\ \ \ 組別：系統組	\\ [1.5ex]
-%    學號姓名：~&103061568~李齊明~(Chi-Ming~Lee)      \\ [1.5ex]
-%    指導教授：~&許雅三~博士~(Prof.~Yarsun~Hsu)       \\
-%	
 %\end{tabular}
 
 \vspace*{2ex}
@@ -150,7 +145,7 @@ Acknowledgements Page
 \section{Introduction}
 
     \subsection{Motivation}
-        As wireless communication standard evolves, the demand for digital signal processing platform that supplies computation with high-performance, high-flexibility and low-energy consumption is gaining momentum in the mobile industry. 
+        As wireless communication standard evolves, the demand for a digital signal processing platform that supplies computation with high-performance, high-flexibility and low-energy consumption is gaining momentum in the mobile industry. 
         Take an example of LTE-advance, which is considered to be the next mainstream mobile wireless technology, it provides 10 times higher transmission throughput than that of LTE \cite{lte}. 
         In order to achieve this enhancement, strategies such as scaling up MIMO system and permitting carrier aggregation \cite{carrier} that require more sophisticated arithmetics are adopted in LTE-advance.
         Moreover, these algorithms used in LTE-advance demodulation will still change frequently with the protocol specification.
@@ -158,8 +153,8 @@ Acknowledgements Page
         However, VLIW and ASIP, which have been popular choices of state-of-the-art digital signal processor (DSP) micro-architecture, serve as two extremes cases for hardware designers who would like to trade-off between flexibility and energy efficiency. 
         VLIW gains good flexibility by allocating each functional unit dedicated control signals and ports on register file that result in significant power dissipation, so it could work orthogonally with each other; 
         On the contrary, ASIP benefits from optimized data-path for the specific ISA or algorithm by sacrificing its flexibility so good energy efficiency is achieved. 
-        Consequently, improving energy efficiency while keeping hardware flexibility for DSP on mobile devices becomes a challenge.	\\
-
+        Consequently, improving energy efficiency while keeping hardware flexibility for DSP on mobile devices becomes a challenge.	
+        \\\indent 
         On the other hand, heterogeneous computing, which is referred to systems equipped with multiple types of processors, has opened a new era for digital signal processing. 
         Such an integration of different processors gains performance improvement by taking advantage of particular processing activities to handle certain types of tasks.
         Nowadays, a digital signal processing platform typically contains a CPU that handles control intensive tasks and a DSP that perform computation intensive ones.
@@ -193,12 +188,12 @@ Acknowledgements Page
 
 \section{Related Work}
     In the stream of DSP design, many studies have been conducted on register file (RF) organization as it becomes the dominating factor of cycle time, power consumption and chip area \cite{register}.
-    Rixner \textit{et al.} indicated that, for conventional centralized organization, the cost grows significantly with the number of functional units (FUs) \cite{register}, causing a challenge for designing VLIW DSP.
-    A straightforward solution is partitioning the centralized RF into several parts, each of which serves specific FUs, such as \cite{cluster}.
+    Rixner \textit{et al.} indicated that, for conventional centralized organization, the cost grows significantly with the number of functional units (FUs) \cite{register}, posing a serious challenge to VLIW DSP design.
+    A straightforward solution to it is partitioning the centralized RF into several parts, each of which serves specific FUs, such as \cite{cluster}.
     Studies like \cite{synzen} and \cite{dsplite} went even further by discarding the centralized RF and allocating each FU a dedicated one, which is also known as distributed RF organization.
     However, dividing RF leads to more complicated compiler design and overhead of inter-RF data transport.
     In addition, above approaches still suffer from poor code density, which is an inherent problem from the VLIW architecture.
-    \\
+    \\\indent
     Some approaches avoided the aforementioned cost growth by customizing the data-path and limiting the number of ports on RF.
     Ou \textit{et al.} proposed composite FUs for DSP, which cascade FUs with a specific order and demand fewer ports on RF \cite{cascade} \cite{hearaid}.
     Similar techniques are often applied to ASIP design but they usually lack flexibility to target general purposes.
@@ -208,10 +203,10 @@ Acknowledgements Page
     The user can program the bypass network in MOVE, and avoid most of accesses to RF by clever data transport.
     Such an architecture that manipulates data transport usually refers to transport-triggered architecture (TTA).
     The Work from Lama \textit{et al.} \cite{ttagpu} also demonstrated a framework that takes the advantage of TTA in graphic processing unit (GPU), and this idea is a potential alternative for DSP design.
-    \\
+    \\\indent
     On the other hand, one may notices that none of the above implementations adopts HSA \cite{systemspec}, which is a promising standard for embedded DSP platforms.
     So far, most of studies on HSA focus on the integration of CPU and GPU. \cite{hsaemu} presented a full system emulator for HSA platforms that include CPUs and GPUs.
-    Beyond emulation, \cite{hsacyc} further illustrated a cycle-accurate HSA simulator that integrates QEMU and GPGPU-sim \cite{gpgpusim}.
+    Beyond emulation, \cite{hsacyc} further illustrated a cycle-accurate HSA simulator that integrates QEMU \cite{qemu} and GPGPU-sim \cite{gpgpusim}.
     To the best of our knowledge, little or no research has been performed to apply the standard to DSP platforms.
 
 \newpage
@@ -225,7 +220,7 @@ Acknowledgements Page
         Unlike general purpose computers, which usually feature powerful ISA and novel branch predictors that help them dealing with control intensive tasks very well,
         DSPs simply focus on computation intensive tasks delivered by another unit (general purpose processor, analog to digital converter, etc.), 
         and thus its hardware can be simplified and optimized for better power efficiency, which enable them to be widely used in mobile devices and embedded systems.
-        \\
+        \\\indent
         The single-issue reduced instruction set computer (RISC), introduced in 1980s \cite{risc}, becomes a popular template for DSP owing to its simplicity.
         The key concept of RISC is designing an ISA with primitive and orthogonal instructions which demand simpler datapath.
         By taking the advantage of the regularity in the datapath, pipelining technique can thus be adopt to achieve the application requirement.
@@ -243,7 +238,7 @@ Acknowledgements Page
             \includegraphics[width=0.5\textwidth]{./figs/vliw.eps}
             \label{fig:vliw}
         \end{figure}
-        \\
+        \\\indent
         The second drawback is plenty of redundant write back (WB). 
         In digital signal processing, intermediate results are often read exactly once, which implies lots of RF storage of them is redundant.
         Several approaches have been proposed to address this issue.
@@ -256,13 +251,13 @@ Acknowledgements Page
             \includegraphics[width=0.6\textwidth]{./figs/cascade.eps}
             \label{fig:cascade}
         \end{figure}
-        \\
+        \\\indent
         Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
         Such an architecture makes a significant distinction from RISC because only a "move" instruction is needed. 
         All computation can be completed by moving operands on the interconnection network, avoiding WB as much as possible.
 
         \begin{figure}[!ht] 
-            \caption{Transport triggered architecutre (TTA)}
+            \caption{Transport triggered architecture (TTA)}
             \centering
             \includegraphics[width=0.8\textwidth]{./figs/tta.eps}
             \label{fig:tta}
@@ -272,15 +267,97 @@ Acknowledgements Page
         %\subsubsection{Very Long Instruction Word Processor}
         %\subsubsection{Transport-Triggered Architecture}
 
-    \subsection{Register Files Organization}
+    \subsection{Register File Model}
+    Register file (RF) organization also serves as an important role in DSP design. 
+    Increaing computational demand drives more and more FUs on RF,
+    which result in significant hardware cost.
+    In this part, we will introduce a basic RF model to explain hardware cost in area, delay and power perspectives.
+    \subsubsection{Area}
+    \label{sec:area}
+    RF is an array of register cells, each of which connects to several bit lines and word lines.
+    Figure~\ref{fig:rf} illustrates a basic schematic of a register cell.
+        \begin{figure}[!ht] 
+            \caption{Register cell schematic}
+            \centering
+            \includegraphics[width=0.7\textwidth]{./figs/rf.eps}
+            \label{fig:rf}
+        \end{figure}
+    For a centralized RF organization with N ports, 
+    each register cell is connected to N bit lines, each of which controlled by a word lines.
+    N bit lines and N word lines are placed horizontally and vertically respectively.
+    Since the width of wire tracks is a constant, 
+    the interconnection area of each cell grows with the factor of $N^2$.
+    Moreover, since the register number grows with the FU number as well,
+    the factor of total interconnection area is further multiplied with another N and reaches $N^3$,  
+    which dominates the chip area when N is large.
+    \subsubsection{Delay}
+    Wire propagation and fan-out/fan-in delays are two major constituents of RF access delay.
+    The former is the latency of a logic passage across a wire,
+    which is proportional to the wire length, 
+    while the latter is the latency of driving on capacitive loads.
+    As discussed in ~\ref{sec:area}, the interconnection area of RF is the factor of $N^3$.
+    By taking square root on the factor of area, 
+    we obtain another factor, $N^{3/2}$, for wire length and propagation delay.
+    The growing wire length increases load capacitance on bit lines as well, 
+    and it contribute additional fan-out/fan-in delay to the overall.
+    Nevertheless, $N^{3/2}$ is still the dominating factor of RF access delay when N is large.
+    \subsubsection{Power}
+    For each access to RF, bit lines need to be pre-charged to a threshold voltage,
+    and then sense register cells by asserting specific word lines.
+    As a result, the energy dissipation in RF is mainly resulted from logic switching in bit lines capacitance,
+    because every bit line dedicated to a port needs to be active to accomplish an access to the port.
+    As the port number increases, the capacitance in bit line is principally wire capacitance.
+    The overall power consumption of bit lines grows with the product of the bit line number and the wire length.
+    As shown in Figure~\ref{fig:rf}, the wire length and the bit line number of each cell are proportional to N.
+    Since the register cell number is proportional to N as well, 
+    the overall power consumption of bit lines is also the factor of $N^3$ when N is large.
         %\subsubsection{Centralized Register Files}
         %\subsubsection{Banked Register Files}
         %\subsubsection{Clustered Register Files}
         %\subsubsection{Distributed Register Files}
     \subsection{Heterogeneous System Architecture}
+    Heterogeneous System Architecture (HSA) presents an integrated view of various computing devices, 
+    such as CPU, DSP, GPU and FPGA.
+    HSA allows these devices to be coupled in a single system heterogeneously, and even share the same memory physically.
+    Such asymmetry of computing devices in HSA is the key differentiation from conventional symmetric multiprocessing (SMP) \cite{parallel},
+    which involves two or more identical processors collaborating with uniform access to the shared memory.
+    By adopting HSA, one is able to design a single system that handles wide variety of computational demands efficiently.
+    For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo} \cite{carrizo} APU, featuring HSA 1.0.
+    As illustrated in Figure~\ref{fig:kaveri}, \textit{Carrizo} is a SoC platform with 4 CPU cores and 8 GPU cores, 
+    which are connected with unified and coherent memory called \textit{hUMA}.
+    \textit{Carrizo} enables task sharing without data copy between CPUs and GPUs to achieve greater performance.
+    By cleverly choosing the suitable computing device for each task, 
+    \textit{Carrizo} can operate more efficiently to save power as well.
+    Since the proposed DeAr DSP targets HSA platforms, 
+    in this part, we will briefly introduce key features of HSA in three perspectives: 
+    system specification, programming model and software infrastructure.
         \subsubsection{System Specification}
-        \subsubsection{Software Stack}
-
+        HSA foundation released HSA Platform System Architecture Specification 1.0 \cite{systemspec} in 2015.
+        The main purpose of the specification is defining system architecture requirements, 
+        which support the HSA programming model and software infrastructure, from a hardware perspective.
+        An HSA platform refers to a system involving multiple computing devices, defined as HSA agents.
+        Figure~\ref{fig:systemspec} illustrates a basic HSA platform.
+        One of the agents needs to be host CPU, and the other usually serve as kernel agents. 
+        The host CPU is responsible for running the operating system with \textit{HSA Runtime},
+        while kernel agents handle computational tasks from the host CPU by executing HSAIL code.
+        HSA require all HSA agents to be capable of accessing shared virtual address space, 
+        so data exchange between agents can be accomplished by passing data pointer instead.
+        Nevertheless, not all memory regions need to be accessible by all agents (i.e., \textit{Global} segment).
+        HSA defines other memory segments (\textit{Group}, \textit{Private}, \textit{Spilled}, etc.), 
+        which possess various accessibility by various computing agents or items.
+        By manipulating different memory segments, the programmer can utilize data locality in memory hierarchy to improve performance.
+        To transmit control signals between agents, HSA specifies \textit{Architected Queuing Language} (AQL) as the protocol. 
+        AQL defines several packet types: \textit{agent dispatch}, \textit{kernel dispatch}, \textit{AND barrier} and \textit{OR barrier}, etc.
+        An agent dispatches tasks wrapped in \textit{kernel dispatch} or \textit{agent dispatch} packets to command queues, 
+        and other agents consume the packets, and complete the wrapped tasks.
+        \textit{AND barrier} and \textit{OR barrier} are pushed to command queues to synchronize execution of agents 
+        Another advantage of AQL is allowing \textit{user mode queuing},
+        which implies the programmer is allowed to  access the command queue via \textit{HSA Runtime API} without OS involving.
+        By this mean, the latency from dispatching to executing of a task is thus minimized.
+        \subsubsection{Programming Model}
+        % work group, work item warp, memory hierarchy, hqueue, 
+        \subsubsection{Software Infrastructure}
+        
 \section{Design and Implementation}
     \subsection{System Overview}
     \subsection{Micro-architecture Design}
@@ -297,12 +374,16 @@ Acknowledgements Page
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
             The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
             With CLOC \cite{cloc} tool provided by HSAfoundation, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
-            Next, in Line~\ref{line:tran}, we run the HSAIL transformation (elaborated in \ref{sec:trans}) on HSAIL code and obtain a hierarchical data flow graph (HDFG), $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds crucial scheduling heuristics.
-            After that, in Line~\ref{line:optstart} to \ref{line:optend}, we perform the key part of DeAr software, operation scheduling and optimization (elaborated in \ref{sec:sando}).
+            Next, in Line~\ref{line:trans}-\ref{line:trane}, 
+            we run the HSAIL transformation (elaborated in \ref{sec:trans}) on HSAIL code and obtain a hierarchical data flow graph (HDFG), 
+            $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds crucial scheduling heuristics.
+            After that, in Line~\ref{line:optstart} to \ref{line:optend}, we perform the key part of DeAr software, 
+            operation scheduling and optimization (elaborated in \ref{sec:sando}).
             The optimization flag $\lambda$ in Line~\ref{line:forlambda} determines the number of iterations to be used.
-            For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, and it schedules operations with a limited randomness.
-            Finally, the scheduler select the scheduling result with the least cycle count, $C_{golden}$ among iterations and generates the final code $X_{golden}$ for DeAr as the output.
-
+            For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, 
+            and it schedules operations with a limited randomness.
+            Finally, the scheduler select the scheduling result with the least cycle count, 
+            $C_{golden}$ among iterations and generates the final code $X_{golden}$ for DeAr as the output.
             %-----------------framework algo -------------
             \begin{algorithm}[h]
               \caption{\textproc{Software Framework for DeAr}}
@@ -312,20 +393,26 @@ Acknowledgements Page
                     \Ensure 
                         Binary code of DeAr
 
-                  \State Convert the kernel code to HSAIL code
+                  %\State Convert the kernel code to HSAIL code
+                  \State $hsail \Leftarrow$ \Call{CL Offline Compiler }{ $kernel$ }
                   \label{line:tohsail}
                   %\State Perform SSA transformation on HSAIL;
                   %\label{tossa}
                   %\State Convert SSA code to DFG, $G = ( V_{op} , E_{op} )$, where $V_{op}$ is the set of operations and $E_{op}$ is the set of their dependencies;
                   %\label{todfg}
                   %\State Perform hierarchization on $G$, and get $\bar{G} = ( V_{bt} , E_{bt} )$, where $V_{bt}$ is a set of binary trees and $E_{bt}$ is the set of their dependencies;
-                  \State Perform the HSAIL transformation on HSIL code, and obtain a HDFG, $\bar{G}$
-                  \label{line:tran}
+                  \State $G \Leftarrow$ \Call{Convert HSAIL to DFG by SSA }{ $hsail$ }
+                  \label{line:trans}
+                  \State $\bar{G} \Leftarrow$ \Call{Hierarchize DFG to HDFG }{ $G$ }
+                  %\State Perform the HSAIL transformation on HSIL code, and obtain a HDFG, $\bar{G}$
+                  \label{line:trane}
                   \State $C_{golden} \Leftarrow  \infty$
                   \label{line:optstart}
                   \For {$i=1$ to $f(\lambda)$}
                     \label{line:forlambda}
-                    \State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$
+                    %\State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$
+                    \State $X_{inter}, bt_{remain} \Leftarrow$ \Call{Inter-tree Scheduling }{ $\bar{G}$ }
+                    \State $X_i, C_i \Leftarrow$ \Call{Intra-tree Scheduling }{ $X_{inter}, bt_{remain}$ }
                     \If {$C_i < C_{golden}$}
                       \State $C_{golden} \Leftarrow C_i$
                       \State $X_{golden} \Leftarrow X_i$
@@ -338,21 +425,51 @@ Acknowledgements Page
             \end{algorithm}
             %-----------------------------------------
 
-        \subsubsection{Hierarchical Data Flow Graph}
+        \subsubsection{Data Flow Graph and Hierarchical Data Flow Graph}
         \label{sec:hdfg}
-            A data flow grahp (DFG), which presents dependencies among operations, is key information for 
+            A data flow grahp (DFG), which presents dependencies among operations, is crutial information for program analysis.
+            By partitioning a program into basic blocks, the control flow can be simplified, and thus each DFG of a basic block is a directed acyclic graph (DAG).
+            Figure~\ref{fig:dfg} illustrates an example of a DFG, where each node and each edge denote an operation and a dependency respectively.
+            We can further express any DFG as a data structure $G$, which holds a set of nodes (operations), $V_{op}$, and a set of edges (dependencies), $E_{op}$
+            In conventional DSP software design, optimal scheduling of operations is often approached by analyzing DFGs.
+            For example, \cite{dsplite} solves ILP problems \cite{ilp} in DFGs in scheduling, 
+            and list scheduling \cite{list} calculates scheduling range of operations in DFGs as the scheduling criteria. \\\indent
+
+            However, we found that conventional DFG analysis is infeasible for scheduling in DeAr due to uniqueness of its datapath.
+            As a result, in this work, we propose an enhanced version of DFG, hierarchical data flow graph (HDFG), to fit DeAr.
+
+            Figure~\ref{fig:hdfg} demonstrate a HDFG, $\bar{G} = {V_{bt}, E_{bt}}$, converted from Figure~\ref{fig:dfg}.
+            We organize several important features of HDFG as below: 
+            \begin{itemize}
+                \item Cascaded operations, which implies no fork and join of edges within the cascade, are grouped into a super node ($sn$). 
+                      If an operation is isolated, it forms a $sn$ directly.
+                \item Neighboring $sn$ are further grouped into binary trees, $bt$s, which form a set of vertices, $V_{bt}$, in HDFG.
+                      If a $sn$ is isolated, it forms a binary tree directly.
+                \item Dependencies among operations that cross binary trees are inherited by binary trees they belong to.
+                      These inherited dependencies form a set of edges, $E_{bt}$, among $V_{bt}$.
+                \item A $bt$ without any in-edge existing in $V_{bt}$ (i.e., $\sum_{v \in V_{bt}}\textrm{deg}^-(bt) = 0$) is free to be scheduled. 
+                      After scheduled, the $bt$ and its edge will be erased from $\bar{G}$.
+                \item Every $sn$ must have either zero (leaf nodes) or two (non-leaf nodes) children.
+                      Edges in a HDFG at $bt$, $sn$ and operation level guarantee the correctness of execution order.
+            \end{itemize}
+
+            The hierarchy of HDFGs can provide crutial optimization heuristics to the DeAr scheduler.
+            DeAr avoids RF access within a super node, and regularize RF access into first-in last-out fashion (stack) with the help from the recursive property of a binary tree.
+            In addition, the binary property also provides a chance to balance workload for two threads.
+
+
 
         
         \subsubsection{HSAIL Transformation}
         \label{sec:trans}
         The whole process of the HSAIL transformation contains two phases elaborated as below:
         \begin{itemize}
-            \item \textbf{Phase 1: Convert HSAIL to DFG by SSA} \\
+            \item \textbf{Phase 1: Convert HSAIL to DFG by SSA} \\\indent
                 Algorithm~\ref{alg:2dfg} illustrates how this phase works.
                 Single static assignment (SSA) \cite{ssa} is another form of IR which simplifies work of compiler significantly, 
                 and thus deriving the SSA form of the code becomes the first step.
                 SSA form specifies that each variable must be assigned exactly once, which is the key distinction from HSAIL.
-                \\
+                \\\indent
                 The conversion from normal HSAIL to SSA form is initialized by performing reaching definition analysis \cite{rda} as shown in Line~\ref{line:rda}.
                 Next, for each assignment in the code, we give a new name to the LHS variable, and update corresponding new names of RHS variables indicated by reaching definition analysis.
                 These iterations which derive the SSA form correspond to Line~\ref{line:forhsails}-\ref{line:forhsaile}.
@@ -360,28 +477,8 @@ Acknowledgements Page
                 As a result, we can construct the DFG without burden by iterating the new code, as shown in Line~\ref{line:forssas}-\ref{line:forssae}.
                 Operations and their dependencies are stored in a set of vertices $V_{op}$ and a set of edges $E_{op}$ respectively, 
                 and thus the DFG, $G = ( V_{op} , E_{op} )$, is constructed.
-            \item \textbf{Phase 2: Hierarchize DFG to HDFG} \\
-                As discussed in~\ref{sec:hdfg}, an HDFG is an enhanced version of a DFG which provides necessary heuristics for DeAr scheduler.
-                Hierarchizing a DFG to an HDFG can be achieved by traversing the DFG, details of which are shown in Algorithm~\ref{alg:tohdfg}.
-                In Line~\ref{line:forroots}-\ref{line:forroote}, the algorithm firstly iterates all root operations (i.e., $\textrm{deg}^+(op)=0$ ) in $G$,
-                and call the first subroutine, \textproc{Build Binary Tree }, on each root operations.
-                Line~\ref{line:bbts}-\ref{line:bbte} show the details of \textproc{Build Binary Tree }.
-                A binary tree $bt$ is initialized by building a super node $sn$ on the input operation $op$ with the second subroutine, \textproc{Build Super Node }, 
-                which groups cascaded operations ending with $op$, as shown in Line~\ref{line:bsns}-\ref{line:bsne}.
-                After that, the third subroutine \textproc{Grow Binary Tree }, described in Line~\ref{line:gbts}-\ref{line:gbte}, will expand $bt$ by including neighboring operations if each of operations has exactly one out-edge (i.e., $\textrm{deg}^+(op)=1$), as shown in Line~\ref{line:growifs}-\ref{line:growife}. 
-                \\
-                On the contrary, if the aforementioned condition is not met with any of $op_{left}, op_{right}$, 
-                it will call \textproc{Build Binary Tree } on both to build new binary trees, $bt_{left}, bt_{right}$,
-                and record the new dependencies, $bt_{left} \rightarrow bt, bt_{right} \rightarrow bt$.
-                This step is demonstrated in Line~\ref{line:growelses}-\ref{line:growelsee}. 
-                \\
-                The recursion proceeds by cross-calling between \textproc{Build Binary Tree } and \textproc{Grow Binary Tree } until the whole DFG is traversed.
-                Binary trees and their dependencies are stored in a set vertices $V_{bt}$ and a set of edges $E_{bt}$ respectively.
-                Finally, the HDFG, $\bar{G} = ( V_{bt} , E_{bt} )$, is constructed and returned.
-        \end{itemize}
-
         %----------hsail to dfg algo--------------
-        \begin{algorithm}[h]    \caption{\textproc{Convert HSAIL to DFG by SSA}}
+        \begin{algorithm}[h!]    \caption{\textproc{Convert HSAIL to DFG by SSA}}
         \begin{algorithmic}[1]
             \Require    HSAIL code
             \Ensure     $G = ( V_{op} , E_{op} )$   \Comment{ DFG }
@@ -402,8 +499,28 @@ Acknowledgements Page
         \end{algorithm}
         %----------------------------------------
 
+            \item \textbf{Phase 2: Hierarchize DFG to HDFG} \\\indent
+                As discussed in~\ref{sec:hdfg}, an HDFG is an enhanced version of a DFG which provides necessary heuristics for DeAr scheduler.
+                Hierarchizing a DFG to an HDFG can be achieved by traversing the DFG, details of which are shown in Algorithm~\ref{alg:tohdfg}.
+                In Line~\ref{line:forroots}-\ref{line:forroote}, the algorithm firstly iterates all root operations (i.e., $\textrm{deg}^+(op)=0$ ) in $G$,
+                and call the first subroutine, \textproc{Build Binary Tree }, on each root operations.
+                Line~\ref{line:bbts}-\ref{line:bbte} show the details of \textproc{Build Binary Tree }.
+                A binary tree $bt$ is initialized by building a super node $sn$ on the input operation $op$ with the second subroutine, \textproc{Build Super Node }, 
+                which groups cascaded operations ending with $op$, as shown in Line~\ref{line:bsns}-\ref{line:bsne}.
+                After that, the third subroutine \textproc{Grow Binary Tree }, described in Line~\ref{line:gbts}-\ref{line:gbte}, will expand $bt$ by including neighboring operations if each of operations has exactly one out-edge (i.e., $\textrm{deg}^+(op)=1$), as shown in Line~\ref{line:growifs}-\ref{line:growife}. 
+                \\\indent
+                On the contrary, if the aforementioned condition is not met with any of $op_{left}, op_{right}$, 
+                it will call \textproc{Build Binary Tree } on both to build new binary trees, $bt_{left}, bt_{right}$,
+                and record the new dependencies, $bt_{left} \rightarrow bt, bt_{right} \rightarrow bt$.
+                This step is demonstrated in Line~\ref{line:growelses}-\ref{line:growelsee}. 
+                \\\indent
+                The recursion proceeds by cross-calling between \textproc{Build Binary Tree } and \textproc{Grow Binary Tree } until the whole DFG is traversed.
+                Binary trees and their dependencies are stored in a set vertices $V_{bt}$ and a set of edges $E_{bt}$ respectively.
+                Finally, the HDFG, $\bar{G} = ( V_{bt} , E_{bt} )$, is constructed and returned.
+        \end{itemize}
+
         %----------DFG to HDFG algo--------------
-        \begin{algorithm}[h]    \caption{\textproc{Hierarchize DFG to HDFG}}
+        \begin{algorithm}[h!]    \caption{\textproc{Hierarchize DFG to HDFG}}
         \begin{algorithmic}[1]
             \Require    $G = ( V_{op} , E_{op} )$ \Comment{ DFG }
             \Ensure     $\bar{G} = ( V_{bt} , E_{bt} )$ \Comment{ HDFG }
@@ -442,11 +559,11 @@ Acknowledgements Page
             \Statex %-----------------------
             \Function   {Build Super Node }{$op$}  \label{line:bsns}
                 \State  Initialize a super node $sn$ 
-                \State  $sn$.head $\Leftarrow op$
+                \State  $sn.head \Leftarrow op$
                 \While{$\textrm{deg}^-(op) = 1$}
                     \State   $op \Leftarrow op_{next} \ni (op_{next} \rightarrow op) \in E_{op}$ 
                 \EndWhile
-                \State  $sn$.tail $\Leftarrow op$
+                \State  $sn.tail \Leftarrow op$
                 \State      \Return {$sn$}
             \EndFunction                        \label{line:bsne}
         \end{algorithmic}
@@ -455,10 +572,16 @@ Acknowledgements Page
         %--------------------------------------
 
     
-        \subsubsection{Scheduling and Optimization}
-        Algorithm~\ref{alg:inter}
-        \label{sec:sando}
+        \subsubsection{Scheduling}
 
+        A scheduler is responsible for ensuring the order of operations, 
+        arranging data movement and allocating hardware resources.
+        Once the scheduling result is determined, the corresponding machine code is also generated.
+        The principle of the DeAr scheduler is, 
+        two threads process binary trees in a HDFG concurrently and collaboratively until all operations are scheduled.
+        Before exploring how threads co-work, we need to look into how a binary tree, $bt$, is handled by the scheduler.
+        Algorithm~\ref{sbt}, \textproc{Schedule Binary Tree}, 
+        demonstrates how operaions of a $bt$ are scheduled into a specific sequence.
         %-------Schedule Binary Tree----------
 \begin{algorithm}[h]
     \caption{\textproc{Schedule Binary Tree }}
@@ -474,9 +597,13 @@ Acknowledgements Page
                 \State \Call{Schedule Binary Tree }{$sn.right\_child$}
             \EndIf
         \EndIf
-        \State \Call{Schedule Super Node }{$sn$}   \label{line:sbte}
+        \State \Call{Schedule Super Node }{$sn$}   
         \State Erase $sn$ from the binary tree
+        \If{$sn$ IS a root node}        
+            \State \Return{$list_{op}$}
+        \EndIf
 
+        \label{line:sbte}
         \Statex
     \Function   {Stack Size }{$sn$}  \label{line:gsss}
         \If{$sn$ is a leaf node}
@@ -486,7 +613,6 @@ Acknowledgements Page
         \EndIf
         \State \Return{$size$}
     \EndFunction                    \label{line:gsse}
-    
     \Statex
     \Function   {Schedule Super Node }{$sn$}  \label{line:ssns}
        \State   $op \Leftarrow$ $sn.tail$
@@ -497,18 +623,41 @@ Acknowledgements Page
     \EndFunction                            \label{line:ssne}
 
     \end{algorithmic}
-    \label{alg:inter}
+    \label{alg:sbt}
 \end{algorithm}
-        %-----------------------------------
-
+    %----------------------------------------------
+        It traverse a $bt$ recursively in a post-order fashion, which implies the root is touched first but scheduled last.
+        The input is the root $sn$ of a $bt$, and then a list of operations, which indicates execution flow, is returned.
+        Line~\ref{line:sbts}-\ref{line:sbte} is the main part of the algorithm.
+        For a input $sn$, the existence of its children is checked at the beginning.
+        If children exist, the same algorithm, \textproc{Schedule Binary Tree }, is applied to them and the recursion starts.
+        The first subroutine, \textproc{Stack Size } shown in Line~\ref{line:gsss}-\ref{line:gsse}, determines the precedence of children.
+        After the recursion, the second subroutine, 
+        \textproc{Schedule Super Node} shown in Line~\ref{line:ssns}-\ref{line:ssne}, is applied to this $sn$, 
+        By this subroutine, cascaded operations in the $sn$ are scheduled consecutively.
+        \\\indent
+        The key insight of Algorithm~\ref{alg:sbt} is, it optimizes RF access significantly with heuristics from HDFGs.
+        Firstly, operations in a $sn$ are scheduled consecutively.
+        With this policy, the forwarding mechanism in DeAr can be taken advantage, and unnecessary WB is can be avoided.
+        Secondly, the scheduler always schedules the child which demands larger stack size earlier, 
+        By this mean, the stack size used by a parent $sn$ is the smaller one of two children plus one, 
+        so that we can ensure the cost on stack size is minimized and prevent RF from spilling.
+        \\\indent
+        We further introduce \textproc{Inter-tree scheduling} and \textproc{Intra-tree scheduling}, 
+        both of which require Algorithm~\ref{alg:sbt}.
+        A typical HDFG contains multiple $bt$.
+        As a result, the DeAr scheduler perform \textproc{Inter-tree scheduling} if multiple $bt$ exist.
+        Algorithm~\ref{alg:inter} illustrate the detail of \textproc{Inter-tree scheduling}, 
+        where a HDFG, $\bar{G}$ is input, and binary code segment, 
+        $X_{inter}$, accompanied with a remaining subtree, $bt_{remain}$, will be returned.
         %-----------Inter-tree-------------
-\begin{algorithm}[h]
-    \caption{\textproc{Inter-tree Scheduling for Dual-thread}}
+\begin{algorithm}[h!]
+    \caption{\textproc{Inter-tree Scheduling}}
     \begin{algorithmic}[1]
         \Require    HDFG $\bar{G} = (V_{bt}, E_{bt})$
         \Ensure     Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
         \State $X_{inter} \Leftarrow NULL$       \Comment{Initialize $X_{inter}$}
-        \While{$V_{bt} \neq \emptyset$}
+        \While{$V_{bt} \neq \emptyset$} \label{line:interws}
             \If{$work\_queue_{thread1} = \emptyset$}
                 \State Select a binary tree $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$ randomly
                 \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$bt.root$}
@@ -521,9 +670,9 @@ Acknowledgements Page
                 \State Push $list_{op}$ into $work\_queue_{thread2}$
                 \State Erase $bt$ and its edges from $\bar{G}$
             \EndIf
-            \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{Gen Code by DP}{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
-        \EndWhile
-        \If{$work\_queue_{thread1} \neq \emptyset$}
+            \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{Gen Code by DP}{$work\_queue_{thread1}$, $work\_queue_{thread2}$} \label{line:intercon}
+        \EndWhile \label{line:interwe}
+        \If{$work\_queue_{thread1} \neq \emptyset$} \label{line:interis}
             \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
             \State Clear $work\_queue_{thread1}$
         \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
@@ -531,21 +680,44 @@ Acknowledgements Page
             \State Clear $work\_queue_{thread2}$
         \Else
             \State $bt_{remain} \Leftarrow NULL$
-        \EndIf
+        \EndIf \label{line:interie}
         \State \Return{$X_{inter}$, $bt_{remain}$}
     \end{algorithmic}
     \label{alg:inter}
 \end{algorithm}
         %------------------------------------------
-
+        Line~\ref{line:interws}-\ref{line:interwe} enclosed by a while loop, is the main part of \textproc{Inter-tree scheduling}.
+        The scheduler performs several identical steps for thread~1 and thread~2 respectively.
+        It firstly search the whole $\bar{G}$ and select a free $bt$ randomly.
+        Such a selection preserves randomness for DeAr scheduler, 
+        and a better scheduling result is possible to be achieved with more trials, as discussed in Algorithm~\ref{alg:framework}.
+        Next, the scheduler checks whether the work-queue of a thread is empty.
+        If it is empty, the scheduler processes the selected $bt$ with Algorithm~\ref{alg:sbt}, 
+        and enqueue the returned $op_{list}$ to the work-queue of a thread.
+        Here, a work-queue is data structure that holds the operation sequence that belongs to a thread.
+        An operation is removed from a thread's work-queue once it is indeed dispatched to binary code.
+        After above steps, two work-queue are filled, and the key of this algorithm, \textproc{Gen Code by DP}, is performed.
+        This subroutine, \textproc{Gen Code by DP}, dispatches operations in two work-queues which execute concurrently to binary code, 
+        and arbitrates for FU conflict by Dynamic Programming (DP) \cite{dp}.
+        It then returns a new code segment concatenated by the current one, and ensures at least one work-queue is cleared.
+        Here, as shown in Line~\ref{line:intercon}, we use the sigh, $\oplus$, to denote the operation of code concatenation.
+        Repeat of the loop proceeds until all $bt$ in $\bar{G}$ are consumed.
+        However, it is very likely that there is a work-queue where operations remaining at the last iteration.
+        Line~\ref{line:interis}-\ref{line:interie} illustrate such a scenario.
+        Since the resulting binary code is incomplete, 
+        remaining operations are reverted to the part of their original binary tree by \textproc{Restore Subtree from Queue},
+        and a remaining subtree, $bt_{remain}$, is returned.
+        \\\indent 
+        To deal with $bt_{remain}$ and obtain the remaining part of the binary code, 
+        \textproc{Intra-tree Scheduling}, illustrated in Algorithm~\ref{alg:intra}, is applied.
         %----------------Intra-tree---------------
 \begin{algorithm}[h]
-    \caption{\textproc{Intra-tree Sscheduling for Dual-thread}}
+    \caption{\textproc{Intra-tree Scheduling}}
     \begin{algorithmic}[1]
         \Require    Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
         \Ensure     Final binary code $X_{final}$
         \State $X_{tail}, X_{body} \Leftarrow NULL$
-        \While{$bt_{remain} \neq \emptyset$}
+        \While{$bt_{remain} \neq \emptyset$}    \label{line:intra:ws}
             \State $list_{op} \Leftarrow$ \Call{Schedule Super Node }{$X_{remain}.root$}
             \State Push $list_{op}$ into $work\_queue_{thread1}$
             \State $X_{tail} \Leftarrow$ \Call{Gen Code }{$list_{op}$} $\oplus X_{tail}$
@@ -566,13 +738,37 @@ Acknowledgements Page
             \Else
                 \State $bt_{remain} \Leftarrow NULL$
             \EndIf
-        \EndWhile
+        \EndWhile   \label{line:intra:we}
         \State $X_{final} \Leftarrow X_{inter} \oplus X_{body} \oplus X_{tail}$
         \State \Return{$X_{final}$}
     \end{algorithmic}
     \label{alg:intra}
 \end{algorithm}
         %-------------------------------------------
+        The principle of \textproc{Intra-tree Scheduling} is similar to the one of \textproc{Inter-tree Scheduling} ---
+        using two threads to process two $bt$ concurrently and collaboratively.
+        Line~\ref{line:intra:ws}-\ref{line:intra:we} demonstrate a while loop, 
+        which generates binary code iteratively.
+        A crucial strategy applied here is, partitioning $bt_{remain}$ into three parts:
+        the root node, left and right subtrees.
+        Since operations in the root can only be handled sequentially, 
+        we can dispatch them directly with a single thread (thread 1), 
+        and obtain a tail segment of binary code, $X_{tail}$.
+        Next, by treating left and right subtrees as independent ones, 
+        we schedule them into work-queues of two threads respectively with \textproc{Schedule Binary Tree},
+        and call \textproc{Gen Code by DP} to obtain another segment of binary code, $X_{body}$.
+        By above steps, $bt_{remain}$ keeps shrinking while $X_{body}$ and $X_{tail}$ keep accumulating,
+        until all operations left in $bt_{remain}$ are dispatched.
+        Finally, we concatenate $X_{inter}$ from \textproc{Inter-tree Scheduling}, $X_{body}$ as well as $X_{tail}$,
+        and obtain the complete binary code $X_{final}$.
+        \\\indent
+        The key insight of Algorithm~\ref{alg:inter} and Algorithm~\ref{alg:intra} is, they take advantage of DP.
+        DP is a powerful technique often used in optimization with sequence data \cite{dpseq}.
+        Letting OPC be the criteria, DP determines which of two threads should stall its operation when FU conflict occurs.
+        As a result, a sequence of arbitrations optimized for ILP within a certain search space (product of two work-queues length), can be achieved.
+        Moreover, the proposed algorithms also make use of the characteristic of a binary tree. 
+        Even if only one $bt$ exists in HDFG, 
+        the scheduler can still balance the workload of two threads by extracting left and right subtrees from $bt$ beforehand.
 
 \section{Performance Evaluation}
     \subsection{Operation per Cycle}

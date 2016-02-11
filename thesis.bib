@@ -29,6 +29,7 @@
     note = {Retrieved Januaryi 21, 2016 from \url{http://www.3gpp.org/technologies/keywords-acronyms/97-lte-advanced} },
 }
 
+
 %$ author = {B.~Sander and B.~Beckmann and M.~Fowler and M.~Mantor}, 
 @manual{systemspec,
     title = {HSA Platform System Architecture Specification},
@@ -40,7 +41,13 @@
 @techreport{mainstream,
     title = {What is Heterogeneous System Architeucture (HSA)?},
     institution = {AMD, inc.},
-    note = {Retrieved Januaryi 21, 2016 from \url{http://developer.amd.com/resources/heterogeneous-computing/} },
+    note = {Retrieved January 21, 2016 from \url{http://developer.amd.com/resources/heterogeneous-computing/} },
+}
+
+@techreport{carrizo,
+    title = {AMD “Carrizo” architecture unveiled at ISSCC},
+    institution = {AMD, inc.},
+    note = {Retrieved January 21, 2016 from \url{http://www.amd.com/en-us/who-we-are/corporate-information/events/isscc} },
 }
 
 @manual{runtime,
@@ -51,11 +58,11 @@
 }
 
 @inproceedings{dspstone,
-    author = {V. Zivojnovic, J. Martinez, C. Schläger, and Heinrich Meyr},
-    booktitle = {Proc. of ICSPAT'94 - Dallas},
-    title = {DSPstone: A DSP-Oriented Benchmarking Methodology},
-    year = {1994},
-    month = {Oct},
+  title={DSPstone: A DSP-oriented benchmarking methodology},
+  author={Zivojnovic, Vojin and Velarde, J Martinez and Schlager, Christian and Meyr, Heinrich},
+  booktitle={Proceedings of the International Conference on Signal Processing Applications and Technology},
+  pages={715--720},
+  year={1994}
 }
 
 @techreport{bdti,
@@ -65,59 +72,66 @@
     month = {Sep},
 }
 
-@conference{register,
-    author = {Rixner,~S. and Dally,~W.~J. and Mattson,~P.},
-    title = {Register organization for media processing},
-    booktitle = {HPCA-6},
-    pages = {375-386},
-    year = {2000},
+@inproceedings{register,
+  title={Register organization for media processing},
+  author={Rixner, Scott and Dally, William J and Khailany, Brucek and Mattson, Peter and Kapasi, Ujval J and Owens, John D},
+  booktitle={High-Performance Computer Architecture, 2000. HPCA-6. Proceedings. Sixth International Symposium on},
+  pages={375--386},
+  year={2000},
+  organization={IEEE}
 }
 
 @article{cluster,
-    author = {Simar,~R. and Tatge,~R.},
-    title = { How TI adopted VLIW in digital signal processors},
-    journal = {Solid-Stage Circuits Magzine, IEEE},
-    volume = {1},
-    issue = {3},
-    pages = {10-14},
-    year = {2009},
+  title={How TI adopted VLIW in digital signal processors},
+  author={Simar, Ray and Tatge, Reid},
+  journal={Solid-State Circuits Magazine, IEEE},
+  volume={1},
+  number={3},
+  pages={10--14},
+  year={2009},
+  publisher={IEEE}
 }
 
-@conference{synzen,
-    author = { Hauser,~S. and Moser,~N. and Juurlink,~B.},
-    title = {SynZEN: A hybrid TTA/VLIW architecture with a distributed register file},
-    booktitle = {NORCHIP 2012},
+@inproceedings{synzen,
+  title={SynZEN: A hybrid TTA/VLIW architecture with a distributed register file},
+  author={Hauser, Stefan and Moser, Nico and Juurlink, Ben},
+  booktitle={NORCHIP, 2012},
+  pages={1--4},
+  year={2012},
+  organization={IEEE}
 }
 
 @article{dsplite,
-    author = {Tay-Jyi~Lin and Hung-Yueh~Lin and Chie-Min~Chao},
-    title = {A Compact DSP Core with Static Floating-Point Arithmetic},
-    journal = {Journal of VLSI signal processing systems for signal, image and video technology},
-    volume = {42},
-    issue = {2},
-    pages = {127-138},
-    year = {2006},
-    month = {Feb},
+  title={A compact DSP core with static floating-point arithmetic},
+  author={Lin, Tay-Jyi and Lin, Hung-Yueh and Chao, Chie-Min and Liu, Chih-Wei and Jen, Chih-Wei},
+  journal={Journal of VLSI signal processing systems for signal, image and video technology},
+  volume={42},
+  number={2},
+  pages={127--138},
+  year={2006},
+  publisher={Springer}
 }
 
-@conference{cascade,
-    author = {Shih-Hao Ou and Yi Cho and Tay-Jyi Lin},
-    title = {Improving datapath utilization of programmable DSP with composite functional units},
-    booktitle = {ISCAS 2008},
-    pages = {3438-3441}
+@inproceedings{cascade,
+  title={Improving datapath utilization of programmable DSP with composite functional units},
+  author={Ou, Shih Hao and Cho, Yi and Lin, Tay Jyi and Liu, Chih Wei},
+  booktitle={Circuits and Systems, 2008. ISCAS 2008. IEEE International Symposium on},
+  pages={3438--3441},
+  year={2008},
+  organization={IEEE}
 }
 
 @article{hearaid,
-    author = {Shih-Hao~Ou and Kuo-Chiang~Chang and Chih-Wei~Liu},
-    title = {An energy-efficient, high-precision SFP LPFIR filter engine for digital hearing aids},
-    journal = {Integration, the VLSI Journal},
-    volume = {48},
-    pages = {230-238},
-    year = {2015},
-    month = {Jan},
+  title={An energy-efficient, high-precision SFP LPFIR filter engine for digital hearing aids},
+  author={Ou, Shih-Hao and Chang, Kuo-Chiang and Liu, Chih-Wei},
+  journal={Integration, the VLSI Journal},
+  volume={48},
+  pages={230--238},
+  year={2015},
+  publisher={Elsevier}
 }
 
-@mastersthesis{
+@mastersthesis{multistage,
     author = {Chen,~Chih-Ching},
     title = {Design of Multi-Stage Computing Engine for DSP Applications},
     school = {College of Electrical and Computer Engineering, National Chiao Tung University},
@@ -125,43 +139,106 @@
     month = {Jul},
 }
 
-@conference{move,
-    author = {Corporaal,~H. and Mulder,~H.},
-    title = {MOVE: a framework for high-performance processor design},
-    booktitle = {Supercomputing, 1991},
-    pages = {18-22},
+@inproceedings{move,
+  title={MOVE: A framework for high-performance processor design},
+  author={Corporaal, Henk and Mulder, Hans JM},
+  booktitle={Proceedings of the 1991 ACM/IEEE conference on Supercomputing},
+  pages={692--701},
+  year={1991},
+  organization={ACM}
 }
 
-@article{ttagpu,
-    author = {Carlos~S.~de~La~Lama and Pekka~Jääskeläinen and Jarmo~Takala},
-    title = {Programmable and Scalable Architecture for Graphics Processing Units},
-    journal = {Embedded Computer Systems: Architectures, Modeling, and Simulation},
-    volume = {5657},
-    pages = {2-11},
-    year = {2009},
+@incollection{ttagpu,
+  title={Programmable and scalable architecture for graphics processing units},
+  author={Carlos, S and J{\"a}{\"a}skel{\"a}inen, Pekka and Takala, Jarmo},
+  booktitle={Embedded Computer Systems: Architectures, Modeling, and Simulation},
+  pages={2--11},
+  year={2009},
+  publisher={Springer}
 }
 
-
-@conference{qemu,
-    author = {Bellard,~F.},
-    title = {QEMU, a fast and portable dynamic translator},
-    booktitle = {USENIX Annual Technical Conference},
-    pages = {41-16},
-    year = {2005},
+@inproceedings{qemu,
+  title={QEMU, a Fast and Portable Dynamic Translator.},
+  author={Bellard, Fabrice},
+  booktitle={USENIX Annual Technical Conference, FREENIX Track},
+  pages={41--46},
+  year={2005}
 }
 
-@conference{gpgpusim,
-    author = {Bakhoda,~A. and Yuan,~G.~L. and Fung,~W.~W.~L and Wong,~H. and Aamodt,~T.~M.},
-    title = {Analyzing CUDA workloads using a detailed GPU simulator},
-    booktitle = {ISPASS 2009},
-    pages = {163-174},
+@inproceedings{hsaemu,
+    title={HSAemu: a full system emulator for HSA platforms},
+    author={Ding, Jiun-Hung and Hsu, Wei-Chung and Jeng, Bai-Cheng and Hung, Shih-Hao and Chung, Yeh-Ching},
+    booktitle={Proceedings of the 2014 International Conference on Hardware/Software Codesign and System Synthesis},
+    pages={26},
+    year={2014},
+    organization={ACM}
 }
 
-@conference{ssa,
-    author = {Jeffery von Ronne and Ning Wang and Michael Franz},
-    title = {Interpreting programs in static single assignment form},
-    journal = {IVME 2004},
-    pages = {23-30}
+@inproceedings{gpgpusim,
+  title={Analyzing CUDA workloads using a detailed GPU simulator},
+  author={Bakhoda, Ali and Yuan, George L and Fung, Wilson WL and Wong, Henry and Aamodt, Tor M},
+  booktitle={Performance Analysis of Systems and Software, 2009. ISPASS 2009. IEEE International Symposium on},
+  pages={163--174},
+  year={2009},
+  organization={IEEE}
+}
+
+@inproceedings{ssa,
+  title={Interpreting programs in static single assignment form},
+  author={Von Ronne, Jeffery and Wang, Ning and Franz, Michael},
+  booktitle={Proceedings of the 2004 workshop on Interpreters, virtual machines and emulators},
+  pages={23--30},
+  year={2004},
+  organization={ACM}
+}
+
+@article{dpseq,
+  title={A discipline of dynamic programming over sequence data},
+  author={Giegerich, Robert and Meyer, Carsten and Steffen, Peter},
+  journal={Science of Computer Programming},
+  volume={51},
+  number={3},
+  pages={215--263},
+  year={2004},
+  publisher={Elsevier}
+}
+
+@book{dp,
+  title={Dynamic programming and optimal control},
+  author={Bertsekas, Dimitri P and Bertsekas, Dimitri P and Bertsekas, Dimitri P and Bertsekas, Dimitri P},
+  volume={1},
+  number={2},
+  year={1995},
+  publisher={Athena Scientific Belmont, MA}
+}
+
+@book{rda,
+  title={Principles of program analysis},
+  author={Nielson, Flemming and Nielson, Hanne R and Hankin, Chris},
+  year={2015},
+  publisher={Springer}
+}
+
+@book{ilp,
+  title={Integer programming},
+  author={Wolsey, Laurence A},
+  volume={42},
+  year={1998},
+  publisher={Wiley New York}
+}
+
+@book{risc,
+  title={Computer architecture: a quantitative approach},
+  author={Hennessy, John L and Patterson, David A},
+  year={2011},
+  publisher={Elsevier}
+}
+
+@book{parallel,
+    title={Parallel computer architecture: a hardware/software approach},
+    author={Culler, David E and Singh, Jaswinder Pal and Gupta, Anoop},
+    year={1999},
+    publisher={Gulf Professional Publishing}
 }
 
 
