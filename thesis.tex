@@ -322,25 +322,32 @@ Acknowledgements Page
     Such asymmetry of computing devices in HSA is the key differentiation from conventional symmetric multiprocessing (SMP) \cite{parallel},
     which involves two or more identical processors collaborating with uniform access to the shared memory.
     By adopting HSA, one is able to design a single system that handles wide variety of computational demands efficiently.
-    For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo} \cite{carrizo} APU, featuring HSA 1.0.
-    As illustrated in Figure~\ref{fig:kaveri}, \textit{Carrizo} is a SoC platform with 4 CPU cores and 8 GPU cores, 
-    which are connected with unified and coherent memory called \textit{hUMA}.
+    For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo APU} \cite{carrizo}, featuring HSA 1.0.
+    As illustrated in Figure~\ref{fig:carrizo}, \textit{Carrizo} is the SoC platform with the 4-core CPU and the GPU with 8 compute units (384 shader cores totally).
+    Both of them work with the shared virtual memory (SVM) since their MMUs access an identical page table.
     \textit{Carrizo} enables task sharing without data copy between CPUs and GPUs to achieve greater performance.
     By cleverly choosing the suitable computing device for each task, 
     \textit{Carrizo} can operate more efficiently to save power as well.
     Since the proposed DeAr DSP targets HSA platforms, 
     in this part, we will briefly introduce key features of HSA in three perspectives: 
     system specification, programming model and software infrastructure.
+        \begin{figure}[!ht] 
+            \caption{Carrizo APU with HSA}
+            \centering
+            \includegraphics[width=0.8\textwidth]{./figs/carrizo.eps}
+            \label{fig:carrizo}
+        \end{figure}
         \subsubsection{System Specification}
-        HSA foundation released HSA Platform System Architecture Specification 1.0 \cite{systemspec} in 2015.
+        The HSA foundation released HSA Platform System Architecture Specification 1.0 \cite{systemspec} in 2015.
         The main purpose of the specification is defining system architecture requirements, 
         which support the HSA programming model and software infrastructure, from a hardware perspective.
-        An HSA platform refers to a system involving multiple computing devices, defined as HSA agents.
-        Figure~\ref{fig:systemspec} illustrates a basic HSA platform.
+        Figure~\ref{fig:systemspec} presents the example of an HSA platform.
+        An HSA platform refers to a system involving multiple types of computing devices, 
+        which are defined as HSA agents.
         One of the agents needs to be host CPU, and the other usually serve as kernel agents. 
-        The host CPU is responsible for running the operating system with \textit{HSA Runtime},
+        The host CPU is responsible for running the operating system and setting up \textit{HSA Runtime},
         while kernel agents handle computational tasks from the host CPU by executing HSAIL code.
-        HSA require all HSA agents to be capable of accessing shared virtual address space, 
+        HSA require all HSA agents to be capable of accessing SVM maintained coherently, 
         so data exchange between agents can be accomplished by passing data pointer instead.
         Nevertheless, not all memory regions need to be accessible by all agents (i.e., \textit{Global} segment).
         HSA defines other memory segments (\textit{Group}, \textit{Private}, \textit{Spilled}, etc.), 
@@ -348,16 +355,66 @@ Acknowledgements Page
         By manipulating different memory segments, the programmer can utilize data locality in memory hierarchy to improve performance.
         To transmit control signals between agents, HSA specifies \textit{Architected Queuing Language} (AQL) as the protocol. 
         AQL defines several packet types: \textit{agent dispatch}, \textit{kernel dispatch}, \textit{AND barrier} and \textit{OR barrier}, etc.
-        An agent dispatches tasks wrapped in \textit{kernel dispatch} or \textit{agent dispatch} packets to command queues, 
-        and other agents consume the packets, and complete the wrapped tasks.
+        An agent pushes tasks wrapped in \textit{kernel dispatch} or \textit{agent dispatch} packets to command queues, 
+        and other agents consume the packets, and dispatch the wrapped tasks.
         \textit{AND barrier} and \textit{OR barrier} are pushed to command queues to synchronize execution of agents 
         Another advantage of AQL is allowing \textit{user mode queuing},
-        which implies the programmer is allowed to  access the command queue via \textit{HSA Runtime API} without OS involving.
+        which implies the programmer is allowed to access the command queue via \textit{HSA Runtime API} without OS involving.
         By this mean, the latency from dispatching to executing of a task is thus minimized.
+        \begin{figure}[!ht] 
+            \caption{Example of an HSA Platform}
+            \centering
+            \includegraphics[width=0.75\textwidth]{./figs/systemspec.eps}
+            \label{fig:systemspec}
+        \end{figure}
         \subsubsection{Programming Model}
+        To support multiple Instruction Set Architectures (ISAs) to various agents in a single HSA platform,
+        HSA foundation drew up Heterogeneous System Architecture Intermediate Language (HSAIL)
+        With HSAIL, programmers can develop code for HSA in an intermediate form accepted by wide range of agents.
+        HSAIL basically adopts the parallel programming model of Single Instruction Multiple Data (SIMD), 
+        which carries out same computation on different data to accelerate applications.
+        HSAIL organizes instances of execution in specified hierarchy, which help programmers to manipulate the SIMD model.
+        Figure~\ref{fig:grid} presents a graphical view on how HSAIL organizes instances of execution.
+        The atomic instance of execution is work-items, each of which has dedicated registers and private memory.
+        Group of work-items form a work-group, which owns group memory accessed by subordinate work-items only.
+        The work-items in a work-group can be arranged in one, two or three dimensional coordinate, 
+        and the programmer specifies the number of dimensions as well as the size of each dimension.
+        Based on the same principle of arranging instances, all work-groups further form a grid, 
+        which provides a global view to all work-items created in an HSAIL program (kernel).
+        Work-items within a work-group are executed concurrently in chunks called wavefronts, 
+        of which sizes are limited by the number of processing cores (lanes) in the target kernel agent.
+        Each work-group and each work-item have work-group ID and work-item ID respectively.
+        By manipulating such threading hierarchy, 
+        the programmer can control accessibility of data and synchronize the work items in a specific scope without burden.
+        \begin{figure}[!ht] 
+            \caption{Execution hierarchy in HSAIL}
+            \centering
+            \includegraphics[width=0.85\textwidth]{./figs/grid.eps}
+            \label{fig:grid}
+        \end{figure}
         % work group, work item warp, memory hierarchy, hqueue, 
         \subsubsection{Software Infrastructure}
-        
+        The software infrastructure of HSA is composed of two parts, the compilation tools and the \textit{HSA runtime}.   
+        The compilation tools are responsible for generating machine code of specific ISAs from high-level language.
+        Figure~\ref{fig:swinf}~(a) illustrates the whole compilation flow of HSA software.
+        The programmer develops applications targeting HSA with high-level parallel programming language such as OpenCL, OpenMP or a domain-specific language (DSL).
+        The off-line compiler of the hight-level language translate the code to standard HSAIL kernel accepted by all computing devices in an HSA platform.
+        Each kind of the computing devices must be recognized by the finalizer, 
+        which is composed of several device-specific HSAIL compilers.
+        Depending on which device is going to execute the kernel, 
+        the finalizer translates the HSAIL to corresponding ISA and completes the code generation flow.
+        \\\indent
+        On the other hand, the \textit{HSA runtime} bridges HSAIL runtime APIs and agents, as illustrated in Figure~\ref{fig:swinf}~(b).
+        With the \textit{HSA runtime}, the programmer is allowed to manipulate system memory and AQL, 
+        and thus SVM and \textit{user mode queuing} can be accomplished.
+        It is possible that the programmer triggers the finalizer to perform the final stage of compilation at runtime.
+        In addition, \textit{HSA runtime} also perform error handling and retrieve system and agent information for users.
+        \begin{figure}[!ht] 
+            \caption{Software Infrastructe of HSA}
+            \centering
+            \includegraphics[width=0.85\textwidth]{./figs/swinf.eps}
+            \label{fig:swinf}
+        \end{figure}
 \section{Design and Implementation}
     \subsection{System Overview}
     \subsection{Micro-architecture Design}
@@ -373,7 +430,7 @@ Acknowledgements Page
             To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
             The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
-            With CLOC \cite{cloc} tool provided by HSAfoundation, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
+            With CLOC \cite{cloc} tool provided by \textit{HSA Foundation}, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
             Next, in Line~\ref{line:trans}-\ref{line:trane}, 
             we run the HSAIL transformation (elaborated in \ref{sec:trans}) on HSAIL code and obtain a hierarchical data flow graph (HDFG), 
             $\bar{G}$ (elaborated in \ref{sec:hdfg}), which holds crucial scheduling heuristics.
@@ -580,7 +637,7 @@ Acknowledgements Page
         The principle of the DeAr scheduler is, 
         two threads process binary trees in a HDFG concurrently and collaboratively until all operations are scheduled.
         Before exploring how threads co-work, we need to look into how a binary tree, $bt$, is handled by the scheduler.
-        Algorithm~\ref{sbt}, \textproc{Schedule Binary Tree}, 
+        Algorithm~\ref{alg:sbt}, \textproc{Schedule Binary Tree}, 
         demonstrates how operaions of a $bt$ are scheduled into a specific sequence.
         %-------Schedule Binary Tree----------
 \begin{algorithm}[h]
