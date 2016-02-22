@@ -7,17 +7,31 @@
         Unfortunately, owing to the limits of CMOS technology and the significant growth of bus complexity, 
         driving the clock speed or increasing the SIMD width are consequently infeasible.
         Instead, the proposed DeAr datapath adopted the concept of VLIW, 
-        which dispatches multiple operations in a single cycle.
-        The key advantage of DeAr is allowing two threads to work concurrently and collaboratively in each lane of a DSP.
+        which is able to dispatch multiple operations in a single cycle.
+        The key advantage of DeAr is allowing two threads to work concurrently and collaboratively in each lane of the DSP.
         By this mean, the workload of each work-item can be shared by two concurrent threads, 
-        which accelerate the execution of the wavefront without improving the clock speed or SIMD width.
+        which accelerate the execution of the wavefront without touching the clock speed or SIMD width.
+        \\\indent
         Figure~\ref{fig:micro} illustrates the micro-architecture of DeAr datapath applied in each DSP lane.
-        Two threads share a group of arithmetic units that commonly exist in a RISC datapath.
-        Although the demonstrated example includes an adder, a multiplier and a barrel shifter,
-        which are qualified to perform most benchmarks,
-        the configuration can be modified to fit the target application.
+        Two threads residing in a lane share a group of arithmetic units that commonly exist in a RISC datapath.
+        The demonstrated example includes an adder, a multiplier and a barrel shifter, which are qualified to perform most benchmarks,
+        Nevertheless, the configuration can be modified to fit the target applications.
+        Each thread owns a pair of queue memories acompanied with a stack memory, 
+        and these memory units of two threads form the sequential-accessed banked RF.
+        The queue pair, composed of an load-queue and store-queue, 
+        serves as the buffer that interfaces the lower level of the memory hierarchy with the datapath.
+        The load-queue and store-queue are accessed from their both sides concurrently in opposite directions and the first-in-first-out (FIFO) fashion.
+        By preventing the queues from empty or full with clever scheduling,
+        the latency of load and store can thus be hidden.
+        The stack memory, on the other hand, is responsible for the storage of intermediate data.
+        The nature of a stack memory is last-in-first-out (LIFO), 
+        which is suitable for the recursive property of the DeAr scheduling algorithm (elaborated in Section~\ref{secswdesign}).
         
-        Each thread residing in a lane owns a dedicated stack and queue memories serving as a register file.
+
+
+        
+
+
         \begin{figure}[!ht] 
             \caption{Micro-architecture of a DeAr DSP lane}
             \centering
@@ -25,6 +39,7 @@
             \label{fig:micro}
         \end{figure}
     \section{Software Design}
+            \label{sec:swdesign}
         \subsection{Software framework for DeAr}
             To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
