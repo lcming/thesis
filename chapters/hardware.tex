@@ -66,6 +66,43 @@
             \label{fig:micro}
         \end{figure}
 
-
     \section{Instruction Set Architecture}
+
+    %---------- risc-style portion table
+    \begin{table}[ht!]
+        \centering
+        \begin{tabular}{|c|l|l|c|}
+            \hline
+        \multicolumn{1}{|c|}{\textbf{Category}} & \multicolumn{1}{c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c|]{@{}c@{}}Followed \\ by stack \\ operation?\end{tabular}}} \\ \hline
+            \multirow{5}{*}{Arithmetic}    & Add & \textbf{d} = \textbf{s} + \textbf{t} & \multirow{7}{*}{Yes}  \\ \cline{2-3}
+                                           & Subtract & \textbf{d} = \textbf{s} - \textbf{t} & \\ \cline{2-3} 
+                                           & Multiply & \textbf{d} = \textbf{s} * \textbf{t} & \\ \cline{2-3} 
+                                           & Shift left & \textbf{d} = \textbf{s} << \textbf{t} & \\ \cline{2-3}
+                                           & Shift right & \textbf{d} = \textbf{s} >> \textbf{t} & \\ \cline{1-3}
+            \multirow{2}{*}{Others}        & Move & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} << 0 & \\ \cline{2-3} 
+                                           & Nop & no operation & \\ \hline
+            \multirow{2}{*}{Memory transfer} & Load burst & repeat(\textbf{b}) load\_queue.push (memory[\textbf{a}]) & \multirow{2}{*}{No} \\ \cline{2-3} 
+                                             & Store burst & repeat(\textbf{b}) memory[\textbf{a}] = store\_queue.pop() & \\ \hline
+        \end{tabular}
+        \caption{RISC-style portion of the DeAr instruction set}
+        \label{my-label}
+    \end{table}
+    %-----------------------------------------
+    %---------- stack portion table
+\begin{table}[ht!]
+\centering
+\begin{tabular}{|l|l|l|}
+    \hline
+    \multicolumn{1}{|c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Note}} \\ \hline
+    Push & \begin{tabular}[c]{@{}l@{}}1. Add the head address by 1\\ 2. Write the new data to the head address\end{tabular} & \multirow{2}{*}{ \parbox{5cm}{A "pop" followed by a "push" is equivalent to a "modify"} } \\ \cline{1-2}
+    Pop                               & \begin{tabular}[c]{@{}l@{}}1. Subtract the head address by 1\\ 2. Invalidate the previous head data\end{tabular} & \\ \hline
+    Modify                            & Modify the head data to to the new data & The head address remains \\ \hline
+    Nop                               & No operation & The head address and data remain \\ \hline
+    \end{tabular}
+\caption{Stack access portion of the DeAr instrucion set}
+\label{tab:stack}
+\end{table}
+    %-----------------------------------------
+
+
     \section{System Integration}
