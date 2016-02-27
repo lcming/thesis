@@ -19,10 +19,11 @@
         because hardware simplicity matters than portability and many optimization approaches can be applied in compilation stages. 
         Figure~\ref{fig:vliw} illustrates a basic VLIW datapah, where multiple instructions can be executed at a cycle.
         The number of ports on RF is scaled up with the issue-width, and the compiler is responsible for performing static scheduling to avoid resources conflict among operations.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{A basic VLIW datapah}
             \centering
             \includegraphics[width=0.5\textwidth]{./figs/vliw.eps}
+            \caption{A basic VLIW datapah}
             \label{fig:vliw}
         \end{figure}
         \\\indent
@@ -32,21 +33,22 @@
         Figure~\ref{fig:cascade} shows a datapath with a customized composite FU that cascades primitive FUs. 
         Intermediate results can be forwarded from one to its follower with an optimized order which targets specific applications.
         Processor with such customization is referred to application-specific instruction set processor (ASIP).
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{A datapath with a composite functional unit}
             \centering
             \includegraphics[width=0.6\textwidth]{./figs/cascade.eps}
+            \caption{A datapath with a composite functional unit}
             \label{fig:cascade}
         \end{figure}
         \\\indent
         Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
         Such an architecture makes a significant distinction from RISC because only a "move" instruction is needed. 
         All computation can be completed by moving operands on the interconnection network, avoiding WB as much as possible.
-
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Transport triggered architecture (TTA)}
             \centering
             \includegraphics[width=0.8\textwidth]{./figs/tta.eps}
+            \caption{Transport triggered architecture (TTA)}
             \label{fig:tta}
         \end{figure}
       
@@ -63,10 +65,11 @@
     \label{sec:area}
     RF is an array of register cells, each of which connects to several bit lines and word lines.
     Figure~\ref{fig:rf} illustrates a basic schematic of a register cell.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Register cell schematic}
             \centering
             \includegraphics[width=0.7\textwidth]{./figs/rf.eps}
+            \caption{Register cell schematic}
             \label{fig:rf}
         \end{figure}
     For a centralized RF organization with N ports, 
@@ -118,10 +121,11 @@
     Since the proposed DeAr DSP targets HSA platforms, 
     in this part, we will briefly introduce key features of HSA in three perspectives: 
     system specification, programming model and software infrastructure.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Carrizo APU with HSA}
             \centering
             \includegraphics[width=0.8\textwidth]{./figs/carrizo.eps}
+            \caption{Carrizo APU with HSA}
             \label{fig:carrizo}
         \end{figure}
         \subsection{System Specification}
@@ -148,10 +152,11 @@
         Another advantage of AQL is allowing \textit{user mode queuing},
         which implies the programmer is allowed to access the command queue via \textit{HSA Runtime API} without OS involving.
         By this mean, the latency from dispatching to executing of a task is thus minimized.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Example of an HSA Platform}
             \centering
             \includegraphics[width=0.85\textwidth]{./figs/systemspec.eps}
+            \caption{Example of an HSA Platform}
             \label{fig:systemspec}
         \end{figure}
         \subsection{Programming Model}
@@ -173,10 +178,11 @@
         Each work-group and each work-item have work-group ID and work-item ID respectively.
         By manipulating such threading hierarchy, 
         the programmer can control accessibility of data and synchronize the work items in a specific scope without burden.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Execution hierarchy in HSAIL}
             \centering
             \includegraphics[width=0.85\textwidth]{./figs/grid.eps}
+            \caption{Execution hierarchy in HSAIL}
             \label{fig:grid}
         \end{figure}
         % work group, work item warp, memory hierarchy, hqueue, 
@@ -196,10 +202,11 @@
         and thus SVM and \textit{user mode queuing} can be accomplished.
         It is possible that the programmer triggers the finalizer to perform the final stage of compilation at runtime.
         In addition, \textit{HSA runtime} also perform error handling and retrieve system and agent information for users.
+        \vspace{\textfig}
         \begin{figure}[!ht] 
-            \caption{Software Infrastructe of HSA}
             \centering
             \includegraphics[width=0.85\textwidth]{./figs/swinf.eps}
+            \caption{Software Infrastructe of HSA}
             \label{fig:swinf}
         \end{figure}
 

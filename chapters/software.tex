@@ -1,76 +1,6 @@
-\chapter{Design and Implementation}
-    \section{Micro-architecture Design}
-        In this section, we will look into DeAr from a micro-architecuture perspective, and explore its design considerations at the same time.
-        DSP designers usually evaluate the computing power of a DSP by Million Operations per Second (MOPS).
-        Conventionally, the clock speed and SIMD width (number of lanes) of DSP are the main determinant of MOPS.
-        Unfortunately, owing to the limits of CMOS technology and the significant growth of bus complexity, 
-        driving the clock speed or increasing the SIMD width are consequently infeasible.
-        Instead, the we adopted the concept of VLIW, which is able to issue multiple operations in a cycle.
-        One of the key features of the proposed DeAr datapath is manipulating Simultaneous Multi-threading (SMT) in each DSP lane to exploit the arithmetic resources.
-        By scheduling DeAr threads for the collaborative execution, the workload of each work-item can be shared by two concurrent DeAr threads, 
-        which accelerate the execution of the wavefront and gain higher MOPS without touching the clock speed or SIMD width.
-        Another one is exhaustively compacting the hardware resources while keeping the flexibility and computation power.
-        This offers the DeAr dataptah better efficiency in several perspectives, such as power consumption, chip area and code storage.
-        \\\indent
-        Figure~\ref{fig:micro} illustrates the micro-architecture of DeAr datapath applied in each DSP lane.
-        Two DeAr threads residing in a lane share a group of arithmetic units that commonly exist in a RISC datapath.
-        The demonstrated example includes an adder, a multiplier and a barrel shifter, which are qualified to perform most benchmarks,
-        Nevertheless, the configuration of arithmetic units can be modified to fit the target applications.
-        The output of each arithmetic unit is an accumulator register, 
-        which bypasses the result to any arithmetic units that need it in the next clock cycle.
-        The bypassing-mechenism of accumulator registers avoid unnecessary accesses to RF, 
-        and thus reduce the energy dissipation in RF.
-        In addition, the accumulator registers are all clock-gated.
-        This enables DeAr to preserve the data in accumulator registers until the corresponding arithmetic unit is activated next time, 
-        offering more data bypassing opportunities.
-        The bypassing mechanism and resolution of structural hazards are both handled by the software, 
-        so the hardware complexity of dynamic scheduling or bypassing units can be avoided or reduced.
-        \\\indent
-        The RF is physically and symmetrically separated for two DeAr threads.
-        Each of them owns a pair of private queue memories as well as a private stack memory, 
-        and these memory units of two DeAr threads form the sequential-accessed banked RF.
-        The banked organization of the RF cuts off redundant connection from read/write ports to register cells.
-        As a result, the wire area, power consumption and access time of the RF are significantly reduced, 
-        compared with the conventional centralized organization.
-        The queue pair, composed of an load-queue and store-queue, 
-        serves as the buffer that interfaces the lower level of the memory hierarchy with the datapath.
-        Load-queues and store-queues are accessed from their both sides concurrently in the first-in-first-out (FIFO) fashion.
-        The DeAr thread reads input data from its load-queue and writes the result of computation to its store-queue, 
-        while the load/store unit accesses the queues in the opposite direction.
-        By preventing the queues from empty or full with clever scheduling, the latency of load/store can thus be hidden.
-        The stack memory, on the other hand, is responsible for the storage of intermediate data.
-        The nature of a stack memory is last-in-first-out (LIFO), 
-        which is the key property of the DeAr scheduling algorithm (elaborated in Section~\ref{secswdesign}).
-        Using the sequential-access memory rather than a random-access one in RF effectively reduces the length of control signal, 
-        since any access to RF can be simplified to "Push" or "Pop".
-        The reduction in the length of control signal gains high code density and save the wiring from the instruction unit to RF.
-        This is the key advantage of DeAr over conventional VLIW architectures.
-        \\\indent
-        The compact data bus separates the RF and arithmetic units with a set of multiplexers controlled by the instruction unit.
-        Figure~\ref{fig:databus} reveals the details of the compact data bus, 
-        We can summarize the route of data as below:
-        \begin{itemize}
-            \item Each arithmetic unit receives the first operand from a load-queue or an accumulator.
-        and receives the second one (if exists) from a load-queue or a stack.
-            \item Each store-queue receives data from the output of an arithmetic unit.
-            \item Each stack receives data from the output of an arithmetic unit.
-        \end{itemize}
-        It is important to note that, even though the communication among the RF, arithmetic units and accumulator registers is compacted exhaustively, 
-        the flexibility of the datapath is still be kept.
-        By such a compact design of the data bus, the further reduction in the length of control signal can be achieved.
-
-        \begin{figure}[!ht] 
-            \centering
-            \includegraphics[width=0.85\textwidth]{./figs/micro.eps}
-            \caption{Micro-architecture of a DeAr DSP lane}
-            \label{fig:micro}
-        \end{figure}
-
-
-    \section{System Integration}
-    \section{Software Design}
-            \label{sec:swdesign}
-        \subsection{Software framework for DeAr}
+\chapter{Software Design and Implementation}
+        \label{cha:software}
+        \section{Software framework for DeAr}
             To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
             Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
             The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
@@ -126,7 +56,7 @@
             \end{algorithm}
             %-----------------------------------------
 
-        \subsection{Data Flow Graph and Hierarchical Data Flow Graph}
+        \section{Data Flow Graph and Hierarchical Data Flow Graph}
         \label{sec:hdfg}
             A data flow grahp (DFG), which presents dependencies among operations, is crutial information for program analysis.
             By partitioning a program into basic blocks, the control flow can be simplified, and thus each DFG of a basic block is a directed acyclic graph (DAG).
@@ -155,25 +85,26 @@
             \indent The hierarchy of HDFGs can provide crutial optimization heuristics to the DeAr scheduler.
             DeAr avoids RF access within each super node, and regularize RF access into first-in last-out fashion (stack) with the help from the recursive property of a binary tree.
             Moreover, the binary property also provides more opportunities to balance workload of two threads, and thus higher OPC can be achieved.
-\begin{figure}[!ht]
-    \begin{center}
-    \subfigure[DFG example]
-    {
-        \label{fig:dfg:dfg}
-        \includegraphics[width=0.45\textwidth]{figs/dfg.eps}
-    }
-    \subfigure[Corresponding HDFG]
-    {
-        \label{fig:dfg:hdfg}
-        \includegraphics[width=0.45\textwidth]{figs/hdfg.eps}
-    }
-    \end{center}
-    \caption{Conversion from DFG to HDFG}
-    \label{fig:dfg}
-\end{figure}
+            \vspace{\textfig}
+            \begin{figure}[!ht]
+                \begin{center}
+                \subfigure[DFG example]
+                {
+                    \label{fig:dfg:dfg}
+                    \includegraphics[width=0.45\textwidth]{figs/dfg.eps}
+                }
+                \subfigure[Corresponding HDFG]
+                {
+                    \label{fig:dfg:hdfg}
+                    \includegraphics[width=0.45\textwidth]{figs/hdfg.eps}
+                }
+                \end{center}
+                \caption{Conversion from DFG to HDFG}
+                \label{fig:dfg}
+            \end{figure}
 
         
-        \subsection{HSAIL Transformation}
+        \section{HSAIL Transformation}
         \label{sec:trans}
         The whole process of the HSAIL transformation contains two phases elaborated as below:
         \begin{itemize}
@@ -285,7 +216,7 @@
         %--------------------------------------
 
     
-        \subsection{Scheduling}
+        \section{Scheduling}
 
         A scheduler is responsible for ensuring the order of operations, 
         arranging data movement and allocating hardware resources.
