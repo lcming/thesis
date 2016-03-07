@@ -163,9 +163,9 @@
         To support multiple Instruction Set Architectures (ISAs) to various agents in a single HSA platform,
         HSA foundation drew up Heterogeneous System Architecture Intermediate Language (HSAIL)
         With HSAIL, programmers can develop code for HSA in an intermediate form accepted by wide range of agents.
-        HSAIL basically adopts the parallel programming model of Single Instruction Multiple Data (SIMD), 
+        HSAIL basically adopts the parallel programming model of Single Program Multiple Data (SPMD), 
         which carries out same computation on different data to accelerate applications.
-        HSAIL organizes instances of execution in specified hierarchy, which help programmers to manipulate the SIMD model.
+        HSAIL organizes instances of execution in specified hierarchy, which help programmers to manipulate the SPMD model.
         Figure~\ref{fig:grid} presents a graphical view on how HSAIL organizes instances of execution.
         The atomic instance of execution is work-items, each of which has dedicated registers and private memory.
         Group of work-items form a work-group, which owns group memory accessed by subordinate work-items only.
