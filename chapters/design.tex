@@ -101,18 +101,18 @@ The demonstrated example includes an adder, a multiplier and a barrel shifter, w
 Nevertheless, the configuration of arithmetic units can be modified to fit the target applications.
 The output of each arithmetic unit is an accumulator register, 
 which bypasses the result to any arithmetic units that need it in the next clock cycle.
-The bypassing-mechanism of accumulator registers avoid unnecessary accesses to RF, 
-and thus reduce the energy dissipation in RF.
+The bypassing-mechanism of accumulator registers avoid unnecessary accesses to the register file, 
+and thus reduce the energy dissipation in the register file.
 In addition, the accumulator registers are all clock-gated.
 This enables DeAr to preserve the data in accumulator registers until the corresponding arithmetic unit is activated next time, 
 offering more data bypassing opportunities.
 The bypassing mechanism and resolution of structural hazards are both handled by the software, 
 so the hardware complexity of dynamic scheduling or bypassing units can be avoided or reduced.
 \\\indent
-The RF is physically and symmetrically divided for two DeAr threads.
+The register file is physically and symmetrically divided for two DeAr threads.
 Each of them owns a pair of queue memory as well as stack memory, 
-and these memory units of two DeAr threads form the sequential-accessed banked RF.
-The banked organization of the RF cuts off redundant connectivity among read/write ports and register cells.
+and these memory units of two DeAr threads thus form the sequential-accessed banked register file (SBRF).
+The banked organization of the SBRF cuts off redundant connectivity among read/write ports and register cells.
 Compared with the conventional centralized organization, 
 the wire area, power consumption and access time of the banked organization are significantly improved, as discussed in Section~\ref{sec:rfcell}.
 A queue pair, composed of a load-queue and a store-queue, 
@@ -125,10 +125,10 @@ The stack memory, on the other hand, is responsible for the storage of intermedi
 Other possible uses of the stack memory include branch condition evaluation and returning from interruption.
 The nature of a stack memory is last-in-first-out (LIFO), 
 which is the key property of the DeAr scheduling algorithm (elaborated in Chapter~\ref{cha:software}).
-Using the sequential-access memory rather than a random-access one in RF effectively reduces the length of control signal, 
-since any access to the RF can be simplified to "PUSH" or "POP".
-The reduction in the length of control signal gains high code density and save the wiring from the instruction unit to RF.
-This is the key advantage of DeAr over conventional VLIW architectures.
+Applying sequential-access memory units instead of random-access ones effectively reduces the control signal size and decode overhead, 
+since any access to the SBRF can be simplified to "PUSH" or "POP".
+Such simplification gains high code density and save the wiring from the instruction unit to SBRF, 
+and constitute the key advantage of DeAr over conventional VLIW architectures.
 For clarity, we summarize the classification of various data registers in the datapath in Table~\ref{tab:register}.
 \begin{table}[!ht]
     \caption{Classification of data registers in DeAr}
@@ -144,17 +144,20 @@ For clarity, we summarize the classification of various data registers in the da
     \end{tabular}
 \end{table}
 \\\indent
-The transport triggered data bus (TTDB) separates the RF and arithmetic units with a set of multiplexers controlled by the instruction unit.
-Available routes of data over TTDB are summarized as below:
+The design of transport triggered data bus (TTDB) was inspired by TTA~\cite{tta}.
+TTDB separates the RF from arithmetic units with a set of multiplexers controlled by the instruction unit, 
+and bypasses data from arithmetic units and accumulators.
+Possible routes of data over TTDB are summarized as below:
 \begin{itemize}
     \item Each arithmetic unit receives the first operand from a load-queue or an accumulator, 
         and receives the second one from a load-queue or a stack.
     \item Each store-queue receives data from the output of an arithmetic unit.
     \item Each stack receives data from the output of an arithmetic unit.
 \end{itemize}
+\indent
 It is important to note that, even though the communication among the RF, arithmetic units and accumulator registers is compacted exhaustively, 
-the flexibility of the datapath is still be kept.
-The design of TTDB is tightly coupled with the instruction set architecture (ISA).
+the datapath flexibility is still be kept.
+The organization of TTDB is tightly coupled with the instruction set architecture (ISA).
 Accordingly, further reduction in instruction size can be achieved with such a compact design.
 More insight into the relation between TTDB and ISA will be available in Section~\ref{sec:isa}.
 
@@ -246,8 +249,7 @@ Each DeAr instruction is 12-bit in length.
 To offer better insight into the instruction decode mechanism, 
 Table~\ref{tab:decode} elaborates each bit-filed of various instruction types, 
 which is enumerated from MSB to LSB and corresponds the bold alphabet in Table~\ref{tab:risc}.
-Note that Table~\ref{tab:decode} also reveals the details of the compact data bus of Figure~\ref{fig:micro}, 
-since the former describes the communication via the latter in detail.
+%Note that Table~\ref{tab:decode} also reveals the detailed organization of the TTDB by elaborating the communication in the datapath.
 There are five bit fields in an A-type instruction.
 The head 4-bit signal \textbf{f}, which is similar to the function code in RISC, specifies the operation to be performed.
 It is followed by a single-bit signal \textbf{d}, which determines whether the result of this operation is written back to the memory via the store-queue.
@@ -618,7 +620,7 @@ $X_{inter}$, accompanied with a remaining subtree, $bt_{remain}$, will be return
         \State Push $list_{op}$ into $work\_queue_{thread2}$
         \State Erase $bt$ and its edges from $\bar{G}$
         \EndIf
-        \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{Gen Code by DP}{$work\_queue_{thread1}$, $work\_queue_{thread2}$} \label{line:intercon}
+        \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{ALU Alloc}{$work\_queue_{thread1}$, $work\_queue_{thread2}$} \label{line:intercon}
         \EndWhile \label{line:interwe}
         \If{$work\_queue_{thread1} \neq \emptyset$} \label{line:interis}
         \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
@@ -644,11 +646,12 @@ If it is empty, the scheduler processes the selected $bt$ with Algorithm~\ref{al
 and enqueue the returned $op_{list}$ to the work-queue of a thread.
 Here, a work-queue is data structure that holds the operation sequence that belongs to a thread.
 An operation is removed from a thread's work-queue once it is indeed dispatched to binary code.
-After above steps, two work-queue are filled, and the key of this algorithm, \textproc{Gen Code by DP}, is performed.
-This subroutine, \textproc{Gen Code by DP}, dispatches operations in two work-queues which execute concurrently to binary code, 
-and arbitrates for FU conflict by Dynamic Programming (DP) \cite{dp}.
-It then returns a new code segment concatenated by the current one, and ensures at least one work-queue is cleared.
-Here, as shown in Line~\ref{line:intercon}, we use the sigh, $\oplus$, to denote the operation of code concatenation.
+After above steps, two work-queue are filled, and the key step of this algorithm, \textproc{ALU Alloc}, is performed.
+\textproc{ALU Alloc} dispatches operations in two work-queues which execute concurrently and returns a code segment.
+To resolve any resource conflict, it applies Dynamic Programming (DP)~\cite{dp} to allocates ALUs for DeAr thread.
+After \textproc{ALU Alloc}, there will be at least one work-queue is cleared, 
+and the returned code segment is concatenated with the current one.
+As shown in Line~\ref{line:intercon}, we use the sigh, $\oplus$, to denote the operation of code concatenation.
 Repeat of the loop proceeds until all $bt$ in $\bar{G}$ are consumed.
 However, it is very likely that there is a work-queue where operations remaining at the last iteration.
 Line~\ref{line:interis}-\ref{line:interie} illustrate such a scenario.
@@ -675,7 +678,7 @@ To deal with $bt_{remain}$ and obtain the remaining part of the binary code,
         \State Push $list_{op}$ into $work\_queue_{thread1}$
         \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$sbt_{right}.root$}
         \State Push $list_{op}$ into $work\_queue_{thread2}$
-        \State $X_{body} \Leftarrow X_{body} \oplus$ \Call{Gen Code by DP }{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
+        \State $X_{body} \Leftarrow X_{body} \oplus$ \Call{ALU Alloc }{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
         \Statex
         \If{$work\_queue_{thread1} \neq \emptyset$}
         \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
@@ -704,42 +707,60 @@ we can dispatch them directly with a single thread (thread 1),
 and obtain a tail segment of binary code, $X_{tail}$.
 Next, by treating left and right subtrees as independent ones, 
 we schedule them into work-queues of two threads respectively with \textproc{Schedule Binary Tree},
-and call \textproc{Gen Code by DP} to obtain another segment of binary code, $X_{body}$.
+and call \textproc{ALU Alloc} to obtain another segment of binary code, $X_{body}$.
 By above steps, $bt_{remain}$ keeps shrinking while $X_{body}$ and $X_{tail}$ keep accumulating,
 until all operations left in $bt_{remain}$ are dispatched.
 Finally, we concatenate $X_{inter}$ from \textproc{Inter-tree Scheduling}, $X_{body}$ as well as $X_{tail}$,
 and obtain the complete binary code $X_{final}$.
 \\\indent
-The key insight of Algorithm~\ref{alg:inter} and Algorithm~\ref{alg:intra} is, they take advantage of DP.
+The key insight of Algorithm~\ref{alg:inter} and Algorithm~\ref{alg:intra} is, they both take advantage of DP.
 DP is a powerful technique often used in optimization with sequence data \cite{dpseq}.
-Letting OPC be the criteria, DP determines which of two threads should stall its operation when FU conflict occurs.
-As a result, FU allocation optimized for ILP within a certain search space (product of two work-queues length), can be achieved.
-Figure~\ref{fig:dp} shows an example of the DP-based FUs allocation, containing 2 stages.
+With OPC as the criteria, DP determines which of two threads should stall when ALU conflict occurs.
+As a result, optmimized ALU allocation within a certain search space (product of two work-queues length), can be achieved.
+Figure~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
+It contains three stages, each of which is involved with the scoring table marked with arabic numerals horizontally, and english alphabets vertically.
+We demonstrate the detail stage by stage as below:
+\begin{enumerate}
+    \item Supposed two DeAr threads have identical operation sequences, three multiplications followed by three additions, waiting for ALU allocation.
+        As shown in Figure~\ref{fig:alloc:1}, two sequences are put on the top and leftmost of the table respectively, 
+        with three entries on the corner (a0, a1 and b0) remaining empty.
+           \item The second stage, table filling, 
+           \item third
+\end{enumerate}
 %At the first stage, 
 
 \vspace{\textfig}
 \begin{figure}[!ht]
     \begin{center}
-        \subfigure[Stage 1: table filling]
+        \subfigure[Stage 1: scoring table modeling]
         {
-            \label{fig:alloc}
-            \includegraphics[width=0.45\textwidth]{figs/alloc.eps}
+            \label{fig:alloc:1}
+            \includegraphics[width=0.3\textwidth]{figs/alloc.eps}
         }
         \hfill
-        \subfigure[Stage 2: backtracking]
+        \subfigure[Stage 2: scoring table filling]
         {
-            \label{fig:alloc2}
-            \includegraphics[width=0.45\textwidth]{figs/alloc2.eps}
+            \label{fig:alloc:2}
+            \includegraphics[width=0.3\textwidth]{figs/alloc2.eps}
+        }
+        \hfill
+        \subfigure[Stage 3: backtracking]
+        {
+            \label{fig:alloc:3}
+            \includegraphics[width=0.3\textwidth]{figs/alloc3.eps}
         }
     \end{center}
-    \caption{DP-based FU allocation}
+    \caption{DP-based ALUs allocation}
     \label{fig:alloc}
 \end{figure}
 
 \indent
-The proposed algorithms also make use of the characteristic of a binary tree. 
-Even if only one $bt$ exists in HDFG, 
-the scheduler can still balance the workload of two threads by extracting left and right subtrees from $bt$ beforehand.
+Another insight of Algorithm~\ref{alg:intra} is making use of binary tree characteristics.
+Since any left subtree and its sibling can be processed in parallel,
+the scheduler can still balance the workload for two threads by splitting two subtrees from the root even if only one $bt$ remains in HDFG, 
+and thus ILP is kept.
+
+
 
 
 
