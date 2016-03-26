@@ -247,32 +247,37 @@ We can thus preserve more bits in the memory transfer instruction to address lar
 
 Each DeAr instruction is 12-bit in length.
 To offer better insight into the instruction decode mechanism, 
-Table~\ref{tab:decode} elaborates each bit-filed of various instruction types, 
-which is enumerated from MSB to LSB and corresponds the bold alphabet in Table~\ref{tab:risc}.
+Table~\ref{tab:decode} elaborates three instruction types, 
+each of which is enumerated from MSB to LSB.
+Marks of the first column represent various bit-fields, 
+and they correspond to the bold alphabets shown in Table~\ref{tab:risc}.
 %Note that Table~\ref{tab:decode} also reveals the detailed organization of the TTDB by elaborating the communication in the datapath.
-There are five bit fields in an A-type instruction.
+A-type instruction include all arithmetic instructions.
 The head 4-bit signal \textbf{f}, which is similar to the function code in RISC, specifies the operation to be performed.
 It is followed by a single-bit signal \textbf{d}, which determines whether the result of this operation is written back to the memory via the store-queue.
 After that, a pair of 2-bit signals, \textbf{s} and \textbf{t}, select the sources of two arithmetic operands respectively. 
-Nevertheless, the potential data sources of \textbf{s} and \textbf{t} are not identical.
+Nevertheless, the data sources selected by \textbf{s} and \textbf{t} are not identical.
 The former selects the first operand from the load-queue or one of accumulator registers, 
 while the latter selects the second one from the load-queue, stack, or constants (1 or 0).
-The last 2-bit \textbf{k} is the stack access portion, which encodes four operations that manipulate the stack memory.
-Note that both \textbf{f} and \textbf{s} are common to the other two types as well, 
-and there is an unused bit in the A-type instruction.
-\\\indent On the other hand, M-type instructions, include six bit fields.
-The function field \textbf{f} is followed by a single bit \textbf{e}, which specifies data endianness in the memory.
-Next, 2-bit signal \textbf{w}, specifies the word size of the transfer, which can be byte (8-bit), halfword (16-bit) or word (32-bit).
+Some instructions like SHR and SHL use immediate constants as the second operand (i.e., shifting amount).
+In such a scenario, \textbf{t} and the reserved bit serve as immediate data.
+Finally, the last 2-bit \textbf{k} is the stack access portion, which encodes four operations that manipulate the stack memory.
+Note that the functions of \textbf{f} and \textbf{k} remain in M type and B type.
+\\\indent On the other hand, M-type instructions perform memory transfers.
+The function field \textbf{f} is followed by 2-bit signal \textbf{w}, 
+which specifies the word size of the transfer.
+The size can be byte (8-bit), halfword (16-bit) or word (32-bit).
 Another bit value \textbf{b} indicates whether the memory transfer is performed in the burst mode, 
 and the following 2, \textbf{r}, determines the length of the burst (i.e., the number of transfers to be performed consecutively).
 The burst length can be 2, 4, 8 or 16.
 If \textbf{b} is de-asserted, \textbf{r} will be ignored.
-\\\indent The last category, B-type instructions, is a special case compared with the previous two.
+\\\indent The last category, B-type instructions, which control the program flow, 
+is a special case compared with the previous two.
 Since two DeAr threads always perform identical branch instructions simultaneously, 
 two branch instructions can be merged into one with more bits for branch target addressing.
 As a result, B-type instructions can manipulate 24-bit, which is twice of the original one in length.
 The function field \textbf{f} is followed by 16-bit branch address offset \textbf{a}.
-Likewise, the last 2-bit \textbf{k} denotes the stack access portion, which follows unused 2 bits.
+%Likewise, the last 2-bit \textbf{k} denotes the stack access portion, which follows unused 2 bits.
 
 %---------- bit field table---------------
 \begin{table}[!ht]
@@ -283,30 +288,34 @@ Likewise, the last 2-bit \textbf{k} denotes the stack access portion, which foll
         \hline
         \multicolumn{1}{|c|}{\textbf{Mark}} & \multicolumn{1}{c|}{\textbf{Bit field}} & \multicolumn{1}{c|}{\textbf{Description}} \\ \hline
         \multicolumn{3}{|c|}{\textbf{A-type instructions}} \\ \hline
-    f & {[}11:8{]} & \begin{tabular}[c]{@{}l@{}}Specify the function of this instruction, which can \\ be ADD, SUB, SHL, SHR, MUL, MV or NOP\end{tabular} \\ \hline
-    d & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Determine whether the arithmetic result is written \\ back to the store-queue\end{tabular} \\ \hline
-    s & {[}6:5{]} & \begin{tabular}[c]{@{}l@{}}Specify the source of the first arithmetic operand, \\ which can be the load-queue or one of accumulators\end{tabular} \\ \hline
-    t & {[}4:3{]} & \begin{tabular}[c]{@{}l@{}}Specify the source of the second arithmetic operand, \\ which can be the load-queue, stack, constant 0 or 1\end{tabular} \\ \hline
-    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Specify the stack operation, which can be PUSH, POP, \\ MODIFY or NOP (stack access portion)\end{tabular} \\ \hline
+    f & {[}11:8{]} & \begin{tabular}[c]{@{}l@{}}Select the function from ADD, SUB, SHL, SHR, MUL, MV or NOP\end{tabular} \\ \hline
+    d & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Enable WB to the store-queue\end{tabular} \\ \hline
+    s & {[}6:5{]} & \begin{tabular}[c]{@{}l@{}}Select the first operand from load-queue or accumulators \end{tabular} \\ \hline
+    t & {[}4:3{]} & \begin{tabular}[c]{@{}l@{}}1. Select the second operand from load-queue, stack, constant 0 or 1 \\ 2. Immediate data for SHR or SHL\end{tabular} \\ \hline
+    - & {[}2{]} & \begin{tabular}[c]{@{}l@{}}1. Reserve \\ 2. Immediate data for SHR or SHL\end{tabular} \\ \hline
+    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Stack access portion\end{tabular} \\ \hline
         \multicolumn{3}{|c|}{\textbf{M-type instructions}} \\ \hline
-    f & {[}11:8{]} & \begin{tabular}[c]{@{}l@{}}Specify the function of this instruction, which can \\ be LD or ST\end{tabular} \\ \hline
-    e & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Specify the endianness of the data in the memory \end{tabular} \\ \hline
-    w & {[}6:5{]} & \begin{tabular}[c]{@{}l@{}}Specify the word size of the data in the memory, \\ which can be byte, halfword or word \end{tabular} \\ \hline
-    b & {[}4{]} & \begin{tabular}[c]{@{}l@{}}Specify whether the memory transfer is performed in \\ the burst mode \end{tabular} \\ \hline
-    r & {[}3:2{]} & \begin{tabular}[c]{@{}l@{}}Specify the burst length of the burst mode transfer, \\ which can be 2, 4, 8 or 16 \end{tabular} \\ \hline
-    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Specify the stack operation, which can be PUSH, POP, \\ MODIFY or NOP (stack access portion)\end{tabular} \\ \hline
+    f & {[}11:8{]} & \begin{tabular}[c]{@{}l@{}}Select the function from LD or ST\end{tabular} \\ \hline
+    %e & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Specify the endianness of the data in the memory \end{tabular} \\ \hline
+    w & {[}7:6{]} & \begin{tabular}[c]{@{}l@{}}Select the word size from byte, halfword or word \end{tabular} \\ \hline
+    b & {[}5{]} & \begin{tabular}[c]{@{}l@{}}Enable burst mode memory transfer \end{tabular} \\ \hline
+    r & {[}4:3{]} & \begin{tabular}[c]{@{}l@{}}Select the burst length from 2, 4, 8 or 16 \end{tabular} \\ \hline
+    - & {[}2{]} & \begin{tabular}[c]{@{}l@{}}Reserve \end{tabular} \\ \hline
+    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Stack access portion\end{tabular} \\ \hline
         \multicolumn{3}{|c|}{\textbf{B-type instructions}} \\ \hline
-    f & {[}23:20{]} & \begin{tabular}[c]{@{}l@{}}Specify the function of this instruction, which can \\ be BE or BNE\end{tabular} \\ \hline
+    f & {[}23:20{]} & \begin{tabular}[c]{@{}l@{}}Select the function from BE or BNE\end{tabular} \\ \hline
     a & {[}19:4{]} & \begin{tabular}[c]{@{}l@{}}Specify the branch address offset \end{tabular} \\ \hline
-    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Specify the stack operation, which can be PUSH, POP, \\ MODIFY or NOP (stack access portion)\end{tabular} \\ \hline
+    - & {[}3:2{]} & \begin{tabular}[c]{@{}l@{}}Reserve \end{tabular} \\ \hline
+    k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Stack access portion\end{tabular} \\ \hline
     \end{tabular}
 \end{table}
 %------------------------------------------
 
 
 \section{Software Design and Implementation}
-\label{cha:software}
+\label{sec:software}
 \subsection{Software framework for DeAr}
+\label{sec:software:framework}
 To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
 Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
 The user only need to provide DSP kernel code written in OpenCL and a flag which determines the optimization level as the input.
@@ -715,17 +724,31 @@ and obtain the complete binary code $X_{final}$.
 \\\indent
 The key insight of Algorithm~\ref{alg:inter} and Algorithm~\ref{alg:intra} is, they both take advantage of DP.
 DP is a powerful technique often used in optimization with sequence data \cite{dpseq}.
-With OPC as the criteria, DP determines which of two threads should stall when ALU conflict occurs.
+With the criterion of maximizing OPC, DP determines which of two threads shall stall when ALU conflict occurs.
 As a result, optmimized ALU allocation within a certain search space (product of two work-queues length), can be achieved.
 Figure~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
-It contains three stages, each of which is involved with the scoring table marked with arabic numerals horizontally, and english alphabets vertically.
+It contains three stages involving the scoring table marked with arabic numerals horizontally, and english alphabets vertically.
 We demonstrate the detail stage by stage as below:
 \begin{enumerate}
-    \item Supposed two DeAr threads have identical operation sequences, three multiplications followed by three additions, waiting for ALU allocation.
-        As shown in Figure~\ref{fig:alloc:1}, two sequences are put on the top and leftmost of the table respectively, 
-        with three entries on the corner (a0, a1 and b0) remaining empty.
-           \item The second stage, table filling, 
-           \item third
+    \item \textbf{Table modeling} As shown in Figure~\ref{fig:alloc:1}. An (\textit{m}+2) by (\textit{n}+2) empty table is initialized, 
+        where \textit{m} and \textit{n} are the sizes of two operation sequences waiting for ALU allocation.
+        In this example, we assume two DeAr threads have identical sequences, three multiplications followed by three additions, 
+        and thus the scoring table becomes 8 by 8.
+        The algorithm places two sequences on the top row and leftmost column respectively, 
+        with three entries on the upper-left corner (\textit{a0}, \textit{a1} and \textit{b0}) remaining empty. 
+        Remaining entries, on the other hand, will represent the mininum cycles to accomplish the corresponding operations in the next stage.
+    \item \textbf{Table filling} As shown in Figure~\ref{fig:alloc:2}, the algorithm the remaining entries from \textit{b1} to \textit{h7} in row-major order.
+        The score of starting entry, \textit{bt}, is fixed to 0, while the others are evaluated according to adjacent scores.
+        For each entry, the algorithm firstly check whether the corresponding operation pair can be issued simultaneously.
+        If it can be, the entry gets the score of the left-top adjacent plus 1.
+        Otherwise, it gets the score of either the left adjacent or top adjacent plus.
+        Note that the algorithm always chooses the best possible score.
+        After the traversal, the score of bottom-right corner, \textit{ht}, represents the optimized cycle counts to accomplish two operation sequences.
+    \item \textbf{Backtracking} As shown in Figure~\ref{fig:alloc:3}, the algorithm traces back from \textit{h7} to \textit{b1} according to paths of score accumulation.
+        Since such paths can be multiple, our randonly select a path from them with the random seed introduced in~\ref{sec:design:software:framework}.
+        Finally, the ALU allocation is acomplished by forward traversing the selected path, 
+        where a horizontal move indicates allocating ALU for the horizontal operation,
+        a vertical move indicates allocatiing ALU for the vertical operaion and a diagonal move indicates allocating ALUs for both.
 \end{enumerate}
 %At the first stage, 
 

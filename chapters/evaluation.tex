@@ -1,7 +1,50 @@
 \chapter{Performance Evaluation}
-    \section{Operation per Cycle}
-    \section{Write back per Operation}
-    \section{MOPS vs Area}
-    \section{MOPS vs Energy}
+In this chapter, we will present the performance evaluation of DeAr and demonstrate its capability of efficient and fast arithmetic.
+\section{Experiment Setup}
+\label{sec:evaluation:setup}
+%\\\indent
+We prepared two benchmark suites for the experiment.
+The first benchmark suite is adapted from BLAS library, 
+which contains various matrix arithmetic subroutines that are crucial in wireless communication.
+The second one includes general and representative DSP kernels selected from two classic DSP benchmark suites, BDTI~\cite{btdi} and DSPstone~\cite{dspstone}.
+\begin{table}[]
+    \centering
+    \caption{My caption}
+    \label{my-label}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        \textbf{Category} & \multicolumn{8}{c|}{\textbf{Basic linear algebra subroutines (BLAS)}} \\ \hline
+        Name              & AXPY   & MV     & MM      & INV      & CAXPY  & CMV  & CMM    & CINV  \\ \hline
+        \# add            &        &        &         &          &        &      &        &       \\ \hline
+        \# mul            &        &        &         &          &        &      &        &       \\ \hline
+        \# sht            &        &        &         &          &        &      &        &       \\ \hline
+        \# op             &        &        &         &          &        &      &        &       \\ \hline
+        \textbf{Category} & \multicolumn{8}{c|}{\textbf{General and representative DSP kernels}}                     \\ \hline
+        Name              & FIR    & CFIR   & LPFIR   & Biquad   & IT     & DCT  & IMDCT  & FFT   \\ \hline
+        \# add            &        &        &         &          &        &      &        &       \\ \hline
+        \# mul            &        &        &         &          &        &      &        &       \\ \hline
+        \# sht            &        &        &         &          &        &      &        &       \\ \hline
+        \# op             &        &        &         &          &        &      &        &       \\ \hline
+    \end{tabular}
+\end{table}
+It is important to note that we focused on single-core architectures instead of the multi-core ones in the experiment.
+Currently, benchmark results of multi-core systems are highly correlated with the amount of optimization applied to the interconnection and the memory subsystem~\cite{trends}.
+Moreover, the programming language also plays a crucial role in multi-core system performance, 
+but popular ones such as CUDA, OpenCL and OpenMP are still contending for adoption as the industry standard.
+Consequently, the development of a fair benchmark suiting for multi-core DSP platforms is still an open field of study~\cite{landscape}.
+Owing to aforementioned issues, we believe benchmarking the single-core DSPs can present more objective evaluation, 
+as well as reveal deeper and purer insights into DeAr.
+We implemented the hardware with UMC 65nm cell library, 
+and evaluated area and power with Synopsys Design Compiler and Synopsys Prime Time under the certain timing constraint.
+\section{Hardware Utilization Analysis}
+{
+    \subsection{Operations per Cycle}
+    \subsection{Write back per Operation}
+}
+\section{Synthesis Result}
+{
+    \subsection{Power Consumption Analysis}
+    \subsection{Power Consumption Analysis}
+}
 
 

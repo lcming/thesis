@@ -1,1 +1,28 @@
 \chapter{Conclusions and Future Work}
+In this work, we proposed an efficient, fast and flexible DSP core design, DeAr,
+which manipulates SMT in a VLIW-fashion datapath.
+The compact hardware design endows DeAr good scalability of multi-core architecture, 
+which is suitable for the HSA programming model.
+% which out-performs 
+To demonstrate the compatibility of DeAr with HSA,
+we also presented an architectural framework of the HSA platform with a multi-core DeAr DSP, 
+and developed the complete compiler software.
+\\\indent
+The experiment result showed that
+% though DCT is not well, matrix arithmetic is good
+\\\indent
+% pipeline
+Possible future works include extending the DeAr ISA.
+Although the current ISA are already capable of handling most DSP kernel benchmarks, 
+we still preserve some function code and bit fields to offer the abundant freedom of enhancements, 
+such as adding special function units and supporting interrupt instructions.
+The user can easily develop new features in DeAr to satisfy the demands from applications.
+Another promising work is conducting the full system emulation of DeAr on existing HSA emulators such as HSAemu~\cite{hsaemu}.
+With the evaluation at the system level, the designer is more likely to achieve the better memory hierarchy and interconnection design for multi-core DeAr.
+Beyond DSP, we are also exploring the possibilities of applying DeAr to GPU.
+The efficient arithmetic allows DeAr to become a potential alternative to a conventional RISC shader core.
+However, GPU features massive threads that context-switch frequently.
+Consequently, a state-of-the-art GPU is usually equipped with the dedicated hardware scheduler~\cite{fermi} to manage them.
+Applying such a hardware-based thread scheduler to DeAr still needs more studies.
+
+
