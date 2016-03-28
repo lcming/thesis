@@ -7,9 +7,9 @@ We prepared two benchmark suites for the experiment.
 The first benchmark suite is adapted from BLAS library, 
 which contains various matrix arithmetic subroutines that are crucial in wireless communication.
 The second one includes general and representative DSP kernels selected from two classic DSP benchmark suites, BDTI~\cite{btdi} and DSPstone~\cite{dspstone}.
-\begin{table}[]
+\begin{table}[!ht]
     \centering
-    \caption{My caption}
+    \caption{Operation profiling of two benchmark suites}
     \label{my-label}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -27,15 +27,27 @@ The second one includes general and representative DSP kernels selected from two
         \# op             &        &        &         &          &        &      &        &       \\ \hline
     \end{tabular}
 \end{table}
-It is important to note that we focused on single-core architectures instead of the multi-core ones in the experiment.
+\\\indent Figure~\ref{fig:sim} shows the simulation environment of the experiment.
+The design under test (DUT) was replaced in accordance with various DSP cores to be evaluated, 
+which include DeAr, RISC, VLIW and other similar architectures.
+The instruction unit provides stimulus to the DUT based on the IM,
+and the L/S unit handles data between the DUT and DM.
+We implemented the hardware with UMC 65nm cell library, 
+and evaluated area and power with Synopsys Design Compiler and Synopsys Prime Time under certain timing constraints.
+\vspace{\textfig}
+\begin{figure}[!ht] 
+    \centering
+    \includegraphics[width=0.6\textwidth]{./figs/sim.eps}
+    \caption{Simulation environment}
+    \label{fig:sim}
+\end{figure}
+\\\indent It is important to note that we focused on single-core architectures instead of the multi-core ones in the experiment.
 Currently, benchmark results of multi-core systems are highly correlated with the amount of optimization applied to the interconnection and the memory subsystem~\cite{trends}.
 Moreover, the programming language also plays a crucial role in multi-core system performance, 
 but popular ones such as CUDA, OpenCL and OpenMP are still contending for adoption as the industry standard.
 Consequently, the development of a fair benchmark suiting for multi-core DSP platforms is still an open field of study~\cite{landscape}.
 Owing to aforementioned issues, we believe benchmarking the single-core DSPs can present more objective evaluation, 
 as well as reveal deeper and purer insights into DeAr.
-We implemented the hardware with UMC 65nm cell library, 
-and evaluated area and power with Synopsys Design Compiler and Synopsys Prime Time under the certain timing constraint.
 \section{Hardware Utilization Analysis}
 {
     \subsection{Operations per Cycle}
