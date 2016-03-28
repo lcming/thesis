@@ -7,10 +7,12 @@ We prepared two benchmark suites for the experiment.
 The first benchmark suite is adapted from BLAS library, 
 which contains various matrix arithmetic subroutines that are crucial in wireless communication.
 The second one includes general and representative DSP kernels selected from two classic DSP benchmark suites, BDTI~\cite{btdi} and DSPstone~\cite{dspstone}.
+Table~\ref{tab:op} lists the operation profiling of two benchmark suites, 
+where each subroutine/kernel comprises three primitive operations, addition, multiplication and shifting.
 \begin{table}[!ht]
     \centering
     \caption{Operation profiling of two benchmark suites}
-    \label{my-label}
+    \label{tab:op}
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
         \textbf{Category} & \multicolumn{8}{c|}{\textbf{Basic linear algebra subroutines (BLAS)}} \\ \hline
@@ -28,8 +30,8 @@ The second one includes general and representative DSP kernels selected from two
     \end{tabular}
 \end{table}
 \\\indent Figure~\ref{fig:sim} shows the simulation environment of the experiment.
-The design under test (DUT) was replaced in accordance with various DSP cores to be evaluated, 
-which include DeAr, RISC, VLIW and other similar architectures.
+The design under test (DUT) was replaced in accordance with various DSP architectures to be evaluated, 
+which include DeAr, RISC, VLIW and other similar works.
 The instruction unit provides stimulus to the DUT based on the IM,
 and the L/S unit handles data between the DUT and DM.
 We implemented the hardware with UMC 65nm cell library, 
@@ -52,6 +54,7 @@ as well as reveal deeper and purer insights into DeAr.
 {
     \subsection{Operations per Cycle}
     \subsection{Write back per Operation}
+    \subsection{Code density}
 }
 \section{Synthesis Result}
 {
