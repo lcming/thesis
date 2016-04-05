@@ -19,17 +19,13 @@
     \\\indent
     On the other hand, one may notices that none of the above implementations adopts HSA \cite{systemspec}, which is a promising standard for embedded DSP platforms.
     So far, most of studies on HSA focus on the integration of CPU and GPU. 
-    \cite{sc} proposed a hardware-based data format converter for HSA, which improve the data locality
     \cite{hsaemu} presented a full system emulator for HSA platforms that include CPUs and GPUs.
-    Beyond emulation, \cite{hsacyc} further illustrated a cycle-accurate HSA simulator that integrates QEMU \cite{qemu} and GPGPU-sim \cite{gpgpusim}.
+    Beyond emulation, the study on a cycle-accurate HSA simulator that integrates QEMU \cite{qemu} and GPGPU-sim \cite{gpgpusim} is going in full swing.
     To the best of our knowledge, little or no research has been conducted on applying the standard to DSP platforms.
-    Despite of this, some work of HSA which aimed at accelerating GPU is also applicable in HSA with DSP.
+    \\\indent
+    Nevertheless, we found that some of studies which aimed at accelerating GPU can be applicable to HSA with DSP.
     Hsu \textit{et.al.} proposed a hardware-based data layout controller for HSA \cite{sc}.
     The controller optimizes irregular data structures from CPU and fit them to the memory footprint of GPU on-the-flight of memory access.
     The data locality in GPU is improved significantly as well as the latency of data layout conversion is hidden.
     Such a data conversion mechanism is also crucial to the HSA with DeAr DSP.
     As a result, the proposed system framework for DeAr will be presented with reference to \cite{sc} in Section~\ref{cha:hardware}.
-    
-
-
-
