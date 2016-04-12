@@ -8,13 +8,25 @@ To demonstrate the compatibility of DeAr with HSA,
 we also presented an architectural framework of the HSA platform with a multi-core DeAr DSP, 
 and developed the complete compiler software.
 \\\indent
-The experiment result showed that
+To validate the low-cost design of DeAr, we prepared two DSP benchmark suites, basic linear algebra subprograms (BLAS) and general digital signal processing kernels (GDSPK).
+In BLAS, DeAr reduced 35.4\%--21.1\% or 21.2--5.3\% of area,
+and 22.7\%--15.1\% or 46.9\%--2.8\% of power dissipation , compared with the VLIW or composite-ALU architecture.
+In GDSPK, on the other hand, DeAr reduced 35.2\%--21.6\% or 33.5\%--4.7\% of area, 
+and 18.5\%--10.4\% or 19.7\%--1.5\% of power dissipation , compared with the VLIW or composite-ALU architecture.
+In addition to the efficiency at the circuit level, DeAr also achieved significant improvement on code density.
+It saved 56.5\%--35.7\% or 42.9\%--24.9\% of code size measured in effected instruction width (EIW), 
+compared with the VLIW or composite-ALU architecture.
 % though DCT is not well, matrix arithmetic is good
 \\\indent
+The main future work is the implementation of the memory layout controller~\cite{sc} for DeAr.
+As the introduced in Section~\ref{sec:integration}, by manipulating such a device, the irregular memory footprint of DeAr can be coalesced for the L/S unit.
+DeAr can thus merge several L/S instructions into one and achieve even better power efficiency.
+However, we still need more studies to achieve best trade-off among throughput, power dissipation and flexibility of the memory layout controller.
+\\\indent
 % pipeline
-Possible future works include extending the DeAr ISA.
+Other possible future works include extending the DeAr ISA.
 Although the current ISA are already capable of handling most DSP kernel benchmarks, 
-we still preserve some function code and bit fields to offer the abundant freedom of enhancements, 
+we still preserved some function code and bit fields to offer the abundant freedom of enhancements, 
 such as adding special function units and supporting interrupt instructions.
 The user can easily develop new features in DeAr to satisfy the demands from applications.
 Another promising work is conducting the full system emulation of DeAr on existing HSA emulators such as HSAemu~\cite{hsaemu}.
@@ -22,7 +34,7 @@ With the evaluation at the system level, the designer is more likely to achieve 
 Beyond DSP, we are also exploring the possibilities of applying DeAr to GPU.
 The efficient arithmetic allows DeAr to become a potential alternative to a conventional RISC shader core.
 However, GPU features massive threads that context-switch frequently.
-Consequently, a state-of-the-art GPU is usually equipped with the dedicated hardware scheduler~\cite{fermi} to manage them.
-Applying such a hardware-based thread scheduler to DeAr still needs more studies.
+Consequently, a state-of-the-art GPU is usually equipped with the dedicated hardware scheduler to manage them.
+Applying such a hardware-based thread scheduler to DeAr still needs more studies as well.
 
 
