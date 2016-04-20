@@ -1,7 +1,7 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%Title: cascade.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5e
-%%CreationDate: Sun Jan 24 16:54:26 2016
+%%CreationDate: Wed Apr 20 00:03:52 2016
 %%BoundingBox: 0 0 223 81
 %Magnification: 1.0000
 %%EndComments
@@ -76,6 +76,19 @@ end
   bind def
 /shd {dup dup currentrgbcolor 4 -2 roll mul 4 -2 roll mul
   4 -2 roll mul srgb} bind def
+ /DrawEllipse {
+	/endangle exch def
+	/startangle exch def
+	/yrad exch def
+	/xrad exch def
+	/y exch def
+	/x exch def
+	/savematrix mtrx currentmatrix def
+	x y tr xrad yrad sc 0 0 1 startangle endangle arc
+	closepath
+	savematrix setmatrix
+	} def
+
 /$F2psBegin {$F2psDict begin /$F2psEnteredState save def} def
 /$F2psEnd {$F2psEnteredState restore end} def
 
@@ -100,32 +113,19 @@ pageheader
 %
 % 
 % here starts figure with depth 50
+% Ellipse
+7.500 slw
+n 2115 2745 318 318 0 360 DrawEllipse gs col0 s gr
+
+% Ellipse
+n 3015 2745 318 318 0 360 DrawEllipse gs col0 s gr
+
+% Ellipse
+n 3915 2745 318 318 0 360 DrawEllipse gs col0 s gr
+
 % Polyline
 0 slj
 0 slc
-7.500 slw
-n 2745 3015 m 2745 2475 l 3285 2475 l 3285 3015 l
- cp gs col0 s gr 
-% Polyline
-15.000 slw
-n 3015 2925 m
- 3015 2565 l gs col0 s gr 
-% Polyline
-n 2835 2745 m
- 3195 2745 l gs col0 s gr 
-% Polyline
-7.500 slw
-n 1845 3015 m 1845 2475 l 2385 2475 l 2385 3015 l
- cp gs col0 s gr 
-% Polyline
-15.000 slw
-n 1935 2925 m
- 2295 2565 l gs col0 s gr 
-% Polyline
-n 1935 2565 m
- 2295 2925 l gs col0 s gr 
-% Polyline
-7.500 slw
 n 945 3375 m 945 2115 l 1485 2115 l 1485 3375 l
  cp gs col0 s gr 
 % Polyline
@@ -157,18 +157,18 @@ n 1485 2295 m 2385 2295 l
 n 2618 2507 m 2732 2555 l 2654 2459 l 2618 2507 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
 gs  clippath
-2609 2955 m 2760 2955 l 2760 2895 l 2609 2895 l 2609 2895 l 2729 2925 l 2609 2955 l cp
+2654 2955 m 2805 2955 l 2805 2895 l 2654 2895 l 2654 2895 l 2774 2925 l 2654 2955 l cp
 eoclip
 n 2385 2925 m
- 2745 2925 l gs col0 s gr gr
+ 2790 2925 l gs col0 s gr gr
 
 % arrowhead
-n 2609 2955 m 2729 2925 l 2609 2895 l 2609 2955 l  cp gs 0.00 setgray ef gr  col0 s
+n 2654 2955 m 2774 2925 l 2654 2895 l 2654 2955 l  cp gs 0.00 setgray ef gr  col0 s
 % Polyline
 gs  clippath
 3509 2775 m 3660 2775 l 3660 2715 l 3509 2715 l 3509 2715 l 3629 2745 l 3509 2775 l cp
 eoclip
-n 3285 2745 m
+n 3330 2745 m
  3645 2745 l gs col0 s gr gr
 
 % arrowhead
@@ -177,7 +177,7 @@ n 3509 2775 m 3629 2745 l 3509 2715 l 3509 2775 l  cp gs 0.00 setgray ef gr  col
 gs  clippath
 1621 3165 m 1470 3165 l 1470 3225 l 1621 3225 l 1621 3225 l 1501 3195 l 1621 3165 l cp
 eoclip
-n 4185 2745 m 4455 2745 l 4455 3195 l
+n 4230 2745 m 4455 2745 l 4455 3195 l
  1485 3195 l gs col0 s gr gr
 
 % arrowhead
@@ -187,13 +187,20 @@ n 1621 3165 m 1501 3195 l 1621 3225 l 1621 3165 l  cp gs 0.00 setgray ef gr  col
 n 4095 2565 m 3915 2745 l
  4095 2925 l gs col0 s gr 
 % Polyline
-7.500 slw
-n 3645 3015 m 3645 2475 l 4185 2475 l 4185 3015 l
- cp gs col0 s gr 
-% Polyline
-15.000 slw
 n 3915 2565 m 3735 2745 l
  3915 2925 l gs col0 s gr 
+% Polyline
+n 1935 2565 m
+ 2295 2925 l gs col0 s gr 
+% Polyline
+n 3015 2925 m
+ 3015 2565 l gs col0 s gr 
+% Polyline
+n 2835 2745 m
+ 3195 2745 l gs col0 s gr 
+% Polyline
+n 1935 2925 m
+ 2295 2565 l gs col0 s gr 
 /Times-Roman ff 222.25 scf sf
 1080 2835 m
 gs 1 -1 sc (RF) col0 sh gr
