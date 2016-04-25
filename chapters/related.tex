@@ -1,31 +1,31 @@
 \chapter{Related Work}
 \label{cha:related}
-    In the stream of DSP design, many studies have been conducted on RF organization as it becomes the dominating factor of clock rate, power dissipation and chip area \cite{register}.
-    Rixner \textit{et al.} indicated that, for conventional centralized organization of RF, the cost grows significantly with the number of functional units (FUs) \cite{register}, posing a serious challenge to VLIW DSP design.
+    In the stream of DSP design, many studies have been conducted on RF organization since it became the dominating factor of clock cycle, power dissipation and chip area \cite{register}.
+    Rixner \textit{et al.} indicated that, for conventional centralized organization of RF, the cost grows significantly with the number of functional units (FUs) \cite{register}, posing a severe challenge to VLIW DSP design.
     A straightforward solution to it is partitioning the centralized RF into several parts, each of which serves specific FUs, such as \cite{cluster}.
     Studies like \cite{synzen} and \cite{dsplite} went even further by discarding the centralized RF and allocating each FU a dedicated one, which is also known as distributed RF organization.
-    However, dividing RF leads to more complicated compiler design and overhead of inter-RF data transport.
-    In addition, above approaches still suffer from poor code density, which is an inherent problem from the VLIW architecture.
+    However, dividing RF leads overhead of inter-RF data transport and complicates the compiler design.
+    In addition, the above solutions still suffer from poor code density, which is an inherent problem from the VLIW architecture.
     \\\indent
-    Some approaches avoided the aforementioned cost growth by customizing the datapath and limiting the number of ports on RF.
-    Ou \textit{et al.} proposed composite FUs for DSP, which cascade FUs with a specific order and demand fewer ports on RF \cite{cascade} \cite{hearaid}.
+    Some approaches avoided the aforementioned cost growth by customizing the datapath and limiting the number of ports in RF.
+    Ou \textit{et al.} proposed the composite-ALU DSP, which cascades FUs with a specific order and demand fewer ports in RF \cite{cascade} \cite{hearaid}.
     Similar techniques are often applied to ASIP design but they usually lack flexibility to target general purposes.
-    There are further researches that achieve power reduction on RF by minimizing the number of accesses to it.
-    Chen \textit{et al.} proposed a simulated-annealing based scheduling that aggressively forwards data from FU outputs to inputs instead of accessing RF \cite{multistage}.
+    There are further researches that achieve power reduction in RF by minimizing its access frequency.
+    Chen \textit{et al.} proposed a simulated-annealing based scheduling for DSPs which aggressively forwards data from accumulators to FU inputs instead of accessing RF every cycle\cite{multistage}.
     \cite{move} presented a processor framework: MOVE, which features the separation of data transport and operation in the datapath. 
-    The user can program the bypass network in MOVE, and avoid most of accesses to RF by clever data transport.
-    Such an architecture that manipulates data transport is usually referred to as transport-triggered architecture (TTA).
-    The Work from Lama \textit{et al.} \cite{ttagpu} also demonstrated a framework that takes the advantage of TTA in graphic processing unit (GPU), and this idea is a potential alternative for DSP design.
+    The user can program the bypass network in MOVE, and thus avoid redundant accesses to RF by clever data transport.
+    Such an architecture that manipulates data transport is usually referred to as the transport-triggered architecture (TTA).
+    The work from Lama \textit{et al.} \cite{ttagpu} also demonstrated a framework that takes the advantage of TTA in graphic processing unit (GPU), and this idea is a potential alternative for the DSP design.
     \\\indent
     On the other hand, one may notices that none of the above implementations adopts HSA \cite{systemspec}, which is a promising standard for embedded DSP platforms.
-    So far, most of studies of HSA focus on the integration of CPU and GPU. 
+    So far, most of studies on HSA focus on the integration of CPU and GPU. 
     \cite{hsaemu} presented a full system emulator for HSA platforms that include CPUs and GPUs.
-    Beyond emulation, the study on a cycle-accurate HSA simulator that integrates QEMU \cite{qemu} and GPGPU-sim \cite{gpgpusim} is going in full swing.
+    Beyond emulation, the study on a cycle-accurate HSA simulator that integrates QEMU \cite{qemu} and GPGPU-sim \cite{gpgpusim} is in full swing.
     To the best of our knowledge, little or no research has been conducted on applying the standard to DSP platforms.
     \\\indent
-    Nevertheless, we found that some of studies which aimed at accelerating GPU can be applicable to HSA with DSPs.
+    Nevertheless, we also noticed that some of studies aiming at accelerating GPU can be applicable to HSA with DSPs.
     Hsu \textit{et.al.} proposed a hardware-based memory layout controller for heterogeneous systems~\cite{sc}.
     The controller optimizes irregular data structures from CPU and fit them to the memory footprint of GPU on-the-flight of memory transfer.
     The data locality in GPU is improved significantly as well as the latency of data layout conversion is hidden.
     Such a data conversion mechanism is also crucial to the integration of DeAr DSP and HSA, 
-    and it will be presented with reference to \cite{sc} in Section~\ref{sec:integration}.
+    and thus it will be presented in Section~\ref{sec:integration} with reference to \cite{sc}.

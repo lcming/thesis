@@ -2,8 +2,8 @@
     \section{Evolution of Digital Signal Processors}
         A digital signal processor (DSP) is an optimized computer that aims at accelerating digital signal processing, such as baseband demodulation or video codec.
         In principle, a programmer extracts key subroutines or algorithms from applications and accelerates them with a DSP.
-        Such extracted pieces of code that executed by DSPs are also referred to DSP kernels.
-        Unlike general purpose computers, which usually feature powerful ISA and novel branch predictors that help them dealing with control intensive tasks very well,
+        Such extracted pieces of code executed by DSPs are also referred to DSP kernels.
+        Unlike a general purpose computers, which usually feature powerful ISA and novel branch predictors that help them with control intensive tasks,
         DSPs simply focus on computation intensive tasks delivered by another unit (general purpose processor, analog to digital converter, etc.), 
         and thus its hardware can be simplified and optimized for better power efficiency, which enable them to be widely used in mobile devices and embedded systems.
         \\\indent
@@ -113,7 +113,7 @@
     By adopting HSA, one is able to design a single system that handles wide variety of computational demands efficiently.
     For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo APU} \cite{carrizo}, featuring HSA 1.0.
     As illustrated in Figure~\ref{fig:carrizo}, \textit{Carrizo} is the SoC platform with the 4-core CPU and the GPU with 8 compute units (384 shader cores totally).
-    Both of them work with textit{the Shared Virtual Memory} (SVM) since their MMUs access an identical page table.
+    Both of them work with \textit{the Shared Virtual Memory} (SVM) since their MMUs access an identical page table.
     \textit{Carrizo} enables task sharing without data copy between CPUs and GPUs to achieve greater performance.
     By cleverly choosing the suitable computing device for each task, 
     \textit{Carrizo} can operate more efficiently to save power as well.
@@ -135,7 +135,7 @@
         which are defined as HSA agents.
         One of the agents needs to be host CPU, and the other usually serve as kernel agents. 
         The host CPU is responsible for running the operating system and setting up \textit{HSA Runtime},
-        while kernel agents handle computational tasks from the host CPU by executing HSAIL code.
+        while kernel agents handle computational tasks from the host CPU.
         HSA requires all HSA agents to be capable of accessing SVM maintained coherently, 
         so data exchange between agents can be accomplished by passing data pointer instead.
         Nevertheless, not all memory regions need to be accessible by all agents (i.e., \textit{Global} segment).
@@ -146,10 +146,10 @@
         AQL defines several packet types: \textit{agent dispatch}, \textit{kernel dispatch}, \textit{AND barrier} and \textit{OR barrier}, etc.
         An agent pushes tasks wrapped in \textit{kernel dispatch} or \textit{agent dispatch} packets to command queues, 
         and other agents consume the packets, and dispatch the wrapped tasks.
-        \textit{AND barrier} and \textit{OR barrier} are pushed to command queues to synchronize execution of agents 
+        \textit{AND barrier} and \textit{OR barrier} are pushed to command queues to synchronize execution of agents.
         Another advantage of AQL is allowing \textit{user mode queuing},
         which implies the programmer is allowed to access the command queue via \textit{HSA Runtime API} without OS involving.
-        By this mean, the latency from dispatching to execution of a task is thus minimized.
+        By this means, the latency from dispatching to execution of a task is thus minimized.
         \vspace{\textfig}
         \begin{figure}[!ht] 
             \centering
@@ -159,7 +159,7 @@
         \end{figure}
         \subsection{Programming Model}
         To support multiple Instruction Set Architectures (ISAs) for various agents in a single HSA platform,
-        HSA foundation drew up /textit{Heterogeneous System Architecture Intermediate Language} (HSAIL)
+        HSA foundation drew up \textit{Heterogeneous System Architecture Intermediate Language} (HSAIL)
         With HSAIL, programmers can develop code for HSA in an intermediate form accepted by wide range of agents.
         HSAIL basically adopts the parallel programming model of Single Program Multiple Data (SPMD), 
         which carries out same computation on different data to accelerate applications.
@@ -195,7 +195,7 @@
         Depending on which device is going to execute the kernel, 
         the finalizer translates the HSAIL to corresponding ISA and completes the code generation flow.
         \\\indent
-        On the other hand, the \textit{HSA runtime} bridges HSAIL runtime APIs and agents, as illustrated in Figure~\ref{fig:swinf}~(b).
+        On the other hand, the \textit{HSA runtime} bridges HSA runtime APIs and agents, as illustrated in Figure~\ref{fig:swinf}~(b).
         With the \textit{HSA runtime}, the programmer is allowed to manipulate system memory and AQL, 
         and thus SVM and \textit{user mode queuing} can be accomplished.
         It is possible that the programmer triggers the finalizer to perform the final stage of compilation at runtime.

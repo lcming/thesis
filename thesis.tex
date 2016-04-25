@@ -53,6 +53,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{algpseudocode}
 \algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
 
@@ -127,20 +128,18 @@
 
 \begin{abstract}  % Abstract
     The evolution of wireless communication protocols drives the quest of power-efficient and flexible computing for embedded digital signal processors (DSPs), 
-    but popular architectures, very-long-instruction-word (VLIW) and application-specific instruction set processor (ASIP), serve as opposite extreme cases in regard to power-efficiency and flexibility.
+    but the popular DSP architectures, very-long-instruction-word (VLIW) and application-specific instruction set processor (ASIP), serve as opposite extreme cases in regard to power-efficiency and flexibility.
     \\\indent
     To this end, we present DeAr: Dual-thread Architecture DSP, 
-    which manipulates simultaneous multi-threading (SMT) with a compact register file (RF) composed of stack and queue memory, 
-    and a transport-triggered bus exploiting the data forwarding mechanism.
+    which manipulates a multi-banked register file that enables simultaneous multi-threading (SMT),
+    as well as a transport-triggered bus that exploits the data forwarding mechanism in its compact datapath.
     In addition, a novel scheduling algorithm that leverages the compact hardware to achieve both high throughput and flexible computation is presented.
-    To go beyond the single core DSP, we also propose a system integration framework and a compilation flow for DeAr based on Heterogeneous System Architecture (HSA), 
+    To go beyond a single core DSP, we also propose a system integration framework and a compilation tool for DeAr based on Heterogeneous System Architecture (HSA), 
     which is a promising standard for the multi-core architecture promoted by several leading semiconductor companies, AMD, ARM, MediaTek, etc.
-    %We also propose a novel scheduling algorithm which leverages the compact hardware to achieve both high throughput and flexible computation.
-    %In the experiment of common DSP kernels, 
     \\\indent
     In the experiment of the comparison with VLIW and ASIP respectively, 
-    DeAr saved 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite aiming at wireless communication;
-    In the same manner, it saved 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite of general digital signal processing kernels.
+    DeAr either saves 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite aiming at wireless communication, 
+    or saves 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite of general digital signal processing kernels.
 \end{abstract}
 \clearpage
 %\addcontentsline{toc}{section}{Acknowledgements}

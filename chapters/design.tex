@@ -2,8 +2,8 @@
 \section{Proposed Architecture}
 \subsection{Concepts of DeAr}
 \indent 
-One of key features in the DeAr DSP is manipulating Simultaneous Multi-threading (SMT) in each processing core with the purpose of exploiting arithmetic resources.
-By dispatching two instruction streams that manipulate its VLIW-fashion datapath, 
+One of the key features in the DeAr DSP is manipulating Simultaneous Multi-threading (SMT) in each processing core with the purpose of exploiting concurrent arithmetic resources.
+By dispatching two instruction streams that manipulate its multi-issue datapath, 
 the computational workload of a work-item can be amortized by two threads running simultaneously.
 Figure~\ref{fig:bb:1} illustrates the typical execution flow of an HSA work-item across several basic blocks.
 A basic block is piece of code without any branch or jump instruction except at its entry or exit.
@@ -13,10 +13,10 @@ At the entry of a program, two DeAr threads are forked by in replacement of a wo
 Next, the forked DeAr threads simultaneously fetch and execute instructions within the basic block.
 They join at the end of the basic block, and perform an identical branch or jump instruction targeting the next basic block simultaneously.
 \\\indent
-The fundamental challenge in SMT is scheduling threads, 
+The fundamental challenge in SMT is scheduling for threads, 
 which can be resolved by either hardware (dynamic scheduling) or software (static scheduling).
-We applied the latter because the static approach offers more optimization opportunities in scheduling, 
-and hardware resources can be dedicated to arithmetics.
+We apply the latter because the static approach offers more optimization opportunities in scheduling, 
+and the hardware resources can be dedicated to arithmetics.
 \vspace{\textfig}
 \begin{figure}[!ht]
     \begin{center}
@@ -36,16 +36,16 @@ and hardware resources can be dedicated to arithmetics.
     \label{fig:bb}
 \end{figure}
 \\\indent 
-Another feature of DeAr is exhaustively compacting its hardware resources while keeping the flexibility and computational power.
+Another feature of DeAr is exhaustively compacting its datapath while keeping the flexibility and computational power.
 This offers DeAr better efficiency in several perspectives including power dissipation, chip area and memory usage.
-Moreover, such compact hardware design equips it with excellent scalability, 
-which makes DeAr very suitable for the HSA programming model.
-A DeAr core can be scaled up to multi-core architecture, 
+Moreover, such a compact core design equips it with excellent scalability, 
+which makes DeAr suitable for HSA.
+A DeAr core can be scaled up to the multi-core architecture, 
 where the assembly of cores forms the wavefront which supports the HSA SPMD programming model.
 \subsection{System Integration}
 \label{sec:integration}
 Figure~\ref{fig:archi} illustrates the proposed framework of an HSA system integrated with a 4-core DeAr DSP.
-The general purpose processor (GPP) hosts OS and HSA runtime, sharing main memory with the DeAr DSP.
+The general purpose processor (GPP) hosts OS and HSA runtime, sharing the main memory with the DeAr DSP.
 In the DSP, each core owns a private L1 D-cache, and shared a L1 I-cache with another core.
 The L1 I-cache sharing mechanism was proposed in~\cite{kelly2004shared},
 which reduces the duplication of program memory in the SPMD model.
@@ -54,9 +54,9 @@ SC, proposed by Hsu \textit{et al.}, is a specialized bus interface IP applied t
 SC not only performs direct memory access (DMA) for the DSP local memory,
 but also re-organize the non-coalescing data transparently to improve the data locality.
 On the other hand, HPI, which is a common module found in Texas Instruments DSPs~\cite{hpi},
-It facilitates the direct access from the GPP to DSP internal resources with purposes below:
+facilitates the direct access from the GPP to DSP internal resources with purposes below:
 \begin{itemize}
-    \item \textbf{MMU}: The host OS accesses the MMU via HPI, and thus HSA SVM can be facilitated.
+    \item \textbf{MMU}: The host OS accesses MMU via HPI, and thus HSA SVM can be facilitated.
     \item \textbf{Dispatch queues}: HSA runtime pushes (pops out) AQL-packets to (from) the kernel-dispatch queue (agent-dispatch queue) via HPI, 
         and thus HSA user-mode queuing can be facilitated.
     \item \textbf{SC}: The SC user API sends control signal to SC via HPI, 
@@ -67,69 +67,59 @@ It facilitates the direct access from the GPP to DSP internal resources with pur
 \begin{figure}[!ht] 
     \centering
     \includegraphics[width=0.8\textwidth]{./figs/archi.eps}
-    \caption{Micro-architecture of a DeAr DSP lane}
+    \caption{Framework for system integration}
     \label{fig:archi}
 \end{figure}
 
-
-%To sum up, Each HSA work-item can be summited to a DeAr core and accelerated by two DeAr threads.
-%to meet the computational demands of data-intensive applications, such as baseband demodulation and multi-media.
-
-
 \section{Hardware Design and Implementation}
 \subsection{Micro-architecture Design}
-% todo program cache, data cache
 In this section, we will look into DeAr from a micro-architecture perspective, and explore its design considerations at the same time.
 Figure~\ref{fig:micro} illustrates the micro-architecture of DeAr DSP lane.
-We adopted the concept of Harvard architecture, 
-which separates data memory and instruction memory physically\cite{harvard}.
-As a result, the datapath and the control path are wrapped by two independent interfaces, the load/store (L/S) unit and the instruction unit, respectively.
-Such orthogonality between data and instructions offers better freedom of optimizing data precision or code density.
+We adopt the concept of Harvard architecture~\cite{harvard}, 
+which separates data memory and instruction memory physically.
+As a result, the datapath and the control path are wrapped by two independent interfaces, the load/store (L/S) unit and the instruction unit respectively.
+Such orthogonality between data and instructions offers better freedom for optimizing data precision and code density.
 The L/S unit supports burst mode transfer, which enables consecutive fetch of the data in the memory.
 This mechanism reduces the number of memory access instructions to be used, 
-and improve the utilization of the bus bandwidth.
-In addition, DeAr allows the memory transfer to be initiated by two threads orthogonally under the hardware arbitration.
+and improve the bus utilization.
+In addition, DeAr allows memory transfer to be initiated by two threads orthogonally under the hardware arbitration.
 On the other hand, since two DeAr threads always branch simultaneously to the same basic block, 
 the compiler can align their simultaneous instructions to adjacent addresses.
 As a result, the instruction unit can serve two DeAr threads by doubling the fetch width instead of duplication of the hardware.
 \\\indent
-Next, we are looking into the datapath.
-Two DeAr threads in a lane not only share an ALU that commonly exist in a RISC datapath, 
-but also the same instruction unit which is suitable for synchronous branch.
+Two DeAr threads in a lane share the ALU that commonly exist in a RISC processor.
 The demonstrated example includes an adder, a multiplier and a barrel shifter, which are qualified to perform most benchmarks,
-Nevertheless, the configuration of the ALU can be modified to fit the target application.
-The output of each arithmetic unit is an accumulator register, 
-which bypasses the result to any arithmetic units that need it in the next clock cycle.
-The bypassing-mechanism of accumulator registers avoid unnecessary accesses to the register file, 
-and thus reduce the energy dissipation in the register file.
-In addition, the accumulator registers are all clock-gated.
-This enables DeAr to preserve the data in accumulator registers until the corresponding arithmetic unit is activated next time, 
+Nevertheless, the configuration of the ALU can be customized to fit the target application.
+The output of each arithmetic unit connects to an accumulator latch, 
+which bypasses the result to ALU inputs.
+The bypassing-mechanism of accumulator latches avoids redundant accesses to the RF, 
+and thus reduces the power dissipation in the RF.
+Besides, DeAr can preserve the data in an accumulator latch until the corresponding arithmetic unit is activated again, 
 offering more data bypassing opportunities.
-The bypassing mechanism and resolution of structural hazards are both handled by the software, 
-so the hardware complexity of dynamic scheduling or bypassing units can be avoided or reduced.
+The bypassing mechanism and resolution of structural hazards are both handled by the software to reduce hardware complexity.
 \\\indent
 The RF is physically and symmetrically divided for two DeAr threads.
 Each of them owns a pair of queue memory module as well as a stack memory module, 
-and these memory units modules form the sequential-accessed banked register file (SBRF).
+and these memory units form the sequential-accessed banked register file (SBRF).
 The banked organization of SBRF cuts off redundant connectivity among read/write ports and register cells.
-Compared with the conventional centralized organization , 
-its wire area and power dissipation are significantly improved.%, as discussed in Section~\ref{sec:rfcell}.
+Compared with the conventional centralized organization, 
+its wire area and power dissipation are significantly improved.
 A load-queue and a store-queue serve as the buffer that connects the lower level of the memory hierarchy with the datapath.
-They can be accessed from their both sides concurrently with the first-in-first-out (FIFO) fashion.
+They can be accessed from their both sides concurrently in the first-in-first-out (FIFO) fashion.
 A DeAr thread reads input data from its load-queue and writes computation results to its store-queue, 
 while the L/S unit accesses queues in the opposite direction against the dataptah.
 By preventing queues from empty or full with clever scheduling, the latency of L/S can thus be hidden.
 The stack memory, on the other hand, is responsible for the storage of intermediate data and L/S address.
 Other possible uses of the stack memory include branch condition evaluation and returning from interruptions.
-The nature of a stack memory is last-in-first-out (LIFO), 
-which is the key property of the DeAr scheduling algorithm elaborated in Section\ref{sec:scheduling}.
+The access pattern of a stack memory is last-in-first-out (LIFO), 
+which is the key feature of the HDFG-base scheduling elaborated in Section\ref{sec:scheduling}.
 Applying sequential-access memory modules instead of random-access ones effectively reduces the control signal size and decode overhead, 
 since any access to the SBRF can be simplified to "PUSH" or "POP".
 Such simplification gains high code density and save the wiring from the instruction unit to SBRF, 
-and constitute the key advantage of DeAr over conventional VLIW architectures.
-For clarity, we summarize the classification of various registers in the datapath in Table~\ref{tab:register}.
+and constitutes the key advantage of DeAr over conventional VLIW architectures.
+For clarity, we summarize the classification of various registers/latches in the datapath in Table~\ref{tab:register}.
 \begin{table}[!ht]
-    \caption{Classification of data registers in DeAr}
+    \caption{Classification of data registers/latches in DeAr}
     \label{tab:register}
     \centering
     \begin{tabular}{|l|l|l|}
@@ -142,9 +132,9 @@ For clarity, we summarize the classification of various registers in the datapat
     \end{tabular}
 \end{table}
 \\\indent
-The design of transport triggered data bus (TTDB) was inspired by TTA~\cite{tta}.
-TTDB separates the RF from ALU with a set of multiplexers controlled by the instruction unit, 
-and bypasses data from ALU outputs and accumulators.
+The design of transport triggered data bus (TTDB) was inspired by TTA~\cite{move}.
+TTDB separates the RF from the ALU with a set of multiplexers controlled by the instruction unit, 
+and bypasses data from accumulators.
 Possible routes of data over TTDB are summarized as below:
 \begin{itemize}
     \item Each arithmetic unit receives the first operand from a load-queue or an accumulator, 
@@ -157,7 +147,7 @@ It is important to note that, even though the communication among the RF, ALU an
 the datapath flexibility is still kept.
 The organization of TTDB is tightly coupled with the instruction set architecture (ISA).
 Accordingly, further reduction in code size can be achieved with such a compact design.
-More insight into the relation between TTDB and ISA will be available in Section~\ref{sec:isa}.
+More insight into the relation between TTDB and ISA is available in Section~\ref{sec:isa}.
 
 \vspace{\textfig}
 \begin{figure}[!ht] 
@@ -174,14 +164,14 @@ More insight into the relation between TTDB and ISA will be available in Section
 but the former is optimized for efficient arithmetic.
 Each DeAr instruction is composed of two portions, RISC-style portion and stack-access portion.
 %The instruction unit issues two instructions simultaneously for two DeAr threads.
-Table~\ref{tab:risc} shows functions of the RISC-style portion, which are similar to the subset of RISC ISA.
+Table~\ref{tab:risc} shows the functions of the RISC-style portion, which are similar to the subset of RISC ISA.
 Here, we use the bold alphabets, \textbf{r}, \textbf{s}, \textbf{t}, \textbf{k}, \textbf{a}, 
 to represent the instruction decode bit-fields and illustrate the meaning of each function.
 According to their functions, they can be classified to three categories, A-type, B-type and M-type.
 The A-type includes arithmetic instructions such as addition (ADD or SUB), multiplication (MUL) and shift operation (SHL or SHR).
 Other instructions like move (MV), which moves data from the other DeAr thread, 
 and no operation (NOP), which stalls the DeAr thread for a cycle, 
-belong to the A-type as well since they also manipulate arithmetic units.
+belong to the A-type as well since they manipulate the datapath in a similar way.
 The B-type includes instructions which interact with the instruction unit, such as branch on zero (BE), branch on nonzero (BNE) and unconditional branch (JMP).
 The M-type, on the other, includes memory transfer instructions, load (LD) and store (ST), which manage the load/store unit.
 %---------- risc-style portion table
@@ -210,21 +200,20 @@ The M-type, on the other, includes memory transfer instructions, load (LD) and s
 
 \indent 
 On the other hand, the stack-access portion, illustrated in Table~\ref{tab:stack}, 
-is dedicated to manipulate the stack memory of the DeAr thread.
-The possible uses
+is dedicated to the manipulation of the stack memory.
 Four stack operations, \textit{PUSH}, \textit{POP}, \textit{MODIFY} and \textit{STALL}, are defined, 
-Each DeAr thread uses these stack operations to buffer its data in the LIFO-manner.
+Each DeAr thread uses these stack operations to buffer its intermediate data in the LIFO-manner.
 A \textit{PUSH} stores the result from one of arithmetic units and adds the head address by 1, 
-while a \textit{POP} eliminate the head data by subtracting the head address by 1.
-Since a \textit{POP}followed by a \textit{PUSH} modifies the data at the head data and maintains the head address, 
-a \textit{MODIFY} is defined to simplify the usage of two operations.
-In some scenarios, the DeAr thread does nothing to the stack but keeps its condition.
+while a \textit{POP} eliminates the head data by subtracting the head address by 1.
+Since a \textit{PUSH} following a \textit{POP} modifies the head data and cancels the address decrement, 
+a \textit{MODIFY} is defined to simplify the combination the operations.
+In some scenarios, a DeAr thread does nothing to the stack but keeps its status.
 As a result, a \textit{STALL} is also defined for the stack-access portion.
-These two portions constitute DeAr ISA.
-The DeAr thread can thus access an arithmetic units with the RISC-style portion and handle the intermediate result with stack-access portion.
-On the other hand, since the memory transfer instructions (i.e., LD and ST) never generate intermediate, 
-they do not need the stack-access portion.
-We can thus preserve more bits in the memory transfer instruction to address larger memory space.
+These two portions compose DeAr ISA.
+Each DeAr thread can thus access an arithmetic unit with the RISC-style portion and handle the intermediate data with the stack-access portion.
+On the other hand, since the memory transfer instructions (i.e., LD and ST) never generate intermediate data, 
+their stack-access portion is set to \textit{STALL} implicitly.
+We can thus preserve more bits in the memory transfer instruction to address more memory space.
 
 %---------- stack portion table
 \begin{table}[ht!]
@@ -250,26 +239,28 @@ Marks of the first column represent various bit-fields,
 and they correspond to the bold alphabets shown in Table~\ref{tab:risc}.
 %Note that Table~\ref{tab:decode} also reveals the detailed organization of the TTDB by elaborating the communication in the datapath.
 \\\indent
-The A-type instruction include all arithmetic instructions.
-The head 4-bit signal \textbf{f}, which is similar to the function code in RISC, specifies the operation to be performed.
+A-type instructions include all arithmetic instructions.
+The head 4-bit \textbf{f}, which is similar to the function code in RISC, specifies the operation to be performed.
 It is followed by a single-bit signal \textbf{d}, which determines whether the result of this operation is written back to the memory via the store-queue.
-After that, a pair of 2-bit signals, \textbf{s} and \textbf{t}, select the sources of two arithmetic operands respectively. 
+After that, a pair of 2-bit, \textbf{s} and \textbf{t}, select the sources of two arithmetic operands respectively. 
 Nevertheless, the data sources selected by \textbf{s} and \textbf{t} are not identical.
 The former selects the first operand from the load-queue or one of accumulators, 
-while the latter selects the second one from the load-queue, stack, or constants (1 or 0).
+while the latter selects the second operand from the load-queue, stack, or constants (1 or 0).
 Some instructions like SHR and SHL use immediate data as the second operand (i.e., shifting amount).
 In such a scenario, \textbf{t} and the reserved bit serve as immediate data.
 Finally, the last 2-bit \textbf{k} is the stack access portion, which encodes four operations that manipulate the stack memory.
 Note that functions of \textbf{f} and \textbf{k} remain in the M-type and B-type.
-\\\indent On the other hand, M-type instructions perform memory transfers.
-The function field \textbf{f} is followed by 2-bit signal \textbf{w}, 
+\\\indent 
+On the other hand, M-type instructions perform memory transfers.
+The function field \textbf{f} is followed by 2-bit \textbf{w}, 
 which specifies the word size of the transfer.
 The size can be byte (8-bit), halfword (16-bit) or word (32-bit).
-Another bit value \textbf{b} indicates whether the memory transfer is performed in the burst mode, 
-and the following 2, \textbf{r}, determines the length of the burst (i.e., the number of transfers to be performed consecutively).
+Another bit \textbf{b} indicates whether the memory transfer is performed in the burst mode, 
+and the following 2-bit \textbf{r} determines the length of the burst (i.e., the number of transfers to be performed consecutively).
 The burst length can be 2, 4, 8 or 16.
 If \textbf{b} is de-asserted, \textbf{r} will be ignored.
-\\\indent The last category, B-type instructions, which control the program flow, 
+\\\indent 
+The last category, B-type instruction, which controls the program flow, 
 is a special case compared with the other two types.
 Since two DeAr threads always perform identical branch instructions synchronously, 
 two branch instructions can be merged into one with more bits for branch target addressing.
@@ -280,7 +271,7 @@ The function field \textbf{f} is thus followed by 16-bit branch address offset \
 %---------- bit field table---------------
 \begin{table}[!ht]
     \centering
-    \caption{Instrucion decode table of the DeAr instrucion set}
+    \caption{Instruction decode table of the DeAr ISA}
     \label{tab:decode}
     \begin{tabular}{|l|l|l|}
         \hline
@@ -294,7 +285,7 @@ The function field \textbf{f} is thus followed by 16-bit branch address offset \
     k & {[}1:0{]} & \begin{tabular}[c]{@{}l@{}}Stack access portion\end{tabular} \\ \hline
         \multicolumn{3}{|c|}{\textbf{M-type instructions}} \\ \hline
     f & {[}11:8{]} & \begin{tabular}[c]{@{}l@{}}Select the function from LD or ST\end{tabular} \\ \hline
-    %e & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Specify the endianness of the data in the memory \end{tabular} \\ \hline
+        %e & {[}7{]} & \begin{tabular}[c]{@{}l@{}}Specify the endianness of the data in the memory \end{tabular} \\ \hline
     w & {[}7:6{]} & \begin{tabular}[c]{@{}l@{}}Select the word size from byte, halfword or word \end{tabular} \\ \hline
     b & {[}5{]} & \begin{tabular}[c]{@{}l@{}}Enable burst mode memory transfer \end{tabular} \\ \hline
     r & {[}4:3{]} & \begin{tabular}[c]{@{}l@{}}Select the burst length from 2, 4, 8 or 16 \end{tabular} \\ \hline
@@ -314,9 +305,9 @@ The function field \textbf{f} is thus followed by 16-bit branch address offset \
 \label{sec:software}
 \subsection{Software framework for DeAr}
 \label{sec:swframework}
-To fully exploit the power of DeAr, we also present a completed code generation flow including compilation, scheduling and optimization.
+To fully exploit the power of DeAr, we also present a complete code generation flow including compilation, scheduling and optimization.
 Algorithm~\ref{alg:framework} provides an overview of the software framework for DeAr. 
-The user only need to provide DSP kernel code written in OpenCL and a flag indicating the optimization level as the input.
+The user only needs to provide DSP kernel code written in OpenCL, and a flag indicating the code optimization level.
 With CLOC \cite{cloc} tool provided by \textit{HSA Foundation}, the kernel code is converted to standardized HSAIL, $H$, as shown in Line~\ref{line:tohsail}.
 Next, in Line~\ref{line:trans}--\ref{line:trane}, 
 we run the HSAIL transformation (Section~\ref{sec:trans}) on HSAIL code and obtain a hierarchical data flow graph (HDFG), 
@@ -324,10 +315,8 @@ $\bar{G}$ (Section~\ref{sec:hdfg}), which holds crucial scheduling heuristics.
 After that, Line~\ref{line:optstart} to \ref{line:optend} perform the key part of DeAr software, 
 operation scheduling and optimization (Section~\ref{sec:scheduling}).
 The optimization flag $\lambda$ in Line~\ref{line:forlambda} determines the number of iterations to be used.
-For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts, 
-and it schedules operations with certain randomness.
-Finally, the scheduler select the scheduling result with the least cycle count, 
-$C_{golden}$ among iterations and generates the final code $X_{golden}$ for as the output.
+For each iteration, the scheduler exhausts heuristics in $\bar{G}$ which optimize the cycle and WB counts with certain randomness.
+Finally, the scheduler selects the best scheduling result $C_{golden}$ among iterations and generates the final code $X_{golden}$ for as the output.
 %-----------------framework algo -------------
 \begin{algorithm}[h]
     \caption{\textproc{Software Framework for DeAr}}
@@ -355,8 +344,8 @@ $C_{golden}$ among iterations and generates the final code $X_{golden}$ for as t
         \For {$i=1$ to $f(\lambda)$}
         \label{line:forlambda}
         %\State Schedule operations in $\bar{G}$ and get binary code $X_i$ and its total cycle count $C_i$
-        \State $X_{inter}, bt_{remain} \Leftarrow$ \Call{Inter-tree Scheduling }{ $\bar{G}$ }
-        \State $X_i, C_i \Leftarrow$ \Call{Intra-tree Scheduling }{ $X_{inter}, bt_{remain}$ }
+        %\State $X_{inter}, bt_{remain} \Leftarrow$ \Call{Inter-tree Scheduling }{ $\bar{G}$ }
+        \State $X_i, C_i \Leftarrow$ \Call{HDFG-based Scheduling }{ $\bar{G}$ }
         \If {$C_i < C_{golden}$}
         \State $C_{golden} \Leftarrow C_i$
         \State $X_{golden} \Leftarrow X_i$
@@ -375,31 +364,29 @@ A data flow graph (DFG), which presents dependencies among operations, is crucia
 By partitioning a program into basic blocks, the control flow can be simplified, and thus each DFG of a basic block is a directed acyclic graph (DAG).
 Figure~\ref{fig:dfg:dfg} illustrates an example of a DFG, where each node and each edge denote an operation and a dependency respectively.
 We can further express any DFG as a data structure $G$, which holds a set of nodes (operations), $V_{op}$, and a set of edges (dependencies), $E_{op}$
-In conventional DSP software design, optimal scheduling of operations is often approached by analyzing the DFG.
-For example, \cite{dsplite} solves ILP problems \cite{ilp} in the DFG for scheduling, 
-and list scheduling \cite{list} calculates scheduling range of each operation in the DFG as the scheduling criterion. 
+In conventional DSP compiler design, optimal scheduling of operations is often approached by analyzing the DFG.
+For example, \cite{dsplite} solves ILP problems \cite{ilp} in a DFG to approximate optimal scheduling, 
+and the list scheduling \cite{list} calculates the scheduling range of each operation in a DFG as the scheduling criterion. 
 \\\indent
-However, we found that conventional DFG analysis is infeasible for DeAr due to its datapath uniqueness.
-As a result, in this work, we proposed an enhanced version of the DFG, the hierarchical data flow graph (HDFG), which fits DeAr.
+However, we noticed that the conventional DFG analysis is infeasible for DeAr due to its datapath uniqueness.
+As a result, in this work, we propose an enhanced version of the DFG, the hierarchical data flow graph (HDFG), which fits DeAr.
 Figure~\ref{fig:dfg:hdfg} demonstrates the HDFG, $\bar{G} = {V_{bt}, E_{bt}}$, converted from Figure~\ref{fig:dfg:dfg}.
 We enumerate several important features of the HDFG as below: 
 \begin{itemize}
-    \item Cascaded operations, which implies no fork and join of edges within the cascade, are grouped into a super node ($sn$). 
-        If an operation is isolated, it forms a $sn$ directly.
-    \item Neighboring $sn$ are further grouped into a binary tree, $bt$.
-        If a $sn$ is isolated, it forms a binary tree directly.
-        These binary trees further form a set of vertices, $V_{bt}$, in HDFG.
-    \item Dependencies among operations that cross binary trees are inherited by binary trees they belong to.
-        These inherited dependencies form a set of edges, $E_{bt}$, among $V_{bt}$.
-    \item A $bt$ without any in-edge existing in $V_{bt}$ (i.e., $\sum_{v \in V_{bt}}\textrm{deg}^-(bt) = 0$) is free to be scheduled. 
-        After scheduling, the $bt$ and its edge will be erased from the $\bar{G}$.
-    \item Every $sn$ must have either zero (leaf nodes) or two (non-leaf nodes) children.
-        Edges at $bt$, $sn$ and $op$ level guarantee the correctness of the execution order.
+    \item Cascaded operations ($op$) form a super node ($sn$), and an isolated $op$ forms a $sn$ directly. 
+Within a $sn$, an $op$ forwards data to the next one.
+    \item Neighboring $sn$s form a full binary tree ($bt$), and isolated $sn$ forms a $bt$ directly.
+These $bt$s further form a set of vertices, $V_{bt}$.
+Within a $bt$, a parent $sn$ receives the first operand popped from the stack and the second one forwarded via TTDB.
+    \item Dependencies among $op$s that cross $bt$s are inherited by the $bt$s they belong to.
+These inherited dependencies form a set of edges, $E_{bt}$, of $V_{bt}$.
+    \item A $bt$ without any in-edge existing in $\bar{G}$ (i.e., $bt \in V_{bt}\ |\ \textrm{deg}^-(bt) = 0$) is free to be scheduled. 
+After scheduled, the $bt$ and its edges are erased from the $\bar{G}$.%
 \end{itemize}
 
 \indent The hierarchy of HDFGs provides crucial optimization information to the DeAr scheduler.
-DeAr eliminates redundant RF access within each $sn$, and regularize the RF access pattern into stack's FILO-fashion by manipulating the recursive property of each $bt$.
-Moreover, the binary property of $bt$ also provides more opportunities to balance workload of two threads, and thus higher OPC is achieved.
+The scheduler eliminates redundant RF access within each $sn$, and regularize the RF access pattern into stack's FILO-fashion by manipulating the recursive property of each $bt$.
+Moreover, the binary property of $bt$ also provides more opportunities for balancing workload of two threads, and thus ILP is achieved.
 \vspace{\textfig}
 \begin{figure}[!ht]
     \begin{center}
@@ -407,7 +394,7 @@ Moreover, the binary property of $bt$ also provides more opportunities to balanc
         {
             \label{fig:dfg:dfg}
             \includegraphics[width=0.45\textwidth]{figs/dfg.eps}
-        }
+        }\hfill
         \subfigure[Corresponding HDFG]
         {
             \label{fig:dfg:hdfg}
@@ -525,202 +512,115 @@ The whole process of the HSAIL transformation contains two phases elaborated as 
     \label{alg:tohdfg}
 \end{algorithm}
 %--------------------------------------
-
-
-\subsection{Scheduling}
+\subsection{HDFG-based Scheduling}
 \label{sec:scheduling}
-The DeAr scheduler is responsible for ensuring the order of operations, 
-arranging data movement and allocating hardware resources.
-Once the scheduling result is determined, the corresponding machine code is also generated.
-The design principle of the DeAr scheduler is ensuring two threads process $bt$s in the HDFG concurrently and collaboratively until all operations are scheduled.
+The goal of the DeAr scheduler is generating the binary code with ILP, high data forwarding rate, 
+and minimum stack memory consumption of each thread.
+To achieve the goal, we present a novel scheduling algorithm, 
+\textproc{HDFG-based scheduling}, which is shown in Algorithm~\ref{alg}.
+The algorithm takes an HDFG ($\bar{G}$) as the input and generates the output binary code ($X_{final}$).
 \\\indent
-Nevertheless, we need to look into how a single $bt$ is handled before exploring the collaboration mechanism of threads.
-Algorithm~\ref{alg:sbt}, \textproc{Schedule Binary Tree}, 
-demonstrates how operations in a $bt$ are scheduled into a specific operation sequence.
-It traverse a $bt$ recursively in a post-order fashion, which implies the root is touched first but scheduled last.
-The input is the root $sn$ of a $bt$, and then a list of operations, which indicates execution flow, is returned.
-Line~\ref{line:sbts}--\ref{line:sbte} is the main part of the algorithm.
-For a input $sn$, the existence of its children is checked at the beginning.
-If children exist, the same algorithm, \textproc{Schedule Binary Tree }, is applied to them and the recursion starts.
-The first subroutine, \textproc{Stack Size } shown in Line~\ref{line:gsss}--\ref{line:gsse}, determines the precedence of children.
-After the recursion, the second subroutine, 
-\textproc{Schedule Super Node} shown in Line~\ref{line:ssns}--\ref{line:ssne}, is applied to this $sn$, 
-By this subroutine, cascaded operations in the $sn$ are scheduled consecutively.
-\\\indent
-The key insight of Algorithm~\ref{alg:sbt} is, it optimizes RF access significantly with heuristics from HDFGs.
-Firstly, operations in a $sn$ are scheduled consecutively.
-With this policy, the forwarding mechanism in DeAr can be taken advantage, and unnecessary WB is can be avoided.
-Secondly, the scheduler always schedules the child which demands larger stack size earlier, 
-By this mean, the stack size used by a parent $sn$ is the smaller one of two children plus one, 
-so that we can ensure the cost on stack size is minimized and prevent RF from spilling.
-%-------Schedule Binary Tree----------
-\begin{algorithm}[!ht]
-    \caption{\textproc{Schedule Binary Tree }}
-    \begin{algorithmic}[1]
-        \Require    $sn$
-        \Ensure     $list_{op}$
-        \If{$sn$ is NOT a leaf node}        \label{line:sbts}
-        \State $size_{left} \Leftarrow$ \Call{Stack Size }{$sn.left\_child$}
-        \State $size_{right} \Leftarrow$ \Call{Stack Size }{$sn.right\_child$}
-        \If{$size_{left} > size_{right}$}
-        \State \Call{Schedule Binary Tree }{$sn.left\_child$}
-        \Else
-        \State \Call{Schedule Binary Tree }{$sn.right\_child$}
-        \EndIf
-        \EndIf
-        \State \Call{Schedule Super Node }{$sn$}   
-        \State Erase $sn$ from the binary tree
-        \If{$sn$ IS a root node}        
-        \State \Return{$list_{op}$}
-        \EndIf
-
-        \label{line:sbte}
-        \Statex
-        \Function   {Stack Size }{$sn$}  \label{line:gsss}
-        \If{$sn$ is a leaf node}
-        \State $size \Leftarrow 0$
-        \Else
-        \State $size \Leftarrow \text{\textproc{Max}(\ \textproc{Stack Size }($sn.left\_child$), \textproc{Stack Size }($sn.right\_child$)\ )} + 1$
-        \EndIf
-        \State \Return{$size$}
-        \EndFunction                    \label{line:gsse}
-        \Statex
-        \Function   {Schedule Super Node }{$sn$}  \label{line:ssns}
-        \State   $op \Leftarrow$ $sn.tail$
-        \Do   
-        \State Insert $op$ to $list_{op}$
-        \State $op \Leftarrow op_{next}$
-        \DoWhile{$op \neq sn.head$}
-        \EndFunction                            \label{line:ssne}
-
-    \end{algorithmic}
-    \label{alg:sbt}
-\end{algorithm}
-%----------------------------------------------
-\indent
-To introduce the collaboration mechanism of threads, We further present \textproc{Inter-tree scheduling} and \textproc{Intra-tree scheduling}, 
-both of which require Algorithm~\ref{alg:sbt}.
-A typical HDFG contains multiple $bt$.
-The DeAr scheduler performs \textproc{Inter-tree scheduling} if multiple $bt$s exist.
-Algorithm~\ref{alg:inter} illustrates the detail of \textproc{Inter-tree scheduling}, 
-where the HDFG, $\bar{G}$ is input, and binary code segment, 
-$X_{inter}$, accompanied with a remaining subtree, $bt_{remain}$, will be returned.
-\\\indent
-Line~\ref{line:interws}--\ref{line:interwe}, enclosed by a while loop, is the main part of \textproc{Inter-tree scheduling}.
-The scheduler performs several identical steps for thread-1 and thread-2 respectively.
-It firstly searches the whole $\bar{G}$ and selects a free $bt$ randomly.
-%Such a selection preserves randomness for DeAr scheduler, 
-%and a better scheduling result is possible to be achieved with more trials, as discussed in Algorithm~\ref{alg:framework}.
-Next, it checks whether the work-queue of a thread is empty.
-If the work-queue is empty, the scheduler processes the selected $bt$ with Algorithm~\ref{alg:sbt}, 
-and enqueue the returned $op_{list}$ to the work-queue of a thread.
-Here, a work-queue is data structure that holds the operation sequence that belongs to a thread.
-An operation is removed from a thread's work-queue once it is indeed dispatched to the binary code.
-After above steps, two work-queues are filled, and the key part of the algorithm, \textproc{ALU Alloc}, is performed.
-\textproc{ALU Alloc} dispatches operations from two work-queues which can execute concurrently, 
-and returns a code segment containing the dispatched operations.
-To resolve any resource conflict, it applies Dynamic Programming (DP)~\cite{dp} to allocates ALU for DeAr thread.
-After \textproc{ALU Alloc}, there will be at least one work-queue is consumed, 
+The scheduler firstly completes the \textit{Inter-tree scheduling phase}
+for the purpose of dispatching operations from independent $bt$s to two threads.
+Line~\ref{line:interws}--\ref{line:interwe}, enclosed by a while loop, is the \textit{Inter-tree scheduling phase}, 
+where the scheduler performs symmetric steps for two threads.
+If there is a thread with an empty operation-list, 
+the scheduler searches $\bar{G}$ and selects a free $bt$ randomly, 
+and assigns operations in the $bt$ sorted by higher-first postorder-traversal (\textproc{HFPT Sort}) to its operation-list.
+%The postorder-traversal ensures that children are listed in front of their parent, 
+%and the higher-first policy ensures that the child of the higher subtree is listed in front of its sibling, 
+%which minimizes the lifetime of data in the stack.
+Next, it performs \textproc{ALU Allocation} for two operation-lists.
+This subroutine dispatches operations allowed to execute concurrently, 
+and generates the code segment containing the dispatched operations and control signal for SBRF and TTDB.
+It applies Dynamic Programming (DP)~\cite{dp} to determine which thread should stall when the ALU conflict occurs.
+After \textproc{ALU Allocation}, at least one operation-list is consumed, 
 and the returned code segment is accumulated with the current segment.
-As shown in Line~\ref{line:intercon}, we use the sigh, $\oplus$, to denote the operation of code accumulation.
-Repeat of the loop proceeds until all $bt$ in $\bar{G}$ are consumed.
-However, it is very likely that there is a work-queue where operations remaining at the last iteration.
+As shown in Line~\ref{line:intercon}, we use $\oplus$ to denote the code accumulation.
+The loop proceeds until all $bt$s in $\bar{G}$ are scheduled.
+\\\indent
+Nevertheless, it is very likely that one of operation-lists has operations remaining at the last iteration.
 Line~\ref{line:interis}--\ref{line:interie} illustrate such a scenario.
-Remaining operations are thus reverted to the form of $bt$ by the routine \textproc{Restore Subtree from Queue},
-and a remaining subtree, $bt_{remain}$, is returned.
-%-----------Inter-tree-------------
-\begin{algorithm}[ht!]
-    \caption{\textproc{Inter-tree Scheduling}}
-    \begin{algorithmic}[1]
-        \Require    HDFG $\bar{G} = (V_{bt}, E_{bt})$
-        \Ensure     Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
-        \State $X_{inter} \Leftarrow NULL$       \Comment{Initialize $X_{inter}$}
-        \While{$V_{bt} \neq \emptyset$} \label{line:interws}
-        \If{$work\_queue_{thread1} = \emptyset$}
-        \State Select a binary tree $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$ randomly
-        \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$bt.root$}
-        \State Push $list_{op}$ into $work\_queue_{thread1}$
-        \State Erase $bt$ and its edges from $\bar{G}$
-        \EndIf
-        \If{$work\_queue_{thread2} = \emptyset$}
-        \State Select a binary tree $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$ randomly
-        \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$bt.root$}
-        \State Push $list_{op}$ into $work\_queue_{thread2}$
-        \State Erase $bt$ and its edges from $\bar{G}$
-        \EndIf
-        \State $X_{inter} \Leftarrow X_{inter} \oplus$ \Call{ALU Alloc}{$work\_queue_{thread1}$, $work\_queue_{thread2}$} \label{line:intercon}
-        \EndWhile \label{line:interwe}
-        \If{$work\_queue_{thread1} \neq \emptyset$} \label{line:interis}
-        \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
-        \State Clear $work\_queue_{thread1}$
-        \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
-        \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread2}$}
-        \State Clear $work\_queue_{thread2}$
-        \Else
-        \State $bt_{remain} \Leftarrow NULL$
-        \EndIf \label{line:interie}
-        \State \Return{$X_{inter}$, $bt_{remain}$}
-    \end{algorithmic}
-    \label{alg:inter}
-\end{algorithm}
-%------------------------------------------
-\indent 
-To deal with the $bt_{remain}$, \textproc{Intra-tree Scheduling}, illustrated in Algorithm~\ref{alg:intra}, is applied.
-The principle of \textproc{Intra-tree Scheduling} is similar to the one of \textproc{Inter-tree Scheduling} ---
-using two threads to process two $bt$ concurrently and collaboratively.
-Line~\ref{line:intra:ws}--\ref{line:intra:we} show a while loop, 
-which generates binary code iteratively.
+Remaining operations are thus reverted to the original form of $bt$ by the subroutine \textproc{Restore Subtree from list},
+and a remaining subtree, $bt_{remain}$, is obtained.%
+\\\indent
+To deal with the $bt_{remain}$, 
+the scheduler performs the \textit{Intra-tree scheduling phase}, 
+which dispatches operations from two subtrees of the $bt_{remain}$ to two threads.
+Line~\ref{line:intra:ws}--\ref{line:intra:we} show a while loop for \textit{Intra-tree scheduling phase}.
 A crucial strategy applied here is, partitioning $bt_{remain}$ into three parts:
 the root node, left and right subtrees.
-Since operations in the root can only be handled sequentially, 
+Since operations in the root must be handled sequentially, 
 we can dispatch them directly with a single thread (thread 1), 
-and obtain a tail segment of binary code, $X_{tail}$.
-Next, by treating the left and right subtrees as independent trees, 
-we schedule them into work-queues of two threads respectively with \textproc{Schedule Binary Tree},
-and call \textproc{ALU Alloc} to obtain another segment of binary code, $X_{body}$.
-By above steps, $bt_{remain}$ keeps shrinking while $X_{body}$ and $X_{tail}$ keep accumulating,
-until all operations left in $bt_{remain}$ are dispatched to the binary.
-Finally, we concatenate $X_{inter}$ from \textproc{Inter-tree Scheduling}, $X_{body}$ as well as $X_{tail}$,
-and obtain the complete binary code $X_{final}$.
-%----------------Intra-tree---------------
-\begin{algorithm}[!ht]
-    \caption{\textproc{Intra-tree Scheduling}}
-    \begin{algorithmic}[1]
-        \Require    Remaining subtree $bt_{remain}$, binary code segment $X_{inter}$
-        \Ensure     Final binary code $X_{final}$
-        \State $X_{tail}, X_{body} \Leftarrow NULL$
-        \While{$bt_{remain} \neq \emptyset$}    \label{line:intra:ws}
-        \State $list_{op} \Leftarrow$ \Call{Schedule Super Node }{$X_{remain}.root$}
-        \State Push $list_{op}$ into $work\_queue_{thread1}$
-        \State $X_{tail} \Leftarrow$ \Call{Gen Code }{$list_{op}$} $\oplus X_{tail}$
-        \State Erase $X_{remain}.root$ and obtain two sub-trees, $sbt_{left}, sbt_{right}$
-        \Statex
-        \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$sbt_{left}.root$}
-        \State Push $list_{op}$ into $work\_queue_{thread1}$
-        \State $list_{op} \Leftarrow$ \Call{Schedule Binary Tree }{$sbt_{right}.root$}
-        \State Push $list_{op}$ into $work\_queue_{thread2}$
-        \State $X_{body} \Leftarrow X_{body} \oplus$ \Call{ALU Alloc }{$work\_queue_{thread1}$, $work\_queue_{thread2}$}
-        \Statex
-        \If{$work\_queue_{thread1} \neq \emptyset$}
-        \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread1}$}
-        \State Clear $work\_queue_{thread1}$
-        \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
-        \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree from Queue }{$work\_queue_{thread2}$}
-        \State Clear $work\_queue_{thread2}$
-        \Else
-        \State $bt_{remain} \Leftarrow NULL$
-        \EndIf
-        \EndWhile   \label{line:intra:we}
-        \State $X_{final} \Leftarrow X_{inter} \oplus X_{body} \oplus X_{tail}$
-        \State \Return{$X_{final}$}
-    \end{algorithmic}
-    \label{alg:intra}
+and obtain a binary code segment, $X_{single}$.
+Then, by treating the left and right subtrees as independent trees, 
+we can perform similar steps applied in the \textit{Inter-tree scheduling phase}.
+We manipulate \textproc{HFPT Sort} and \textproc{ALU Allocation} again, and obtain another binary code segment, $X_{intra}$.
+By repeating above steps, $bt_{remain}$ keeps shrinking while $X_{intra}$ and $X_{single}$ keep accumulating,
+until all operations left in $bt_{remain}$ are dispatched.
+Finally, we concatenate $X_{inter}$, $X_{intra}$ and $X_{single}$,
+and obtain the complete code $X_{final}$.
+%-----------Inter-tree-------------
+%\setlength{\textfloatsep}{0pt}% Remove \textfloatsep
+\begin{algorithm}[ht!]
+    {
+        \caption{\textproc{HDFG-based Scheduling}}
+        \begin{algorithmic}[1]
+            \Require    HDFG $\bar{G} = (V_{bt}, E_{bt})$
+            \Ensure     $X_{final}$
+            \State $X_{inter},X_{intra},X_{single}\Leftarrow NULL$       %\Comment{Initialize $X_{inter}$}
+            \While{$V_{bt} \neq \emptyset$} \label{line:interws}
+            \Comment \textit{Inter-tree scheduling phase}
+            \If{$op\_list_{thread1} = \emptyset$}
+            %\State Select $bt \ni \sum_{bt \in V_{bt}}\textrm{deg}^-(bt) = 0$
+            \State $op\_list_{thread1} \Leftarrow$ \Call{HFPT Sort }{$bt$}, where $bt\in V_{bt}\ |\ \textrm{deg}^-(bt) = 0$ 
+            %\State Erase $bt$ and its edges from $\bar{G}$
+            \EndIf
+            \If{$op\_list_{thread2} = \emptyset$}
+            \State $op\_list_{thread2} \Leftarrow$ \Call{HFPT Sort }{$bt$}, where $bt\in V_{bt}\ |\ \textrm{deg}^-(bt) = 0$
+            %\State Erase $bt$ and its edges from $\bar{G}$
+            \EndIf
+            \State $X_{1} \Leftarrow X_{1}\oplus$\Call{ALU Alloc}{$op\_list_{thread1}$,$op\_list_{thread2}$} \label{line:intercon}
+            \EndWhile \label{line:interwe}
+            \If{$work\_queue_{thread1} \neq \emptyset$} \label{line:interis}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore-Subtree}{$op\_list_{thread1}$}
+            \State Clear $work\_queue_{thread1}$
+            \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore-Subtree}{$op\_list_{thread2}$}
+            \State Clear $work\_queue_{thread2}$
+            \Else
+            \State $bt_{remain} \Leftarrow NULL$
+            \EndIf \label{line:interie}
+            \While{$bt_{remain} \neq \emptyset$}    \label{line:intra:ws}
+            \Comment \textit{Intra-tree scheduling phase}
+            \State $X_{single} \Leftarrow$ \Call{Gen Code Single Thread }{$bt_{root}$} $\oplus X_{single}$
+            \State $op\_list_{thread1} \Leftarrow$ \Call{HFPT Sort }{$bt_{left-subtree}$}
+            \State $op\_list_{thread2} \Leftarrow$ \Call{HFPT Sort }{$bt_{right-subtree}$}
+            \State $X_{body} \Leftarrow X_{body} \oplus$ \Call{ALU Alloc }{$op\_list_{thread1}$, $op\_list_{thread2}$}
+            \If{$work\_queue_{thread1} \neq \emptyset$}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree}{$work\_queue_{thread1}$}
+            \State Clear $work\_queue_{thread1}$
+            \ElsIf{$work\_queue_{thread2} \neq \emptyset$}
+            \State $bt_{remain} \Leftarrow$ \Call{Restore Subtree}{$work\_queue_{thread2}$}
+            \State Clear $work\_queue_{thread2}$
+            \Else
+            \State $bt_{remain} \Leftarrow NULL$
+            \EndIf
+            \EndWhile   \label{line:intra:we}
+            \State $X_{final} \Leftarrow X_{inter} \oplus X_{intra} \oplus X_{single}$
+            \State \Return{$X_{final}$}
+        \end{algorithmic}%
+        \label{alg:sche}
+    }
 \end{algorithm}
-%-------------------------------------------
 \indent
-The key insight of Algorithm~\ref{alg:inter} and Algorithm~\ref{alg:intra} is, they both take advantage of DP.
+In the following, we elaborate how Algorithm~\ref{alg:sche} achieves high data forwarding rate, ILP and minimum stack memory consumption respectively.
+Firstly, the key to achieving high data forwarding rate is the interpretation of the proposed HDFG, 
+which indicates the forwarding moment and forwarding path explicitly.
+\indent
+Secondly, the key to achieving ILP is taking advantage of DP.
 DP is a powerful technique often used in optimization with sequence data \cite{dpseq}.
-With the criterion of maximizing OPC, DP determines which of two threads shall stall when ALU conflict occurs.
+With the criterion of maximizing the number of concurrent operations, DP determines which of two threads shall stall when ALU conflict occurs.
 As a result, optimized ALU allocation within a certain search space (product of two work-queues length), can be achieved.
 Figure~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
 It contains three stages involving the scoring table marked with Arabic numerals horizontally, and English alphabets vertically.
@@ -746,8 +646,6 @@ We demonstrate the detail stage by stage as below:
         where a horizontal move indicates allocating ALU for the horizontal operation,
         a vertical move indicates allocating ALU for the vertical operation and a diagonal move indicates allocating ALU for both.
 \end{enumerate}
-%At the first stage, 
-
 \vspace{\textfig}
 \begin{figure}[!ht]
     \begin{center}
@@ -772,14 +670,49 @@ We demonstrate the detail stage by stage as below:
     \caption{DP-based ALUs allocation}
     \label{fig:alloc}
 \end{figure}
-
 \indent
-Another insight of Algorithm~\ref{alg:intra} is making use of binary tree characteristics.
-Since any left subtree and its sibling can be processed in parallel,
-the scheduler can still balance the workload for two threads by splitting two subtrees from the root even if only one $bt$ remains in the HDFG, 
-and thus ILP is kept.
-
-
-
-
-
+Lastly, the key to achieving minimum stack consumption is the manipulation of HFPT-sort.
+Fig.~\ref{fig:hfpt} shows an example of performing the HFPT-sort on a $bt$, 
+where the number in each $sn$ denotes the execution order, 
+and each parent receives the first operand from the stack and the second one from the forwarding network.
+The postorder-traversal ensures that children are processed before their parent, 
+and thus operands received by parents are validated. 
+Conventionally, the left-subtree has the priority in the postorder-traversal, 
+but we apply the higher-subtree-first rule instead, 
+which indicates the higher subtree root has the higher execution priority over its sibling.
+This implies that the stack is always used by the higher subtree root.
+As a result, for any $bt$, we can represent the stack size requested by HFPT (HFPTSS) in a recursive form:
+\begin{equation*}
+    HFPTSS(bt) = max(\ HFPTSS(bt.higher\_subtree),\ HFPTSS(bt.lower\_subtree) + 1\ )
+\end{equation*}
+Based on the equation above, one can use mathematical induction to prove that the stack memory consumes by HFPT is less than or equal to any possible traversal.
+%Next, we would like to prove that $HFPTSS(bt)$ is the optimized stack size (OSS) for a $bt$ by mathematical induction, or:
+%\begin{equation}
+%    HFPTSS(bt) = OSS(bt) 
+%\end{equation}
+%Letting $bt_n$ denotes a binary tree having a height of $n$, 
+%Eq.~4.2 holds apparently for $bt_0$, 
+%which forms the basis of methematical induction:
+%\begin{equation}
+%    HFPTSS(bt_0) = 0 = OSS(bt_0) 
+%\end{equation}
+%Using the induction hypothesis that the Eq.~4.2 also holds for $bt_k$ and $bt_x$, 
+%which are the higher and lower subtrees of $bt_{k+1}$ respectively (i.e., $x < k$), we have:
+%\begin{equation}
+%    \begin{aligned}
+%        HFPTSS(bt_{k+1}) & = max(\ HFPTSS(bt_k),\ HFPTSS(bt_x) + 1\ ) \\
+%                         & = max(\ OSS(bt_k),\ OSS(bt_x) + 1\ ) \ \ \text{where } OSS(bt_k) \geq OSS(bt_x) \\
+%    \end{aligned}
+%\end{equation}
+%and the lifetime of data in the stack always correspond to the size of the lower subtree.
+%As a result, the lifetime of data in the stack reduced, 
+%and the stack consumption is minimized.
+%and the higher-first policy ensures that the child of the higher subtree is listed in front of its sibling, 
+%which minimizes the lifetime of data in the stack.
+\begin{figure}[!h]
+    \begin{center}
+        \includegraphics[width=0.45\textwidth]{figs/hfpt.eps}
+    \end{center}
+    \caption{HFPT-sort}
+    \label{fig:hfpt}
+\end{figure}%
