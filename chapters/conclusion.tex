@@ -1,21 +1,21 @@
 \chapter{Conclusions and Future Work}
-In this work, we proposed an efficient, fast and flexible DSP core design, DeAr,
+In this work, we propose an efficient and flexible DSP core design, DeAr,
 which manipulates SMT in a VLIW-fashion datapath.
 The compact hardware design endows DeAr good scalability of multi-core architecture, 
 which is suitable for the HSA programming model.
+Besides, we propose a novel program analysis approach based on the hierarchical data flow graph (HDFG), which is an enhanced data flow graph.
+By leveraging HDFG-based scheduling, DeAr achieves high ILP, good flexibility and low RF access rate.
 % which out-performs 
 To demonstrate the compatibility of DeAr with HSA,
-we also presented an architectural framework of the HSA platform with a multi-core DeAr DSP, 
-and developed the complete compiler software.
+we also present the architectural framework of an HSA platform integrated with a multi-core DeAr DSP, 
+and the software framework of a HSA-compatible DeAr compiler.
 \\\indent
-To validate the low-cost design of DeAr, we prepared two DSP benchmark suites, basic linear algebra subprograms (BLAS) and general digital signal processing kernels (GDSPK).
-In BLAS, DeAr reduced 35.4\%--21.1\% or 21.2--5.3\% of area,
+To validate the low-cost design of DeAr, we prepared two DSP benchmark suites, basic linear algebra subprograms (BLAS) and general digital signal processing kernels (GDSPK) in the experiment.
+In BLAS, DeAr reduces 35.4\%--21.1\% or 21.2--5.3\% of area,
 and 22.7\%--15.1\% or 46.9\%--2.8\% of power dissipation , compared with the VLIW or composite-ALU architecture.
-In GDSPK, on the other hand, DeAr reduced 35.2\%--21.6\% or 33.5\%--4.7\% of area, 
+In GDSPK, on the other hand, DeAr reduces 35.2\%--21.6\% or 33.5\%--4.7\% of area, 
 and 18.5\%--10.4\% or 19.7\%--1.5\% of power dissipation , compared with the VLIW or composite-ALU architecture.
-In addition to the efficiency at the circuit level, DeAr also achieved significant improvement on code density.
-It saved 56.5\%--35.7\% or 42.9\%--24.9\% of code size measured in effected instruction width (EIW), 
-compared with the VLIW or composite-ALU architecture.
+In addition to the efficiency at the circuit level, DeAr also achieves significant improvement on code density.
 % though DCT is not well, matrix arithmetic is good
 \\\indent
 The main future work is the implementation of the memory layout controller~\cite{sc} for DeAr.
@@ -26,15 +26,15 @@ However, we still need more studies to achieve best trade-off among throughput, 
 % pipeline
 Other possible future works include extending the DeAr ISA.
 Although the current ISA are already capable of handling most DSP kernel benchmarks, 
-we still preserved some function code and bit fields to offer the abundant freedom of enhancements, 
+we still preserve some function code and bit fields to offer the abundant freedom of enhancements, 
 such as adding special function units and supporting interrupt instructions.
-The user can easily develop new features in DeAr to satisfy the demands from applications.
+The user can easily develop new features in DeAr to meet the application demands.
 Another promising work is conducting the full system emulation of DeAr on existing HSA emulators such as HSAemu~\cite{hsaemu}.
 With the evaluation at the system level, the designer is more likely to achieve the better memory hierarchy and interconnection design for multi-core DeAr.
 Beyond DSP, we are also exploring the possibilities of applying DeAr to GPU.
-The efficient arithmetic allows DeAr to become a potential alternative to a conventional RISC shader core.
+The efficient arithmetic allows DeAr to be a potential alternative to a conventional RISC shader core.
 However, GPU features massive threads that context-switch frequently.
 Consequently, a state-of-the-art GPU is usually equipped with the dedicated hardware scheduler to manage them.
-Applying such a hardware-based thread scheduler to DeAr still needs more studies as well.
+Applying such a hardware-based thread scheduler to DeAr still needs more studies too.
 
 

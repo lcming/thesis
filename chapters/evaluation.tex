@@ -1,13 +1,13 @@
 \chapter{Performance Evaluation}
 \section{Experiment Setup}
 \label{sec:evaluation:setup}
-In this chapter, we present the performance evaluation of DeAr and demonstrate its capability of efficient arithmetic.
+In this chapter, we present the performance evaluation of DeAr and demonstrate its capability of efficient and flexible arithmetic.
 Two benchmark suites were prepared for the experiment.
 The first one is adapted from the BLAS~\cite{blas} library, 
 which contains various matrix arithmetic subprograms that are crucial in wireless communication.
 The second one includes general DSP kernels (GDSPK) selected from classic DSP benchmark suites, BDTI~\cite{bdti} and DSPstone~\cite{dspstone}.
 Table~\ref{tab:op} lists the operation profiling of two benchmark suites, 
-where each subprogram/kernel comprises three primitive operations, addition, multiplication and shifting.
+where each subprogram/kernel consists of three primitive operations, addition, multiplication and shifting.
 \begin{table}[!ht]
     \centering
     \caption{Operation profiling of two benchmark suites}
@@ -36,9 +36,9 @@ where DeAr, scalar, VLIW, and composite-ALU architectures (a class of ASIP) \cit
 The instruction unit provides stimulus to the design under test (DUT) from instruction memory (IM),
 and the L/S unit handles data between the DUT and data memory (DM).
 The DUT was replaced in accordance with DeAr and other architectures, 
-which have identical ALU composed one adder, one multiplier and one shifter.
+which have identical ALU composed of one adder, one multiplier and one shifter.
 Note that we implemented the composite-ALU architecture based on best two ALU configurations (or ALU order), MSA and AMS, described in \cite{cascade}.
-Please also refer to Figure~\ref{fig:vliw} and \ref{fig:cascade} for details of VLIW and composite-ALU respectively.
+Please also refer to Fig.~\ref{fig:vliw} and Fig.~\ref{fig:cascade} for details of VLIW and composite-ALU respectively.
 \vspace{\textfig}
 \begin{figure}[!ht] 
     \centering
@@ -59,13 +59,13 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     Operations per cycle (OPC) evaluates the utilization rate of the ALU.
     This metric is obtained by statically scheduling operations of a DSP kernel for various architectures.
     Under the performance requirement of target applications, OPC helps to determine the timing constraint for hardware synthesis, 
-    where higher OPC brings looser timing constraint, which results in lower cost from the post-synthesis hardware.
-    Table~\ref{tab:opc} profiles the OPC of the DSP cores with the assumption that every operation consumes exactly one clock cycle.
+    where higher OPC brings looser timing constraint, which reduces the cost of post-synthesis hardware.
+    Table~\ref{tab:opc} profiles OPC of the DSP cores with the assumption that every operation consumes exactly one clock cycle.
     The OPC of the scalar processor is fixed to 1.0 because of the limitation of the single-issue datapath.
     On the contrary, benefiting from the wide issue-width and large port number of RF, VLIW gains the best OPC in all benchmarks.
     \\\indent
     The OPC of DeAr is limited by the access pattern of the sequential-access banked RF, which either be LIFO or FIFO, 
-    and thus it was not possible for DeAr to out-perform the VLIW in regard to OPC.
+    and thus it is not possible for DeAr to out-perform the VLIW in regard to OPC.
     Nevertheless, by leveraging the proposed HDFG-based scheduling,  
     DeAr still gains approximate OPC of the VLIW, with only 1.11\% and 4.26\% loss in BLAS and GDSPK respectively.
     On the other hand, the OPC of composite FU architecture is highly correlated with the cascade order and the benchmark characteristic. 
@@ -105,7 +105,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     It is calculated dividing the actual number of RF file accesses by the worst case number of accesses.
     Table~\ref{tab:rpd} profiles the RF access rate of each architecture in regard to various benchmarks.
     Under the assumption of single cycle datapaths, conventional architectures, scalar and VLIW, 
-    lack bypassing capability and write back the arithmetic result every cycle, 
+    lack bypassing capability and write back the arithmetic result every cycle.
     We refer to the RF access number of such a scenario as the worst case, 
     and thus their RF access rate is fixed to 1.0.
     On the contrary, DeAr leverages TTDB and HDFG-based scheduling to exploit data bypassing opportunities. 
@@ -144,7 +144,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     In this section, we present hardware synthesis results with target throughput varying from 50 to 1000 MOPS, 
     We implemented aforementioned designs with UMC 65nm cell library, 
     and measured their area and power dissipation with Synopsys Design Compiler and Synopsys Prime Time under the throughput constraint based on Table~\ref{tab:opc}.
-    Synthesis failures owing to timing violation reported by the tool would remain corresponding fields empty in figures.
+    Synthesis failures owing to timing violation reported by the tool would remain corresponding fields empty in the figures.
     \subsection{Area}
     Figure~\ref{chart:area} shows the synthesis area of DSP cores regarding to the BLAS (a) and GDSPK (b) benchmark suites.
     The proposed DeAr save 24.5\%--21.1\% and 24.9\%--21.6\% of area in BLAS and GDSPK respectively compared with VLIW.
@@ -161,7 +161,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     which leads to sharp area growth as throughput increasing.
     \\\indent Benefiting from the simplicity of its datapath, 
     scalar costs lowest area when while throughput is low.
-    However, the low OPC of scalar becomes the terrible burden on gaining high throughput.
+    However, its low OPC becomes a terrible burden on gaining high throughput.
     As a result, while throughput is above 600 MOPS (BLAS) or 650 MOPS (GDSPK), 
     the area of scalar exceeds the one of DeAr, 
     and DeAr achieves the lowest area among five designs.
@@ -191,23 +191,23 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     \\\indent
     Figure~\ref{chart:area} shows the power dissipation of DSP cores regarding to the BLAS~(a) and GDSPK~(b) benchmark suites.
     Generally, they grow at various slopes with throughput, which has a factor of $f$, 
-    and the near-linear growth indicates the domination of the dynamic power.
+    and the near-linear growth indicates the domination of dynamic power.
     DeAr saves 22.7\%--15.1\% (BLAS) and 18.5\%--10.4\% (GDSPK) of power compared with VLIW.
-    The power reduction achieved by DeAr is attributed to its low register access rate, which reduces $\alpha$
+    The power reduction achieved by DeAr is attributed to its low register access rate, which reduces $\alpha$, 
     and banked RF organization, which reduces $C_L$.
     \\\indent
-    The power dissipation of composite-ALU is significantly affected by ALU order.
+    The power dissipation of composite-ALU is significantly affected by its ALU order.
     Below 600 MOPS, DeAr achieves 46.9\%--41.2\% (BLAS) and 19.7\%--15.8\% (GDSPK) power reduction against AMS, 
     but only achieves 7.1\%--2.6\% (BLAS) and 11.4\%--1.5\% (GDSPK) against MSA.  
     Compared with AMS, MSA benefits from high OPC, which reduces $f$, and low RF access rate, which reduces $\alpha$, 
     so it could stay competitive against DeAr in this metric.
-    However, the sharp area growth of composite-ALU also drives the severe growth of $C_L$ in the long run.
-    As a result, power dissipation of MSA gradually diverges from the one of DeAr as throughput increasing, 
+    However, the sharp area growth of composite-ALU also drives severe growth of $C_L$.
+    As a result, the power dissipation of MSA gradually diverges from the one of DeAr as throughput increasing, 
     and DeAr achieves 22.5\%--8.7\% (BLAS) and 37.8\%--12.1\% (GDSPK) reduction against MSA while throughput is above or equal 600 MOPS.
     \\\indent
     Although the scalar processor costs very low area, which implies very low $C_L$, 
-    the worst OPC and RF access rate among designs brings unfavorable $f$ and $\alpha$, 
-    which results in severe power dissipation. 
+    its worst OPC and RF access rate among designs brings unfavorable $f$ and $\alpha$, 
+    which result in severe power dissipation. 
     Compared with the scalar, DeAr saves 52.1\%--45.8\% (BLAS) and 47.1\%--38.5\% (GDSPK) of power while throughput is below 700 MOPS, 
     and the synthesis for scalar failed while throughput is above 700 MOPS.
     In regard to power dissipation, DeAr achieves the best result among designs regardless of throughput.
@@ -232,9 +232,9 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     The evaluation of static power dissipation can present rough patterns of total power dissipation in more advanced CMOS technologies, 
     where the static portion of power usually exceeds the dynamic one.
     Fig.~\ref{chart:leakage} shows the static power dissipation of DSP cores in regard to the BLAS~(a) and GDSPK~(b) benchmark suites.
-    The fact that growth pattern of Fig.~\ref{chart:leakage} is similar to the one of Fig~\ref{chart:area} regardless of the design indicates a high correlation between static power and area.
+    The fact that the growth pattern of Fig.~\ref{chart:leakage} is similar to the one of Fig~\ref{chart:area} regardless of the design indicates a high correlation between static power and area.
     As a result, compared with VLIW, DeAr saves 30.1\%--22.7\% (BLAS) and 29.6\%--21.9\% (GDSPK) of static power, 
-    which are approximate to the save percentage of area, 24.5\%--21. 1\% and 24.9\%--21.6\%.
+    which are approximate to the save percentage of area, 24.5\%--21.1\% and 24.9\%--21.6\%.
     \\\indent 
     On the other hand, DeAr saves up to 40.3\% (BLAS) and 58.1\% (GDSPK) of static power against MSA.
     When compared with AMS, DeAr saves up to 31.2\% (BLAS) and 10.4\% (GDSPK) of static power.
@@ -248,7 +248,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     \\\indent 
     Similar to the scenario in the area evaluation, 
     scalar consumes less static power than DeAr does while throughput is low.
-    Nevertheless, while throughput is above 350 MOPS, DeAr saves 23.7\%--2.2\% (BLAS) and 23.4\%--2.1\% (GDSPK) of static power instead against the scalar, 
+    Nevertheless, while throughput is above 350 MOPS, DeAr saves 23.7\%--2.2\% (BLAS) and 23.4\%--2.1\% (GDSPK) of static power against the scalar instead, 
     which suffers from the sharp growth of area as well.
     As a result, DeAr achieves the lowest static power dissipation among five designs in both benchmark suites while throughput is above 350 MOPS.
     \vspace{\textfig}

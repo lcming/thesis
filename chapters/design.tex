@@ -515,10 +515,10 @@ The whole process of the HSAIL transformation contains two phases elaborated as 
 \subsection{HDFG-based Scheduling}
 \label{sec:scheduling}
 The goal of the DeAr scheduler is generating the binary code with ILP, high data forwarding rate, 
-and minimum stack memory consumption of each thread.
+and minimum stack memory consumption for both threads.
 To achieve the goal, we present a novel scheduling algorithm, 
-\textproc{HDFG-based scheduling}, which is shown in Algorithm~\ref{alg}.
-The algorithm takes an HDFG ($\bar{G}$) as the input and generates the output binary code ($X_{final}$).
+\textproc{HDFG-based scheduling}, which is shown in Algorithm~\ref{alg:sche}.
+The algorithm takes an HDFG $\bar{G}$ as the input and generates the output binary code $X_{final}$.
 \\\indent
 The scheduler firstly completes the \textit{Inter-tree scheduling phase}
 for the purpose of dispatching operations from independent $bt$s to two threads.
@@ -546,7 +546,7 @@ and a remaining subtree, $bt_{remain}$, is obtained.%
 \\\indent
 To deal with the $bt_{remain}$, 
 the scheduler performs the \textit{Intra-tree scheduling phase}, 
-which dispatches operations from two subtrees of the $bt_{remain}$ to two threads.
+which dispatches operations from two subtrees of the $bt_{remain}$ to two threads respectively.
 Line~\ref{line:intra:ws}--\ref{line:intra:we} show a while loop for \textit{Intra-tree scheduling phase}.
 A crucial strategy applied here is, partitioning $bt_{remain}$ into three parts:
 the root node, left and right subtrees.
@@ -613,13 +613,12 @@ and obtain the complete code $X_{final}$.
         \label{alg:sche}
     }
 \end{algorithm}
-\indent
+\\\indent
 In the following, we elaborate how Algorithm~\ref{alg:sche} achieves high data forwarding rate, ILP and minimum stack memory consumption respectively.
 Firstly, the key to achieving high data forwarding rate is the interpretation of the proposed HDFG, 
 which indicates forwarding opportunities explicitly.
-\indent
-Secondly, the key to achieving ILP is taking advantage of DP.
-DP is a powerful technique often used in optimization with sequence data \cite{dpseq}.
+\\\indent
+Secondly, the key to achieving ILP is taking advantage of DP, which is a powerful technique often used in optimization with sequence data \cite{dpseq}.
 With the criterion of maximizing the number of concurrent operations, DP determines which of threads should stall when ALU conflict occurs.
 As a result, the optimized ALU allocation within a certain search space (product of two sequence length), can be achieved.
 Figure~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
@@ -628,7 +627,7 @@ We demonstrate the detail stage by stage as below:
 \begin{enumerate}
     \item \textbf{Table modeling} As shown in Figure~\ref{fig:alloc:1}. An (\textit{m}+2) by (\textit{n}+2) empty table is initialized, 
         where \textit{m} and \textit{n} are the sizes of two operation sequences for ALU allocation.
-        In this example, we assume two DeAr threads have identical sequences, three multiplications followed by three additions, 
+        In this example, we assume that two DeAr threads have identical sequences, three multiplications followed by three additions, 
         and thus the scoring table is 8 by 8 in this case.
         The algorithm places two sequences on the top row and leftmost column respectively, 
         with three entries on the upper-left corner (\textit{a0}, \textit{a1} and \textit{b0}) always remaining empty. 
@@ -640,7 +639,7 @@ We demonstrate the detail stage by stage as below:
         If it can be, the entry gets the score of the left-top adjacent plus 1.
         Otherwise, it gets the score of either the left adjacent or top adjacent plus.
         Note that the algorithm always chooses the best one among possible scores.
-        After the traversal, the score of bottom-right corner, \textit{h7}, represents the optimized cycle counts to accomplish two operation sequences.
+        After the traversal, the score of bottom-right corner, \textit{h7}, represents the optimized cycle count to accomplish two operation sequences.
     \item \textbf{Backtracking} As shown in Figure~\ref{fig:alloc:3}, the algorithm traces back from \textit{h7} to \textit{b1} according to the score accumulating paths.
         Since such paths can be multiple, we randomly select a path from them with the random seed introduced in~\ref{sec:swframework}.
         Finally, the ALU allocation is accomplished by reporting the selected path, 
@@ -671,16 +670,16 @@ We demonstrate the detail stage by stage as below:
     \caption{DP-based ALUs allocation}
     \label{fig:alloc}
 \end{figure}
-\indent
-Lastly, the key to achieving minimum stack consumption is the manipulation of HFPT-sort.
+
+\indent Lastly, the key to achieving the minimum stack consumption is manipulating HFPT-sort.
 Fig.~\ref{fig:hfpt} shows an example of performing the HFPT-sort on a $bt$, 
 where the number in each $sn$ denotes the execution order, 
 and each parent receives the first operand from the stack and the second one from the forwarding network.
 The postorder-traversal ensures that children are processed before their parent, 
 and thus operands received by parents are validated. 
 \\\indent
-On the other hand, a left-subtree has a higher priority than its sibling in the conventional postorder-traversal, 
-but we apply the higher-subtree-first rule instead, 
+Besides, in conventional postorder-traversal, a left-subtree has a higher priority than its sibling.
+Nevertheless, we apply the higher-subtree-first rule instead, 
 which indicates that a higher subtree has a higher execution priority than its sibling.
 This implies that the stack memory is always written by the root of a higher subtree.
 As a result, for any $bt$, we can represent the stack size consumed by HFPT (HFPTSS) in a recursive form:
