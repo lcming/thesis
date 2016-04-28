@@ -31,7 +31,7 @@ where each subprogram/kernel consists of three primitive operations, addition, m
         \end{tabular}
     }
 \end{table}
-\\\indent Figure~\ref{fig:sim} shows the simulation environment of the experiment, 
+\\\indent Fig.~\ref{fig:sim} shows the simulation environment of the experiment, 
 where DeAr, scalar, VLIW, and composite-ALU architectures (a class of ASIP) \cite{cascade} were evaluated for comparison. 
 The instruction unit provides stimulus to the design under test (DUT) from instruction memory (IM),
 and the L/S unit handles data between the DUT and data memory (DM).
@@ -146,7 +146,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     and measured their area and power dissipation with Synopsys Design Compiler and Synopsys Prime Time under the throughput constraint based on Table~\ref{tab:opc}.
     Synthesis failures owing to timing violation reported by the tool would remain corresponding fields empty in the figures.
     \subsection{Area}
-    Figure~\ref{chart:area} shows the synthesis area of DSP cores regarding to the BLAS (a) and GDSPK (b) benchmark suites.
+    Fig.~\ref{chart:area} shows the synthesis area of DSP cores regarding to the BLAS (a) and GDSPK (b) benchmark suites.
     The proposed DeAr save 24.5\%--21.1\% and 24.9\%--21.6\% of area in BLAS and GDSPK respectively compared with VLIW.
     The area of the VLIW architecture is dominated by RF, 
     which demands complicated interconnection among ports and registers to facilitate centralized organization.
@@ -189,7 +189,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     As a result, we focus on the analysis of the dynamic power, 
     which is proportional to the product of clock rate $f$, logic switching rate $\alpha$ and the load $C_L$ of each cell.
     \\\indent
-    Figure~\ref{chart:area} shows the power dissipation of DSP cores regarding to the BLAS~(a) and GDSPK~(b) benchmark suites.
+    Fig.~\ref{chart:area} shows the power dissipation of DSP cores regarding to the BLAS~(a) and GDSPK~(b) benchmark suites.
     Generally, they grow at various slopes with throughput, which has a factor of $f$, 
     and the near-linear growth indicates the domination of dynamic power.
     DeAr saves 22.7\%--15.1\% (BLAS) and 18.5\%--10.4\% (GDSPK) of power compared with VLIW.
@@ -252,7 +252,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     which suffers from the sharp growth of area as well.
     As a result, DeAr achieves the lowest static power dissipation among five designs in both benchmark suites while throughput is above 350 MOPS.
     \vspace{\textfig}
-    \begin{figure}[!ht]
+    \begin{figure}[t]
         \begin{center}
             \subfigure[BLAS benchmark suite]
             {

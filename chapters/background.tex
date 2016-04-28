@@ -16,7 +16,7 @@
         This can be resolved by designing a multi-issue datapath with either hardware (i.e., superscalar) or software (i.e., VLIW) instruction scheduling.
         In the field of DSP design, adopting the VLIW architecture is a preferable strategy, 
         because hardware simplicity matters than portability and many optimization approaches can be applied in compilation stages. 
-        Figure~\ref{fig:vliw} illustrates a 3-way issue VLIW datapath, where three instructions can be dispatched at a cycle.
+        Fig.~\ref{fig:vliw} illustrates a 3-way issue VLIW datapath, where three instructions can be dispatched at a cycle.
         The number of ports on RF is scaled up with the issue-width, and the compiler is responsible for performing static scheduling to avoid resources conflict among operations.
         \vspace{\textfig}
         \begin{figure}[!ht] 
@@ -29,7 +29,7 @@
         The second drawback of scalar is plenty of redundant writing back (WB) to RF. 
         In digital signal processing, intermediate results are often read exactly once, which implies lots of RF storage of them is redundant.
         Several approaches have been proposed to address this issue.
-        Figure~\ref{fig:cascade} shows the datapath of the composite-ALU architecture that cascades primitive arithmetic units. 
+        Fig.~\ref{fig:cascade} shows the datapath of the composite-ALU architecture that cascades primitive arithmetic units. 
         Intermediate results can be forwarded from one to its follower with an optimized order which targets specific applications.
         The processor with such customization in the datapath is referred to as application-specific instruction set processor (ASIP).
         \vspace{\textfig}
@@ -40,7 +40,7 @@
             \label{fig:cascade}
         \end{figure}
         \\\indent
-        Another approach that enables forwarding mechanism even further is shown in Figure~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
+        Another approach that enables forwarding mechanism even further is shown in Fig.~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
         Such an architecture makes a significant distinction from scalar because only a "move" instruction is needed. 
         All computation can be completed by moving operands on the interconnection network, avoiding WB as much as possible.
         \vspace{\textfig}
@@ -63,7 +63,7 @@
     %\subsection{Area}
     %\label{sec:area}
     %RF is an array of register cells, each of which connects to several bit lines and word lines.
-    %Figure~\ref{fig:rf} illustrates a basic schematic of a register cell.
+    %Fig.~\ref{fig:rf} illustrates a basic schematic of a register cell.
     %    \vspace{\textfig}
     %    \begin{figure}[!ht] 
     %        \centering
@@ -97,7 +97,7 @@
     %because every bit line dedicated to a port needs to be active to accomplish an access to the port.
     %As the port number increases, the capacitance in bit line is principally wire capacitance.
     %The overall power consumption of bit lines grows with the product of the bit line number and the wire length.
-    %As shown in Figure~\ref{fig:rf}, the wire length and the bit line number of each cell are proportional to N.
+    %As shown in Fig.~\ref{fig:rf}, the wire length and the bit line number of each cell are proportional to N.
     %Since the register cell number is proportional to N as well, 
     %the overall power consumption of bit lines is also the factor of $N^3$ when N is large.
     %    %\subsection{Centralized Register Files}
@@ -112,7 +112,7 @@
     which involves two or more identical processors collaborating with uniform access to the shared memory.
     By adopting HSA, one is able to design a single system that handles wide variety of computational demands efficiently.
     For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo APU} \cite{carrizo}, featuring HSA 1.0.
-    As illustrated in Figure~\ref{fig:carrizo}, \textit{Carrizo} is the SoC platform with the 4-core CPU and the GPU with 8 compute units (384 shader cores totally).
+    As illustrated in Fig.~\ref{fig:carrizo}, \textit{Carrizo} is the SoC platform with the 4-core CPU and the GPU with 8 compute units (384 shader cores totally).
     Both of them work with \textit{the Shared Virtual Memory} (SVM) since their MMUs access an identical page table.
     \textit{Carrizo} enables task sharing without data copy between CPUs and GPUs to achieve greater performance.
     By cleverly choosing the suitable computing device for each task, 
@@ -130,7 +130,7 @@
         \subsection{System Specification}
         The HSA foundation released HSA Platform System Architecture Specification 1.0 \cite{systemspec} in 2015.
         The main purpose of the specification is defining the system requirements which support the HSA programming model and the software infrastructure, from a hardware perspective.
-        Figure~\ref{fig:systemspec} illustrates an example of an HSA platform.
+        Fig.~\ref{fig:systemspec} illustrates an example of an HSA platform.
         An HSA platform refers to a system involving multiple types of computing devices, 
         which are defined as HSA agents.
         One of the agents needs to be host CPU, and the other usually serve as kernel agents. 
@@ -164,7 +164,7 @@
         HSAIL basically adopts the parallel programming model of Single Program Multiple Data (SPMD), 
         which carries out same computation on different data to accelerate applications.
         HSAIL organizes instances of execution in specified hierarchy, which help programmers to manipulate its SPMD model.
-        Figure~\ref{fig:grid} presents a graphical view on how HSAIL organizes instances of execution.
+        Fig.~\ref{fig:grid} presents a graphical view on how HSAIL organizes instances of execution.
         The atomic instance for execution is a work-item, which has dedicated registers and private memory.
         Group of work-items form a work-group, which owns group memory accessed by subordinate work-items only.
         The work-items in a work-group can be arranged in one, two or three dimensional coordinate, 
@@ -187,7 +187,7 @@
         \subsection{Software Infrastructure}
         The software infrastructure of HSA is composed of two parts, the compilation tools and the \textit{HSA runtime}.   
         The compilation tools are responsible for generating machine code of specific ISAs from high-level language.
-        Figure~\ref{fig:swinf}~(a) illustrates the whole compilation flow of HSA software.
+        Fig.~\ref{fig:swinf}~(a) illustrates the whole compilation flow of HSA software.
         The programmer develops applications targeting HSA with high-level parallel programming language such as OpenCL, OpenMP or a domain-specific language (DSL).
         The off-line compiler of the hight-level language translate the code to standard HSAIL kernel accepted by all computing devices in an HSA platform.
         Each kind of the computing devices must be recognized by the finalizer, 
@@ -195,7 +195,7 @@
         Depending on which device is going to execute the kernel, 
         the finalizer translates the HSAIL to corresponding ISA and completes the code generation flow.
         \\\indent
-        On the other hand, the \textit{HSA runtime} bridges HSA runtime APIs and agents, as illustrated in Figure~\ref{fig:swinf}~(b).
+        On the other hand, the \textit{HSA runtime} bridges HSA runtime APIs and agents, as illustrated in Fig.~\ref{fig:swinf}~(b).
         With the \textit{HSA runtime}, the programmer is allowed to manipulate system memory and AQL, 
         and thus SVM and \textit{user mode queuing} can be accomplished.
         It is possible that the programmer triggers the finalizer to perform the final stage of compilation at runtime.

@@ -5,10 +5,10 @@
 One of the key features in the DeAr DSP is manipulating Simultaneous Multi-threading (SMT) in each processing core with the purpose of exploiting concurrent arithmetic resources.
 By dispatching two instruction streams that manipulate its multi-issue datapath, 
 the computational workload of a work-item can be amortized by two threads running simultaneously.
-Figure~\ref{fig:bb:1} illustrates the typical execution flow of an HSA work-item across several basic blocks.
+Fig.~\ref{fig:bb:1} illustrates the typical execution flow of an HSA work-item across several basic blocks.
 A basic block is piece of code without any branch or jump instruction except at its entry or exit.
 The life cycle of the work-item involves executing instructions within a block sequentially, and shuttling among the blocks.
-DeAr achieves the speedup by exploiting ILP in each basic block, as shown in Figure~\ref{fig:bb:1}. 
+DeAr achieves the speedup by exploiting ILP in each basic block, as shown in Fig.~\ref{fig:bb:1}. 
 At the entry of a program, two DeAr threads are forked by in replacement of a work-item.
 Next, the forked DeAr threads simultaneously fetch and execute instructions within the basic block.
 They join at the end of the basic block, and perform an identical branch or jump instruction targeting the next basic block simultaneously.
@@ -44,7 +44,7 @@ A DeAr core can be scaled up to the multi-core architecture,
 where the assembly of cores forms the wavefront which supports the HSA SPMD programming model.
 \subsection{System Integration}
 \label{sec:integration}
-Figure~\ref{fig:archi} illustrates the proposed framework of an HSA system integrated with a 4-core DeAr DSP.
+Fig.~\ref{fig:archi} illustrates the proposed framework of an HSA system integrated with a 4-core DeAr DSP.
 The general purpose processor (GPP) hosts OS and HSA runtime, sharing the main memory with the DeAr DSP.
 In the DSP, each core owns a private L1 D-cache, and shared a L1 I-cache with another core.
 The L1 I-cache sharing mechanism was proposed in~\cite{kelly2004shared},
@@ -74,7 +74,7 @@ facilitates the direct access from the GPP to DSP internal resources with purpos
 \section{Hardware Design and Implementation}
 \subsection{Micro-architecture Design}
 In this section, we will look into DeAr from a micro-architecture perspective, and explore its design considerations at the same time.
-Figure~\ref{fig:micro} illustrates the micro-architecture of DeAr DSP lane.
+Fig.~\ref{fig:micro} illustrates the micro-architecture of DeAr DSP lane.
 We adopt the concept of Harvard architecture~\cite{harvard}, 
 which separates data memory and instruction memory physically.
 As a result, the datapath and the control path are wrapped by two independent interfaces, the load/store (L/S) unit and the instruction unit respectively.
@@ -152,7 +152,7 @@ More insight into the relation between TTDB and ISA is available in Section~\ref
 \vspace{\textfig}
 \begin{figure}[!ht] 
     \centering
-    \includegraphics[width=0.85\textwidth]{./figs/micro.eps}
+    \includegraphics[width=0.7\textwidth]{./figs/micro.eps}
     \caption{Micro-architecture of a DeAr DSP lane}
     \label{fig:micro}
 \end{figure}
@@ -362,7 +362,7 @@ Finally, the scheduler selects the best scheduling result $C_{golden}$ among ite
 \label{sec:hdfg}
 A data flow graph (DFG), which presents dependencies among operations, is crucial information for program analysis.
 By partitioning a program into basic blocks, the control flow can be simplified, and thus each DFG of a basic block is a directed acyclic graph (DAG).
-Figure~\ref{fig:dfg:dfg} illustrates an example of a DFG, where each node and each edge denote an operation and a dependency respectively.
+Fig.~\ref{fig:dfg:dfg} illustrates an example of a DFG, where each node and each edge denote an operation and a dependency respectively.
 We can further express any DFG as a data structure $G$, which holds a set of nodes (operations), $V_{op}$, and a set of edges (dependencies), $E_{op}$
 In conventional DSP compiler design, optimal scheduling of operations is often approached by analyzing the DFG.
 For example, \cite{dsplite} solves ILP problems \cite{ilp} in a DFG to approximate optimal scheduling, 
@@ -370,7 +370,7 @@ and the list scheduling \cite{list} calculates the scheduling range of each oper
 \\\indent
 However, we noticed that the conventional DFG analysis is infeasible for DeAr due to its datapath uniqueness.
 As a result, in this work, we propose an enhanced version of the DFG, the hierarchical data flow graph (HDFG), which fits DeAr.
-Figure~\ref{fig:dfg:hdfg} demonstrates the HDFG, $\bar{G} = {V_{bt}, E_{bt}}$, converted from Figure~\ref{fig:dfg:dfg}.
+Fig.~\ref{fig:dfg:hdfg} demonstrates the HDFG, $\bar{G} = {V_{bt}, E_{bt}}$, converted from Fig.~\ref{fig:dfg:dfg}.
 We enumerate several important features of the HDFG as below: 
 \begin{itemize}
     \item Cascaded operations ($op$) form a super node ($sn$), and an isolated $op$ forms a $sn$ directly. 
@@ -621,18 +621,18 @@ which indicates forwarding opportunities explicitly.
 Secondly, the key to achieving ILP is taking advantage of DP, which is a powerful technique often used in optimization with sequence data \cite{dpseq}.
 With the criterion of maximizing the number of concurrent operations, DP determines which of threads should stall when ALU conflict occurs.
 As a result, the optimized ALU allocation within a certain search space (product of two sequence length), can be achieved.
-Figure~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
+Fig.~\ref{fig:alloc} shows an example of the DP-based ALU allocation.
 It contains three stages involving a scoring table marked with Arabic numerals horizontally, and English alphabets vertically.
 We demonstrate the detail stage by stage as below:
 \begin{enumerate}
-    \item \textbf{Table modeling} As shown in Figure~\ref{fig:alloc:1}. An (\textit{m}+2) by (\textit{n}+2) empty table is initialized, 
+    \item \textbf{Table modeling} As shown in Fig.~\ref{fig:alloc:1}. An (\textit{m}+2) by (\textit{n}+2) empty table is initialized, 
         where \textit{m} and \textit{n} are the sizes of two operation sequences for ALU allocation.
         In this example, we assume that two DeAr threads have identical sequences, three multiplications followed by three additions, 
         and thus the scoring table is 8 by 8 in this case.
         The algorithm places two sequences on the top row and leftmost column respectively, 
         with three entries on the upper-left corner (\textit{a0}, \textit{a1} and \textit{b0}) always remaining empty. 
         Other entries, on the other hand, remain empty until the next stage.
-    \item \textbf{Table filling} As shown in Figure~\ref{fig:alloc:2}, the algorithm traverses the entries from \textit{b1} to \textit{h7} in the row-major manner, 
+    \item \textbf{Table filling} As shown in Fig.~\ref{fig:alloc:2}, the algorithm traverses the entries from \textit{b1} to \textit{h7} in the row-major manner, 
         and they are filled in with the minimum cycle counts consumed by the corresponding operations.
         The score of starting entry, \textit{b1}, is fixed to 0, while the others are evaluated based adjacent scores.
         For each entry, the algorithm firstly check whether the corresponding operation pair can be issued simultaneously.
@@ -640,7 +640,7 @@ We demonstrate the detail stage by stage as below:
         Otherwise, it gets the score of either the left adjacent or top adjacent plus.
         Note that the algorithm always chooses the best one among possible scores.
         After the traversal, the score of bottom-right corner, \textit{h7}, represents the optimized cycle count to accomplish two operation sequences.
-    \item \textbf{Backtracking} As shown in Figure~\ref{fig:alloc:3}, the algorithm traces back from \textit{h7} to \textit{b1} according to the score accumulating paths.
+    \item \textbf{Backtracking} As shown in Fig.~\ref{fig:alloc:3}, the algorithm traces back from \textit{h7} to \textit{b1} according to the score accumulating paths.
         Since such paths can be multiple, we randomly select a path from them with the random seed introduced in~\ref{sec:swframework}.
         Finally, the ALU allocation is accomplished by reporting the selected path, 
         where a horizontal move indicates allocating ALU for the horizontal operation,

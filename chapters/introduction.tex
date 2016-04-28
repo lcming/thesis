@@ -3,24 +3,24 @@
     \section{Motivation}
         As wireless communication standard evolves, the demand for a digital signal processing platform that supplies computation with high performance, high flexibility and low power-dissipation is gaining momentum in the mobile industry. 
         Take an example of LTE-advance, which is considered to be the next mainstream mobile wireless technology, it provides 10 times higher transmission throughput than that of LTE~\cite{lte}. 
-        In order to achieve such enhancement, strategies such as scaling up MIMO system and permitting carrier aggregation~\cite{carrier} that require more sophisticated arithmetics are adopted in LTE-advance.
+        In order to achieve such an enhancement, strategies such as scaling up MIMO system and permitting carrier aggregation~\cite{carrier} that require more sophisticated arithmetics are adopted in LTE-advance.
         Moreover, these algorithms used in LTE-advance demodulation will still change frequently with the protocol specification.
         Consequently, both power-efficiency and flexibility become crucial considerations in the filed of digital signal processor design. 
-        However, Very Long Instruction Word (VLIW) and Application-Specific Instruction set Processor (ASIP), both of which have been popular architectures for state-of-the-art digital signal processors (DSPs), are considered to be two extremes cases by hardware designers who would like to trade-off between power-efficiency and flexibility. 
+        However, Very Long Instruction Word (VLIW) and Application-Specific Instruction set Processor (ASIP), both of which have been popular architectures for state-of-the-art digital signal processors (DSPs), are considered to be two extremes cases by the hardware designers who would like to trade-off between power-efficiency and flexibility. 
         VLIW gains good flexibility by allocating each arithmetic unit dedicated control signals and data ports in RF, which result in severe power dissipation. %so it could work orthogonally with each other.
-        On the contrary, ASIP benefits from the optimized datapath for a specific ISA or algorithm by trading-off its flexibility so good power efficiency can be achieved. 
-        Consequently, improving power-efficiency while keeping datapath flexibility in a DSP for mobile devices becomes a challenge.	
+        On the contrary, ASIP buys the optimized datapath for a specific ISA or algorithm at the expense of flexibility, so good power efficiency can be achieved. 
+        Consequently, improving power-efficiency while keeping datapath flexibility in a DSP for mobile devices has been a challenge.	
         \\\indent 
-        On the other hand, heterogeneous computing, which is referred to as the system equipped with multiple types of processors, has opened a new era for digital signal processing. 
+        On the other hand, heterogeneous computing, which is referred to as a system equipped with multiple types of processors, has opened a new era for digital signal processing. 
         Such an integration of different processors gains performance improvement by taking advantage of particular processing capabilities specialized for certain types of tasks.
         Nowadays, a digital signal processing platform typically contains a CPU that handles control intensive tasks and a DSP that performs computation intensive ones.
         Nevertheless, in such heterogeneous DSP platforms, there is still a drawback owing to the communication latency between processors. 
         Frequent data transfer and task dispatching control between DSP and CPU lead to a  bottleneck of performance. 
-        As a result, HSA foundation, founded by AMD, ARM, MediaTek, etc, proposed a new standard for heterogeneous computing, \textit{Heterogeneous System Architecture} (HSA)~\cite{systemspec}, to address the problem. 
-        The standard created concepts of unified memory space and architectural queuing language that alleviate burdens on data transfer and task dispatching, becoming the potential mainstream of computer architecture~\cite{mainstream}.
+        As a result, the HSA foundation, founded by AMD, ARM, MediaTek, etc, proposed a new standard, \textit{Heterogeneous System Architecture} (HSA)~\cite{systemspec}, to address the problem. 
+        The standard created the concepts of unified memory space and architectural queuing language that alleviate burdens on data transfer and task dispatching, becoming the potential mainstream of computer architecture~\cite{mainstream}.
     \section{Goal and Contribution}
-        To improve performance and power-efficiency as well as maintain flexibility for DSPs, 
-        we present DeAr: Dual-thread Architecture for DSP that combines advantages of both VLIW and Transport-triggered Architecture (TTA).
+        To keep both flexibility and power-efficiency for DSPs, 
+        we present DeAr: Dual-thread Architecture for DSP that combines advantages of both VLIW and ASIP.
         We also illustrate a framework which integrates DeAr with an HSA platform, which is able to reduce communication overhead between CPU and DSP. 
         Prominent features of DeAr include:
         \begin{itemize}
@@ -33,13 +33,12 @@
             \item RF access is regularized to implicit operations (i.e. push or pop) instead of conventional random access. The instruction decode complexity is reduced and the code density is improved.
             \item The compact design is suitable for SIMD or vector-processing architectures to meet the throughput requirement.
         \end{itemize}
-        \indent
-        The main contribution of this work can be presented at two levels: micro-architecture and HSA level. 
-        At the micro-architecture level, the proposed DeAr outperforms VLIW and ASIP in the evaluation based equal throughput constraint, ALU and RF resources.
+        \ \ \ \ The main contribution of this work can be presented at two levels: the micro-architecture level and the HSA level. 
+        At the micro-architecture level, proposed DeAr outperforms VLIW and ASIP in the evaluation based equal throughput constraint, ALU and RF resources.
         Compared with VLIW and ASIP respectively, DeAr either saves 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite aiming at wireless communication, 
         or saves 20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the benchmark suite of general digital signal processing kernels.
-        At the HSA level, we propose a complete compilation tool which meets the HSA standard ofr DeAr.
-        Besides, we also demonstrate a system architecture framework that exploits the advantages of DeAr in an HSA-based DSP platform.
+        At the HSA level, we propose a complete compilation tool which meets the HSA standard for DeAr.
+        Besides, we also demonstrate a system integration framework that exploits the advantages of DeAr in an HSA-based DSP platform.
     \section{Organization}
     The remainder of the thesis is organized as follows: In Chapter 2, we briefly review work related to our architecture. In Chapter 3, we introduce prerequisite knowledge for reading this work. In Chapter 4, we illustrate the proposed architecture, and elaborate the design of hardware and software. In Chapter 5, we present the experimental result and analysis that demonstrate capabilities of the proposed design. In the last part, Chapter 6, we draw the conclusion and future work of the thesis.
 
