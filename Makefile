@@ -16,9 +16,9 @@ test: $(TAR).tex
 	-pdflatex $(TAR)
 
 oral: oral.tex $(TAR).bib
-	-pdflatex $@
-	-bibtex $(TAR)
-	-pdflatex $@
+#	-pdflatex $@
+#	-bibtex $(TAR)
+#	-pdflatex $@
 	pdflatex $@
 	evince oral.pdf
 
