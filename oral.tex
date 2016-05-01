@@ -74,7 +74,7 @@
                     The evolution of wireless communication standard drives the quest on a new DSP architecture.
                 }
             \item {
-                    LTE-A demands 10 times transmission throughput than that of LTE. As a result...
+                    E.g., LTE-A demands 10 times transmission rate than that of LTE.
                     \begin{itemize}
                         \item {
                                 More sophisticated arithmetics are needed (throughput).
@@ -87,9 +87,21 @@
                         }
                     \end{itemize}
                 }
-            \item {
-                    Conventional DSP architectures, VLIW and ASIP, are opposite extreme cases for processor design.
+            \item{ 
+                    DSP has gone beyond the scalar architecture to increase throughput!
+                    \begin{itemize}
+                        \item Very Long Instruction Word architecture (VLIW)
+                        \item Application Specific Instruction-set Processor (ASIP)
+                    \end{itemize}
                 }
+            \item {
+                    Unfortunately, VLIW and ASIP are opposite extreme cases...
+                    \begin{itemize}
+                        \item VLIW: good flexibility and bad power-efficiency (worst case design)
+                        \item ASIP: good power-efficiency and bad flexibility (special case design)
+                    \end{itemize}
+                }
+            \item \large{\textbf{Achieving both of them is a challenge!}}
         \end{itemize}
     \end{frame}
 
@@ -99,10 +111,10 @@
                     Heterogeneous computing, a system with multiple types of processors, is gaining momentum.
                     \begin{itemize}
                         \item {
-                                CPU handles control-intensive tasks.
+                                CPU handles control-intensive tasks and coordinate cores.
                             }
                         \item {
-                                DSP, GPU and FPGA handles data-intensive tasks.
+                                DSP, GPU and FPGA handles data-intensive tasks for acceleration.
                             }
                         \end{itemize}
                 }
@@ -117,6 +129,10 @@
                             }
                         \end{itemize}
                 }
+            \item
+                Shall make our new DSP architecture be compatible with HSA!
+            \item
+                \large{\textbf{A TIGER WITH WINGS}}
         \end{itemize}
     \end{frame}
 
