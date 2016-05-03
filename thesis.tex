@@ -95,6 +95,7 @@
 \Huge \underline{碩~士~論~文} \\
 %\Large （初稿）\\
 \vspace*{10ex}
+\begin{flushleft}\huge 題目: \\ \end{flushleft}
 \huge DeAr: 適用於異質系統架構之高效率且彈性的數位訊號處理器設計 \\
 \vspace*{1ex}
 \huge DeAr: An Efficient and Flexible Digital Signal Processor Design for Heterogeneous System Architecture  \\
@@ -104,9 +105,9 @@
 
 \Large
 \begin{tabular}{rl}
-    \makebox[4em][s]{系\hspace{\fill}所\hspace{\fill}別}：&電機工程學系碩士班\ \ \large{組別：系統組}\\ [1.5ex]
-    \makebox[4em][s]{學號姓名}：&103061568~李齊明~(Chi-Ming~Lee)\\ [1.5ex]
-    \makebox[4em][s]{指導教授}：&許雅三~博士~(Prof.~Yarsun~Hsu) \\ 
+    \makebox[4em][s]{系\hspace{\fill}所\hspace{\fill}別}：&\underline{電機工程學系碩士班}\ \ \Large{組別：\underline{系統組}}\\ [1.5ex]
+    \makebox[4em][s]{學號姓名}：&\underline{103061568~李齊明~(Chi-Ming~Lee)}\\ [1.5ex]
+    \makebox[4em][s]{指導教授}：&\underline{許雅三~博士~(Prof.~Yarsun~Hsu)} \\ 
     %\makebox[4em][s]{\ \ \ \ \ \ \ \ }\ &劉志尉~博士~(Prof.~Chih-Wei~Liu) \\ 
 \end{tabular}
 %\end{tabular}
@@ -116,24 +117,62 @@
 \end{center}
 \end{titlepage}
 
-\doublespacing
-\pagenumbering{roman}
-\setcounter{page}{3}
-\addcontentsline{toc}{section}{Abstract}
+\thispagestyle{empty}
+\linespread{1.5}\selectfont
+\begin{center}\Large{摘要} \end{center}
+    \setlength{\parskip}{1em}
+        \par
+        無線通訊的演進，
+        推動了嵌入式訊號處理器 (DSP) 在運算上，
+        高效率且兼具高彈性之需求。
+        然而，目前熱門的DSP架構，
+        超長指令字架構 (VLIW) 、特定應用指令集處理器 (ASIP) ，
+        分別在效率與彈性上，形成兩個極端。
+        \par
+        有鑑於此，我們提出了雙線程架構 (DeAr) DSP 。
+        此架構的資料路徑 (datapath) 中，
+        使用多重分庫暫存器 (multi-banked register file) 以實現同時多線程 (SMT) ，
+        並運用傳輸觸發匯流排 (transport-triggered bus) 進行資料轉送 (forwarding) 。
+        此外，我們也提出了一個新穎的排程演算法，
+        以徹底利用 DeAr 精簡的硬體，
+        達到高吞吐量與高彈性的計算。
+        為了跨越單核心架構，
+        我們也為DeAr提出了符合 HSA 標準之系統整合框架，
+        以及編譯工具。
+        而HSA是由多家半導體大廠如 AMD 、ARM 與 MediaTek 等等所推動之異質多核心架構標準。
+        \par
+        我們提出的架構在實驗中與 VLIW 和 ASIP 進行分別比較，
+        在針對無線通訊的評效中，
+        DeAr 分別節省了20.3\%--13.1\%和31.8--2.2\%的功率消耗，
+        並節省了36.1\%--31.5\%和28.2\%--5.7\%的晶片面積。
+        在廣泛應用的評效中，
+        DeAr則分別節省了20.3\%--13.1\%和31.8--2.2\%的功率消耗，
+        並節省了36.1\%--31.5\%和28.2\%--5.7\%的晶片面積。
+        \par\bigskip
+    \clearpage
 
-\renewcommand{\abstractnamefont}{\normalfont\bfseries}
-\renewcommand{\abstracttextfont}{\normalfont}
-\setlength{\absleftindent}{0pt}
-\setlength{\absrightindent}{0pt}
+    \doublespacing
+    \pagenumbering{roman}
+    \setcounter{page}{3}
+    \addcontentsline{toc}{section}{Abstract}
 
-\begin{abstract}  % Abstract
-    The evolution of wireless communication protocols drives the quest of power-efficient and flexible computing for embedded digital signal processors (DSPs), 
-    but the popular DSP architectures, very-long-instruction-word (VLIW) and application-specific instruction set processor (ASIP), serve as opposite extreme cases in regard to power-efficiency and flexibility.
-    \\\indent
-    To this end, we present DeAr: Dual-thread Architecture DSP, 
-    which manipulates a multi-banked register file that enables simultaneous multi-threading (SMT),
-    as well as a transport-triggered bus that exploits the data forwarding mechanism in the compact datapath.
-    In addition, a novel scheduling algorithm that leverages the compact design to achieve both high throughput and flexible computation is presented.
+    \renewcommand{\abstractnamefont}{\normalfont\bfseries}
+    \renewcommand{\abstracttextfont}{\normalfont}
+    \setlength{\absleftindent}{0pt}
+    \setlength{\absrightindent}{0pt}
+
+    \setlength{\parskip}{0em}
+
+
+
+    \begin{abstract}  % Abstract
+        The evolution of wireless communication protocols drives the quest of power-efficient and flexible computing for embedded digital signal processors (DSPs), 
+        but the popular DSP architectures, very-long-instruction-word (VLIW) and application-specific instruction set processor (ASIP), serve as opposite extreme cases in regard to power-efficiency and flexibility.
+        \\\indent
+        To this end, we present DeAr: Dual-thread Architecture DSP, 
+        which manipulates a multi-banked register file that enables simultaneous multi-threading (SMT),
+    as well as a transport-triggered bus that exploits the data forwarding mechanism in its compact datapath.
+    In addition, a novel scheduling algorithm that leverages the compact hardware to achieve both high throughput and flexible computation is presented.
     To go beyond a single core DSP, we also propose a system integration framework and a compilation tool for DeAr based on Heterogeneous System Architecture (HSA), 
     which is a promising standard for the multi-core architecture promoted by several leading semiconductor companies, AMD, ARM, MediaTek, etc.
     \\\indent
@@ -181,7 +220,7 @@
 
 \input{chapters/conclusion.tex}
 
-%\clearpage
+\clearpage
 
 \addcontentsline{toc}{section}{References}
 \singlespacing
