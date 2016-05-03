@@ -21,8 +21,21 @@
 \usepackage{algorithmicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{algpseudocode}
+\usepackage[noend]{algpseudocode}
 \usepackage{wallpaper}
+\algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\newcommand{\var}[1]{\text{\texttt{#1}}}
+\newcommand{\func}[1]{\text{\textsl{#1}}}
+
+
+% table
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+\usepackage{multirow}
+\usepackage{tabularx}
+
 \algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
 
 \usetheme{Madrid} % origin
@@ -97,8 +110,8 @@
             \item {
                     Unfortunately, VLIW and ASIP are opposite extreme cases...
                     \begin{itemize}
-                        \item VLIW: good flexibility and bad power-efficiency (worst case design)
-                        \item ASIP: good power-efficiency and bad flexibility (special case design)
+                        \item VLIW: good flexibility and bad power-efficiency
+                        \item ASIP: good power-efficiency and bad flexibility
                     \end{itemize}
                 }
             \item \large{\textbf{Achieving both of them is a challenge!}}
@@ -142,10 +155,10 @@
     \begin{frame}{Contribution}
         \begin{itemize}
             \item {
-                    We propose Dual-thread Architecture (DeAr) for DSP, which achieves both power-efficiency and flexibility.
+                    We present \textbf{Dual-thread Architecture} (\textbf{DeAr}) DSP, which achieves both power-efficiency and flexibility.
                     \begin{itemize}
                         \item {
-                                The multi-issue datapath manipulating Simultaneous Multi-threading (SMT).
+                                The multi-issue datapath manipulating Simultaneous Multi-threading.
                             }
                         \item {
                                 Multi-banked register file (RF) with implicit RF addressing.
@@ -156,7 +169,14 @@
                         \end{itemize}
                 }
             \item {
-                    We propose a framework to integrate DeAr DSP with an HSA platform.
+                    A novel scheduling algorithm, HDFG-based scheduling is proposed.
+                    \begin{itemize}
+                        \item Going beyonds the conventional data flow graph (DFG) analysis.
+                        \item Optimizing \textbf{power dissipation}, \textbf{flexibility} and \textbf{Operations per Cycle} (OPC).
+                    \end{itemize}
+                }
+            \item {
+                    We also propose a framework to integrate DeAr DSP with HSA.
                     \begin{itemize}
                         \item {
                                 HSA compatible system integration framework.
@@ -167,13 +187,13 @@
                         \end{itemize}
                 }
             \item{
-        Compared with VLIW and ASIP respectively, DeAr saves: 
+                    Compared with VLIW and ASIP respectively, DeAr saves: 
                     \begin{itemize}
                         \item {
-                            20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the 1st benchmark suit.
+                                \textbf{20.3\%--13.1\%} and \textbf{31.8\%--2.2\%} of power.
                             }
                         \item {
-                            20.3\%--13.1\% and 31.8\%--2.2\% of power, 36.1\%--31.5\% and 28.2\%--5.7\% of area in the 2nd benchmark suit.
+                                \textbf{36.1\%--31.5\%} and \textbf{28.2\%--5.7\%} of area.
                             }
                         \end{itemize}
                 }
@@ -184,17 +204,25 @@
     \subsection{Common DSP architectures}
     \begin{frame}{Very Long Instruction Word (VLIW)}
        \begin{columns}
-           \begin{column}{0.5\textwidth}
+           \begin{column}{0.4\textwidth}
                \begin{figure}[!ht]
                    \centering
                    \includegraphics[width=0.9\textwidth]{./figs/vliw.eps}
                    \caption{VLIW example}
                \end{figure}
            \end{column}
-           \begin{column}{0.5\textwidth}
+           \begin{column}{0.6\textwidth}
               \begin{itemize}
-                  \item foo
-                  \item bar
+                  \item Each function unit (FU) works independently with dedicated ports in RF (worst-case port count).
+                  \item Pros:
+                      \begin{itemize}
+                          \item Multi-issue datapath \\ $\implies$ high OPC
+                          \item Orthogonality among FUs \\ $\implies$ Good flexibility
+                      \end{itemize}
+                 \item Cons:
+                     \begin{itemize}
+                         \item Large port count in RF \\ $\implies$ Severe cost in power and area
+                     \end{itemize}
               \end{itemize} 
            \end{column}
        \end{columns} 
@@ -202,44 +230,68 @@
 
     \begin{frame}{Application Specific Instruction Set Processor (ASIP)}
         \begin{columns}
-            \begin{column}{0.5\textwidth}
+            \begin{column}{0.4\textwidth}
                 \begin{figure}[!ht]
                     \centering
                     \includegraphics[width=0.9\linewidth]{./figs/cascade.eps}
                     \caption{ASIP example}
                 \end{figure}
             \end{column}
-            \begin{column}{0.5\textwidth}
+            \begin{column}{0.6\textwidth}
                \begin{itemize}
-                   \item foo
-                   \item bar
+                   \item FUs are configured or cascaded in a special manner (special-case port count).
+                   \item Pros:
+                       \begin{itemize}
+                           \item Multi-issue datapath \\ $\implies$ high OPC
+                           \item Medium port count in RF \\ $\implies$ Acceptable cost in power and area
+                           \item Inherent forwarding path between FUs \\ $\implies$ Reducing cost in power
+                       \end{itemize}
+                   \item Cons:
+                       \begin{itemize}
+                           \item Fitting particular applications only \\ $\implies$ Poor flexibility
+                       \end{itemize}
                \end{itemize} 
             \end{column}
         \end{columns} 
     \end{frame}
-    \begin{frame}{Transport-triggered Architecture (TTA)}
-        \begin{itemize}
-            \item foo
-            \item bar
-        \end{itemize}
-        \begin{figure}[!ht]
-            \centering
-            \includegraphics[width=0.6\linewidth]{./figs/tta.eps}
-            \caption{TTA example}
-        \end{figure}
-    \end{frame}
+    %\begin{frame}{Transport-triggered Architecture (TTA)}
+    %    \begin{itemize}
+    %        \item foo
+    %        \item bar
+    %    \end{itemize}
+    %    \begin{figure}[!ht]
+    %        \centering
+    %        \includegraphics[width=0.6\linewidth]{./figs/tta.eps}
+    %        \caption{TTA example}
+    %    \end{figure}
+    %\end{frame}
 
     \subsection{Heterogeneous System Architecture}
     \begin{frame}{Key Concepts of HSA}
        \begin{itemize}
            \item Heterogeneous multi-core platform
+               \begin{itemize}
+                   \item Particular processors handles particular tasks --- better power efficiency
+               \end{itemize}
            \item Heterogeneous System Architecture Intermediate Language (HSAIL)
+               \begin{itemize}
+                   \item Providing an unified programming language of heterogeneous cores
+                   \item Single Program Multiple Data (SPMD) programming model
+               \end{itemize}
            \item Shared Virtual Memory (SVM)
+               \begin{itemize}
+                   \item Eliminating redundant transfer among cores
+                   \item Passing pointers instead --- alleviating communication overhead
+               \end{itemize}
            \item Architectural Queuing Language (AQL)
+               \begin{itemize}
+                   \item Handshaking protocol for cores
+                   \item Task dispatching, information exchanging, synchronization, etc.
+               \end{itemize}
        \end{itemize} 
     \end{frame}
 
-    \begin{frame}{HSA platform example}
+    \begin{frame}{HSA Platform Example}
         \begin{figure}[!ht]
             \centering
             \includegraphics[width=0.8\textwidth]{./figs/systemspec.eps}
@@ -247,10 +299,15 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}{Execution hierarchy}
+    \begin{frame}{Execution Hierarchy}
+        \begin{itemize}
+            \item Work-item: the finest execution unit with dedicated registers.
+            \item Work-group: a set of work-items sharing local memory (on-chip buffer)
+            \item Grid: Assembly of all work-items and work-groups in the program context.
+        \end{itemize}
         \begin{figure}[!ht] 
             \centering
-            \includegraphics[width=0.8\textwidth]{./figs/grid.eps}
+            \includegraphics[width=0.7\textwidth]{./figs/grid.eps}
             \label{fig:grid}
         \end{figure}
     \end{frame}
@@ -268,37 +325,49 @@
     \subsection{Proposed Architecture}
 
     \begin{frame}{System Integration (1/2)}
-        \begin{figure}[!ht] 
-            \centering
-            \includegraphics[width=0.5\textwidth]{./figs/archi.eps}
-            \label{fig:archi}
-        \end{figure}
+        \begin{columns}
+            \begin{column}{0.6\textwidth}
+                \begin{figure}[!ht] 
+                    \centering
+                    \includegraphics[width=1.0\textwidth]{./figs/archi.eps}
+                    \label{fig:archi}
+                \end{figure}
+            \end{column}
+            \begin{column}{0.4\textwidth}
+            Key components:
+                \begin{itemize}
+                    \item Host port interface~\cite{hpi}
+                    \item SC-based DMA engine~\cite{sc}
+                    \item Shared L1 program cache~\cite{kelly2004shared}
+                \end{itemize}
+            \end{column}
+        \end{columns}
     \end{frame}
 
     \begin{frame}{System Integration (2/2)}
         \begin{itemize}
-            \item {
-                    \textbf{MMU}: The host OS accesses MMU via HPI, and thus HSA SVM can be facilitated.
-                }
-            \item {
-                    \textbf{Dispatch queues}: HSA runtime pushes (pops out) AQL-packets to (from) the kernel-dispatch queue (agent-dispatch queue) via HPI, 
-                    and thus HSA user-mode queuing can be facilitated.
-                }
-
-            \item {
-                    \textbf{SC}: The SC user API sends control signal to SC via HPI, 
-                    and thus the data transfer and conversion fashion can be specified by the user.
-                }
+            \item Host port interface (HPI)
+                \begin{itemize}
+                    \item Enabling host direct access to DeAr
+                    \item Offloading MMU, AQL and SC control overhead to host
+                \end{itemize}
+            \item SC-based DMA engine
+                \begin{itemize}
+                    \item Initiating data transfer and transforming data layout on-the-fly
+                    \item Improving data locality in DeAr --- coalescing access
+                \end{itemize}
+            \item Shared L1 program cache --- fitting SPMD programming model
         \end{itemize}
     \end{frame}
 
     \begin{frame}{Concepts for Acceleration}
+        Key: Offloading a work-item to two DeAr threads.\\
         \begin{figure}[!ht]
             \begin{center}
                 \subfigure[Execution flow of an HSA work-item]
                 {
                     \label{fig:bb:1}
-                    \includegraphics[width=0.3\textwidth]{figs/bb.eps}
+                    \includegraphics[width=0.33\textwidth]{figs/bb.eps}
                 }
                 \hfill
                 \subfigure[Accelerating the execution of a Basic block]
@@ -312,57 +381,200 @@
         \end{figure}
     \end{frame}
 
-
     \subsection{Hardware Design and Implementation}
-    \begin{frame}{Micro-architecture}
-        \begin{figure}[!ht] 
-            \centering
-            \includegraphics[width=0.6\textwidth]{./figs/micro.eps}
-            \label{fig:micro}
-        \end{figure}
+    \begin{frame}{Micro-architecture (1/2)}
+        \begin{columns}
+            \begin{column}{0.6\textwidth}
+                \begin{figure}[!ht] 
+                    \centering
+                    \includegraphics[width=1.0\textwidth]{./figs/micro.eps}
+                \end{figure}
+            \end{column}
+            \begin{column}{0.4\textwidth}
+                Key components:
+                \begin{itemize}
+                    \item Sequential-access Banked RF
+                    \item Accumulator latches
+                    \item Transport Triggered Data Bus
+                \end{itemize}    
+            \end{column}
+        \end{columns}
     \end{frame}
 
-    \begin{frame}{Instruction Set Architecture}
-        
+    \begin{frame}{Micro-architecture (2/2)}
+        \begin{itemize}
+            \item Sequential-access Banked RF (SBRF)
+                \begin{itemize}
+                    \item Physical and symmetric separation for threads
+                    \item Load/store queues buffer memory transfer data
+                    \item Stack memory stores intermediate data
+                    \item Implicit access reducing code size
+                \end{itemize}
+            \item Accumulator latches (ACCs) --- buffering arithmetic results for future reuse
+            \item Transport-triggered Data Bus (TTDB)
+                \begin{itemize}
+                    \item Flexible data transport between ACCs and FUs
+                    \item Facilitating exhaustive data reuse
+                \end{itemize}
+        \end{itemize}
     \end{frame}
- 
+
+    \begin{frame}{Instruction Set Architecture (1/2)}
+        Each DeAr instruction is composed of two portions:
+        \begin{itemize}
+            \item Stack control portion: manipulating the stack memory
+            \item RISC-fashion portion: a subset of common RISC ISA
+        \end{itemize}
+        \begin{table}[ht!]
+            \centering
+            \caption{Stack access portion of a DeAr instruction}
+            \resizebox{0.9\textwidth}{!}
+            {
+                \begin{tabular}{|l|l|l|}
+                    \hline
+                    \multicolumn{1}{|c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Note}} \\ \hline
+                PUSH & \begin{tabular}[c]{@{}l@{}}1. Add the head address by 1\\ 2. Write the new data to the head address\end{tabular} & \multirow{2}{*}{ \parbox{5cm}{A "pop" followed by a "push" is equivalent to a "modify"} } \\ \cline{1-2}
+                POP                               & \begin{tabular}[c]{@{}l@{}}1. Subtract the head address by 1\\ 2. Invalidate the previous head data\end{tabular} & \\ \hline
+                    MODIFY                            & Modify the head data to to the new data & The head address remains \\ \hline
+                    STALL                               & No operation & The head address and data remain \\ \hline
+                \end{tabular}
+            }
+        \end{table}
+    \end{frame}
+
+
+    \begin{frame}{Instruction Set Architecture (2/2)}
+        \begin{table}[ht!]
+            \centering
+            \caption{RISC-fashion portion of a DeAr instruction}
+            \resizebox{0.8\textwidth}{!}
+            {
+                \begin{tabular}{|c|l|l|c|}
+                    \hline
+                    \multicolumn{1}{|c|}{\textbf{Category}} & \multicolumn{1}{c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Target}} \\ \hline
+                \multirow{7}{*}{ \begin{tabular}[c]{@{}l@{}} \\ A type \end{tabular}}      & ADD & \textbf{d} = \textbf{s} + \textbf{t}  & \multirow{7}{*}{\begin{tabular}[c]{@{}l@{}} \\ Datapath \end{tabular}}  \\ \cline{2-3}
+                                                                                           & SUB & \textbf{d} = \textbf{s} $-$ \textbf{t} & \\ \cline{2-3} 
+                                                                                           & MUL & \textbf{d} = \textbf{s} $\times$ \textbf{t} & \\ \cline{2-3} 
+                                                                                           & SHL & \textbf{d} = \textbf{s} $<<$ \textbf{t} & \\ \cline{2-3}
+                                                                                           & SHR & \textbf{d} = \textbf{s} $>>$ \textbf{t} & \\ \cline{2-3}
+                                                                                           & MV  & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} << 0 & \\ \cline{2-3} 
+                                                                                           & NOP & \begin{tabular}[c]{@{}l@{}}1. disable write back \\ 2. clock-gate the accumulator \end{tabular}& \\ \hline
+                \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ B type \end{tabular}}          & JMP & pc = pc + \textbf{a}  & \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ Instruction unit \end{tabular}} \\ \cline{2-3}
+                                                                                                  & BZ  & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() == stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \cline{2-3}
+                                                                                                  & BNZ & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() != stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \hline
+                \multirow{2}{*}{ \begin{tabular}[c]{@{}l@{}} \\ M type \end{tabular}}           & LD  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ load\_queue.push (memory[\textbf{a}]) \end{tabular}& \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}} \\  Load/store unit \end{tabular}} \\ \cline{2-3} 
+                                                                                                & ST  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ memory[\textbf{a}] = store\_queue.pop() \end{tabular}& \\ \hline
+                \end{tabular}
+            }
+        \end{table}
+    \end{frame}
+
     \subsection{Software Design and Implementation}
-    \begin{frame}{Data Flow Graph and Hierarchical Data Flow Graph}
+    \begin{frame}{Software Framework}
+        \begin{enumerate}
+            \item Compilation
+                \begin{itemize}
+                    \item DeAr users program in high level languages (OpenCL or C++)
+                    \item Off-line compiler~\ref{cloc} from HSA foundation compiles them to HSAIL
+                \end{itemize}
+            \item Finalization
+                \begin{itemize}
+                    \item Converting HSAIL to data flow graph (DFG)
+                        \begin{itemize}
+                            \item Reaching definition analysis (RDA)
+                            \item Single static assignment (SSA)
+                        \end{itemize}
+                    \item Converting DFG to hierarchical data flow graph (HDFG)
+                \end{itemize}
+            \item HDFG-based scheduling
+                \begin{itemize}
+                    \item Power and OPC Optimization
+                    \item Last-in-first-out memory footprint
+                    \item Code generation
+                \end{itemize}
+        \end{enumerate}
+    \end{frame}
+
+    \begin{frame}{Finalization: Converting HSAIL to DFG}
+               % \begin{algorithm}[H] \fontsize{10pt}{10pt}\selectfont  
+        \begin{columns}
+            \begin{column}{0.45\textwidth}
+               \begin{block}{HSAIL: sum of products}
+                   ld\_global\_u32 \$s2, [\$d0]; \\ 
+                   ld\_global\_u32 \$s3, [\$d1]; \\ 
+                   ld\_global\_u32 \$s2, [\$d2]; \\
+                   ld\_global\_u32 \$s3, [\$d3]; \\
+                   mul\_u32 \$s1, \$s2, \$s3; \\
+                   mul\_u32 \$s4, \$s5, \$s6; \\
+                   add\_u32 \$s7, \$s1, \$s4; \\
+                   st\_global\_u32 \$s7, [\$d4]; \\
+               \end{block} 
+            \end{column}
+            \begin{column}{0.55\textwidth}
+                \begin{enumerate}
+                    \item RDA retrieves use-define chains.
+                    \item SSA renames variables.
+                        \begin{itemize}
+                            \item Give a new name to each LHS variable
+                            \item Update corresponding RHS based on RDA
+                        \end{itemize}
+                    \item Re-traversing new code
+                        \begin{itemize}
+                            \item Store assignments in $V_{op}$
+                            \item Store dependencies in $E_{op}$
+                        \end{itemize}
+                    \item DFG: $G = (V_{op}, E_{op})$ is obtained.
+                \end{enumerate}
+           \end{column}
+        \end{columns}
+    \end{frame}
+
+    \begin{frame}{Finalization: Hierarchizing DFG to HDFG}
+        \begin{itemize}
+            \item Conventional DSP program analysis: data flow graph (DFG) analysis
+            \item We propose \textbf{Hierarchical data flow graph (HDFG)} \\
+                    --- providing abundant information for optimizations
+        \end{itemize}
         \begin{figure}[!ht]
             \begin{center}
                 \subfigure[DFG example]
                 {
                     \label{fig:dfg:dfg}
-                    \includegraphics[width=0.4\textwidth]{figs/dfg.eps}
-                }\hfill
+                    \includegraphics[width=0.35\textwidth]{figs/dfg.eps}
+                }
                 \subfigure[Corresponding HDFG]
                 {
                     \label{fig:dfg:hdfg}
-                    \includegraphics[width=0.4\textwidth]{figs/hdfg.eps}
+                    \includegraphics[width=0.35\textwidth]{figs/hdfg.eps}
                 }
             \end{center}
-            \label{fig:dfg}
         \end{figure}
     \end{frame}
-    \begin{frame}{Properties of HDFG}
-        
-    \end{frame}
-    \begin{frame}{HSAIL transformation (1/2)}
-        
-    \end{frame}
-
-    \begin{frame}{HSAIL transformation (2/2)}
-        
-    \end{frame}
-
-    \begin{frame}{HDFG-based scheduling (1/4)}
-    \end{frame}
-    
-    \begin{frame}{HDFG-based scheduling (2/4)}
-        
+    \begin{frame}{Compilation: Properties of HDFG}
+        \begin{itemize}
+            \item Cascaded or isolated $op$ form $sn$ \\ --- data forwarding must performed within $sn$.
+            \item Neighboring or isolated $sn$ form full binary tree $bt$ \\
+                --- parent $sn$ receives data from stack and TTDB
+                \begin{itemize}
+                    \item First operand popped from stack
+                    \item Second operand forwarded from TTDB
+                \end{itemize}
+                Within a $bt$, a parent $sn$ receives the first operand popped from the stack and the second one forwarded via TTDB.
+            \item Dependencies among $op$ that cross $bt$ are inherited
+            \item After scheduled, $bt$ and its edges are erased from HDFG
+        \end{itemize}
     \end{frame}
 
-    \begin{frame}{HDFG-based scheduling (3/4)}
+
+
+    \begin{frame}{HDFG-based scheduling: Inter-tree parallelism}
+    \end{frame}
+
+    \begin{frame}{HDFG-based scheduling: Intra-tree parallelism}
+
+    \end{frame}
+
+    \begin{frame}{HDFG-based scheduling: ALU-Allocation}
         \begin{figure}[!ht]
             \begin{center}
                 \subfigure[Stage 1: scoring table modeling]
@@ -387,7 +599,7 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}{HDFG-based scheduling (4/4)}
+    \begin{frame}{HDFG-based scheduling: HFPT-sort}
         \begin{figure}[!h]
             \begin{center}
                 \includegraphics[width=0.6\textwidth]{figs/hfpt.eps}
@@ -399,14 +611,57 @@
     \section{Performance Evaluation}
     \subsection{Experiment Setup}
     \begin{frame}{Why Single-core Evaluation?}
-        
+        \begin{itemize}
+            \item Multi-core performance is highly correlated with issues not discussed in this work.
+                \begin{itemize}
+                    \item Core interconnection
+                    \item Memory subsystem 
+                    \item Shared memory or message passing
+                \end{itemize}
+            \item Programming language also plays a crucial role, but popular ones are still contending for becoming the standard. \\
+                    --- HSA, OpenCL, CUDA, OpenMP, etc.
+                \item Benchmarking multi-core DSP is still an open field of study~\cite{landscape}
+        \end{itemize}       
     \end{frame}
-    \begin{frame}{Simulation Environment}
-        
+    \begin{frame}{Simulation Benchmark Suites}
+        \begin{itemize}
+            \item Three primitive operations --- addition, multiplication and shifting.
+            \item BLAS --- classic matrix/vector library for wireless communication.
+            \item GDSPK --- common DSP filters and transformations.
+        \end{itemize}
+            \begin{table}[!ht]
+                \centering
+                \resizebox{\columnwidth}{!}
+                {
+                    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+                        \hline
+                        \multicolumn{9}{|c|}{\textbf{Basic linear algebra subprograms (BLAS)}} \\ \hline
+                        Benchmark              & AXPY   & MV     & MM      & INV      & CAXPY  & CMV  & CMM    & CINV  \\ \hline
+                        \# add            &  32    &  56    &   48    &    75    &  128   & 132  &   90   &  88   \\ \hline
+                        \# mul            &  32    &  64    &   64    &   172    &  128   & 144  &  108   & 114   \\ \hline
+                        \# sht            &   0    &   0    &    0    &     0    &    0   &   0  &    0   &   0   \\ \hline
+                        \# op             &  64    & 120    &  112    &   247    &  256   & 276  &  198   & 202   \\ \hline
+                        \multicolumn{9}{|c|}{\textbf{General DSP kernels (GDSPK)}}                     \\ \hline
+                        Benchmark              & FIR    & CFIR   & LPFIR   & Biquad   & IT     & DCT  & IMDCT  & FFT   \\ \hline
+                        \# add            & 15     &  62    &   15    &    8     &  32    &  29  &   21   &  23   \\ \hline
+                        \# mul            & 16     &  64    &    8    &    9     &   0    &  12  &   11   &  10   \\ \hline
+                        \# sht            &  0     &   0    &    0    &    0     &  10    &   9  &    9   &   0   \\ \hline
+                        \# op             & 31     & 126    &   23    &   17     &  42    &  50  &   41   &  33   \\ \hline
+                    \end{tabular}
+                }
+            \end{table}
     \end{frame}
 
-    \begin{frame}{Simulation Benchmark Suites}
-        
+    \begin{frame}{Simulation Environment}
+            \begin{itemize}
+                \item DUT is replaced with \textbf{DeAr}, \textbf{scalar}, \textbf{VLIW} and \textbf{composite-ALU} (cascade-ALU ASIP) in accordance.
+                \item Composite-ALU is evaluated with best two ALU configurations (MSA and AMS) respectively.
+                \item Designs have compatible RF (32 cells) and ALU resources (one adder, multiplier and shifter).
+            \end{itemize}
+            \begin{figure}[!ht] 
+                \centering
+                \includegraphics[width=0.45\textwidth]{./figs/sim.eps}
+            \end{figure}
     \end{frame}
 
     \subsection{Pre-synthesis Analysis}
@@ -446,6 +701,11 @@
 
     \begin{frame}{Future Work (2/2)}
         
+    \end{frame}
+
+    \begin{frame}[plain,c]
+        \centering
+        \Huge{Thank You!}
     \end{frame}
 \end{CJK}
 \end{document}
