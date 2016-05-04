@@ -488,8 +488,9 @@
                 \end{itemize}
             \item HDFG-based scheduling
                 \begin{itemize}
-                    \item Power and OPC Optimization
-                    \item Last-in-first-out memory footprint
+                    \item OPC optimization --- inter-tree and intra-tree parallelism
+                    \item Power optimization --- exhaustive forwarding
+                    \item Memory footprint optimization --- LIFO fashion and minimum stack consumption
                     \item Code generation
                 \end{itemize}
         \end{enumerate}
@@ -520,20 +521,29 @@
                         \end{itemize}
                     \item Re-traversing new code
                         \begin{itemize}
-                            \item Store assignments in $V_{op}$
-                            \item Store dependencies in $E_{op}$
+                            \item Store assignments in $V_{OP}$
+                            \item Store dependencies in $E_{OP}$
                         \end{itemize}
-                    \item DFG: $G = (V_{op}, E_{op})$ is obtained.
+                    \item DFG: $G = (V_{OP}, E_{OP})$ is obtained.
+                        \begin{itemize}
+                            \item Vertex: operation
+                            \item Edge: data flow
+                        \end{itemize}
                 \end{enumerate}
            \end{column}
         \end{columns}
     \end{frame}
 
-    \begin{frame}{Finalization: Hierarchizing DFG to HDFG}
+    \begin{frame}{Finalization: Converting DFG to HDFG}
         \begin{itemize}
             \item Conventional DSP program analysis: data flow graph (DFG) analysis
             \item We propose \textbf{Hierarchical data flow graph (HDFG)} \\
                     --- providing abundant information for optimizations
+            \item After conversion, HDFG: $\bar{G} = (V_{BT}, E_{BT})$ is obtained.
+                \begin{itemize}
+                    \item Vertex: binary tree $BT$
+                    \item Edge: data flow cross $BT$
+                \end{itemize}
         \end{itemize}
         \begin{figure}[!ht]
             \begin{center}
@@ -552,29 +562,76 @@
     \end{frame}
     \begin{frame}{Compilation: Properties of HDFG}
         \begin{itemize}
-            \item Cascaded or isolated $op$ form $sn$ \\ --- data forwarding must performed within $sn$.
-            \item Neighboring or isolated $sn$ form full binary tree $bt$ \\
-                --- parent $sn$ receives data from stack and TTDB
+            \item Cascaded or isolated $OP$ form $SN$ \\ --- data forwarding must performed within $sn$.
+            \item Neighboring or isolated $sn$ form full binary tree $BT$ \\
+                --- parent $SN$ receives data from stack and TTDB
                 \begin{itemize}
                     \item First operand popped from stack
                     \item Second operand forwarded from TTDB
                 \end{itemize}
-                Within a $bt$, a parent $sn$ receives the first operand popped from the stack and the second one forwarded via TTDB.
-            \item Dependencies among $op$ that cross $bt$ are inherited
-            \item After scheduled, $bt$ and its edges are erased from HDFG
+                Within a $BT$, a parent $SN$ receives the first operand popped from the stack and the second one forwarded via TTDB.
+            \item Dependencies among $SN$ that cross $BT$ are inherited
+            \item After scheduled, $BT$ and its edges are erased from HDFG
         \end{itemize}
     \end{frame}
 
 
 
     \begin{frame}{HDFG-based scheduling: Inter-tree parallelism}
+        \textbf{Achieving high OPC by exploring parallelism in HDFG}
+        \begin{itemize}
+            \item A $BT$ without in-edges is free to be scheduled to a thread
+                \begin{itemize}
+                    \item Operations in $BT$ are turned into a list
+                    \item The thread executes operations on the list one by one
+                \end{itemize}
+            \item Two free $BT$s are \textbf{parallelizable} --- \textbf{inter-tree parallelism}
+                \begin{itemize}
+                    \item Processed by two threads respectively and concurrently.
+                    \item Proceeding until all $BT$ are consumed
+                \end{itemize}
+        \end{itemize}
+        But sometimes...
+        \begin{itemize}
+            \item Only one $BT$ exists in HDFG at beginning
+            \item One $BT$ remains after scheduling
+            \item One partial $BT$ remains after scheduling
+        \end{itemize}
+        \vspace{1em}
+        \centering
+        \textbf{Exploring intra-tree parallelism!}
     \end{frame}
 
     \begin{frame}{HDFG-based scheduling: Intra-tree parallelism}
-
+        \begin{columns}
+            \begin{column}{0.35\textwidth}
+                
+            \end{column}
+            \begin{column}{0.65\textwidth}
+                \begin{itemize}
+                    \item Partitioning $bt$ into three parts --- root, left and right-subtrees
+                        \begin{itemize}
+                            \item Root: can only be handled sequentially
+                            \item Left and right-subtrees --- \textbf{intra-tree parallelism}, processed by two threads concurrently
+                        \end{itemize}
+                    \item Imbalance subtree size lead to smaller $bt$ remaining after scheduling
+                    \item Recursively partitioning and scheduling until completion
+                \end{itemize} 
+                \vspace{1em} 
+                Parallelism is good, but how to handle ALU conflict?\\
+                \vspace{1em} 
+                \centering
+                \textbf{DP-based ALU-allocation!}
+            \end{column}
+        \end{columns}
     \end{frame}
 
-    \begin{frame}{HDFG-based scheduling: ALU-Allocation}
+    \begin{frame}{HDFG-based scheduling: DP-based ALU-Allocation}
+        \begin{itemize}
+            \item Analyzing operation-lists of two threads by Dynamic programming (DP)
+            \item DP determines which thread stalls at conflict, and achieved optimized OPC
+            \item An example where two threads have AAAMMM in their operation-lists
+        \end{itemize}
         \begin{figure}[!ht]
             \begin{center}
                 \subfigure[Stage 1: scoring table modeling]
