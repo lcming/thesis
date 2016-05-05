@@ -4,14 +4,14 @@ which manipulates SMT in a VLIW-fashion datapath.
 The compact hardware design endows DeAr good scalability of multi-core architecture, 
 which is suitable for the HSA programming model.
 Besides, we propose a novel program analysis approach based on the hierarchical data flow graph (HDFG), which is an enhanced data flow graph.
-By leveraging HDFG-based scheduling, DeAr achieves high ILP, good flexibility and low RF access rate.
+By leveraging HDFG-based scheduling, DeAr achieves high OPC, good flexibility and low RF access rate.
 % which out-performs 
 To demonstrate the compatibility of DeAr with HSA,
 we also present the architectural framework of an HSA platform integrated with a multi-core DeAr DSP, 
 and the software framework of a HSA-compatible DeAr compiler.
 \\\indent
 To validate the low-cost design of DeAr, we prepared two DSP benchmark suites, basic linear algebra subprograms (BLAS) and general digital signal processing kernels (GDSPK) in the experiment.
-In BLAS, DeAr reduces 35.4\%--21.1\% or 21.2--5.3\% of area,
+In BLAS, DeAr reduces 35.4\%--21.1\% or 21.2\%--5.3\% of area,
 and 22.7\%--15.1\% or 46.9\%--2.8\% of power dissipation , compared with the VLIW or composite-ALU architecture.
 In GDSPK, on the other hand, DeAr reduces 35.2\%--21.6\% or 33.5\%--4.7\% of area, 
 and 18.5\%--10.4\% or 19.7\%--1.5\% of power dissipation , compared with the VLIW or composite-ALU architecture.
