@@ -630,7 +630,7 @@
         \begin{itemize}
             \item Analyzing operation-lists of two threads by Dynamic programming (DP)
             \item DP determines which thread stalls at conflict, and achieved optimized OPC
-            \item An example where two threads have AAAMMM in their operation-lists
+            \item An example where two threads have MMMAAA in their operation-lists
         \end{itemize}
         \begin{figure}[!ht]
             \begin{center}
@@ -656,15 +656,21 @@
         \end{figure}
     \end{frame}
 
-    \begin{frame}{HDFG-based scheduling: HFPT-sort}
+    \begin{frame}{HDFG-based scheduling: HFPT sort}
+        \begin{itemize}
+            \item HFPT (higher-first post-order) sort determines exeuction order in $BT$
+            \item Post-order traversal ensures LIFO memory footprint \\ --- \textbf{achieving flexibility}
+            \item Higher-first strategy lets higher subtree go first \\ --- \textbf{minimizing stack consumption}
+            \item $OP$s in $SN$ are atomic where data must flows via forwarding bus \\ -- \textbf{reducing power}
+        \end{itemize}
         \begin{figure}[!h]
             \begin{center}
-                \includegraphics[width=0.6\textwidth]{figs/hfpt.eps}
+                \includegraphics[width=0.4\textwidth]{figs/hfpt.eps}
             \end{center}
             \label{fig:hfpt}
         \end{figure}%
     \end{frame}
-        
+
     \section{Performance Evaluation}
     \subsection{Experiment Setup}
     \begin{frame}{Why Single-core Evaluation?}
@@ -676,8 +682,8 @@
                     \item Shared memory or message passing
                 \end{itemize}
             \item Programming language also plays a crucial role, but popular ones are still contending for becoming the standard. \\
-                    --- HSA, OpenCL, CUDA, OpenMP, etc.
-                \item Benchmarking multi-core DSP is still an open field of study~\cite{landscape}
+                --- HSA, OpenCL, CUDA, OpenMP, etc.
+            \item Benchmarking multi-core DSP is still an open field of study~\cite{landscape}
         \end{itemize}       
     \end{frame}
     \begin{frame}{Simulation Benchmark Suites}
@@ -686,15 +692,15 @@
             \item BLAS --- classic matrix/vector library for wireless communication.
             \item GDSPK --- common DSP filters and transformations.
         \end{itemize}
-            \begin{table}[!ht]
-                \centering
-                \resizebox{\columnwidth}{!}
-                {
-                    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-                        \hline
-                        \multicolumn{9}{|c|}{\textbf{Basic linear algebra subprograms (BLAS)}} \\ \hline
-                        Benchmark              & AXPY   & MV     & MM      & INV      & CAXPY  & CMV  & CMM    & CINV  \\ \hline
-                        \# add            &  32    &  56    &   48    &    75    &  128   & 132  &   90   &  88   \\ \hline
+        \begin{table}[!ht]
+            \centering
+            \resizebox{\columnwidth}{!}
+            {
+                \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+                    \hline
+                    \multicolumn{9}{|c|}{\textbf{Basic linear algebra subprograms (BLAS)}} \\ \hline
+                    Benchmark              & AXPY   & MV     & MM      & INV      & CAXPY  & CMV  & CMM    & CINV  \\ \hline
+                    \# add            &  32    &  56    &   48    &    75    &  128   & 132  &   90   &  88   \\ \hline
                         \# mul            &  32    &  64    &   64    &   172    &  128   & 144  &  108   & 114   \\ \hline
                         \# sht            &   0    &   0    &    0    &     0    &    0   &   0  &    0   &   0   \\ \hline
                         \# op             &  64    & 120    &  112    &   247    &  256   & 276  &  198   & 202   \\ \hline
@@ -724,40 +730,139 @@
     \subsection{Pre-synthesis Analysis}
 
     \begin{frame}{Operations per Cycle}
-        
+        \begin{table}[!ht]
+            \centering
+            \resizebox{\columnwidth}{!}
+            {
+                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                    \hline
+                    \multicolumn{10}{|c|}{\textbf{Basic linear algebra subprograms (BLAS)}} \\ \hline
+                    Benchmark  &  AXPY  &  MV  &  MM  &  MINV  &  CAXPY  &  CMV  &  CMM  &  CMINV  &  Average \\ \hline 
+                    VLIW  &   1.94  &   1.85  &   1.72  &   1.44  &   1.97  &   1.89  &   1.80  &   1.76  &   1.79     \\ \hline 
+                    DeAr  &   1.94  &   1.85  &   1.72  &   1.40  &   1.97  &   1.89  &   1.80  &   1.62  &   1.77     \\ \hline
+                    Composite-MSA  &   2.00  &   1.88  &   1.75  &   1.37  &   1.33  &   1.35  &   1.38  &   1.53  &   1.57     \\ \hline 
+                    Composite-AMS  &   1.00  &   1.00  &   1.00  &   1.02  &   1.00  &   1.00  &   1.00  &   1.04  &   1.01     \\ \hline 
+                    Scalar  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0 \\ \hline 
+                    \multicolumn{10}{|c|}{\textbf{General DSP application kernels (GDSPK)}}                     \\ \hline
+                    Benchmark  &  FIR  &  CFIR  &  LPFIR  &  Biquad  &  IT  &  DCT  &  IMDCT  &  FFT  &  Average \\ \hline 
+                    VLIW  &   1.82  &   1.91  &   1.67  &   1.55  &   1.33  &   1.61  &   1.86  &   1.38  &   1.64     \\ \hline 
+                    DeAr  &   1.82  &   1.91  &   1.67  &   1.55  &   1.33  &   1.47  &   1.46  &   1.32  &   1.57     \\ \hline 
+                    Composite-MSA  &   1.94  &   1.34  &   1.44  &   1.42  &   1.31  &   1.14  &   1.28  &   1.06  &   1.35     \\ \hline 
+                    Composite-AMS  &   1.00  &   1.00  &   1.53  &   1.21  &   1.14  &   1.61  &   1.52  &   1.27  &   1.29     \\ \hline 
+                    Scalar  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0  & 1.0 \\ \hline 
+                \end{tabular}
+            }
+        \end{table}
+
     \end{frame}
 
     \begin{frame}{Register File Access Rate}
-        
+        \begin{table}[!ht]
+            \centering
+            \resizebox{\columnwidth}{!}
+            {
+                \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+                    \hline
+                    \multicolumn{10}{|c|}{\textbf{Basic linear algebra subprograms (BLAS)}} \\ \hline
+                    Benchmark  &  AXPY  &  MV  &  MM  &  MINV  &  CAXPY  &  CMV  &  CMM  &  CMINV  &  Average \\ \hline 
+                    DeAr  &   0.67  &   0.69  &   0.71  &   0.67  &   0.67  &   0.68  &   0.70  &   0.71  &   0.69     \\ \hline
+                    Composite-MSA  &   0.67  &   0.69  &  0.71  &   0.82  &   0.83  &   0.83  &   0.82  &   0.77  &  0.77     \\ \hline 
+                    Composite-AMS  &   1.0  &   1.00  &   1.00  &   0.98  &   1.00  &   1.00  &   1.00  &   0.97  &   0.99     \\ \hline 
+                    VLIW  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00     \\ \hline 
+                    Saclar  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00     \\ \hline 
+                    \multicolumn{10}{|c|}{\textbf{General DSP kernels (GDSPK)}}                     \\ \hline
+                    Benchmark  &  FIR  &  CFIR  &  LPFIR  &  Biquad  &  IT  &  DCT  &  IMDCT  &  FFT  &  Average \\ \hline 
+                    DeAr  &   0.68  &   0.67  &  0.60  &   0.57  &   0.85  &   0.74  &   0.86  &   0.82  &   0.73     \\ \hline 
+                    Composite-MSA  &   0.68  &   0.83  &   0.80  &   0.80  &   0.83  &   0.87  &   0.80  &   0.92  &   0.82     \\ \hline 
+                    Composite-AMS  &   1.00  &   1.00  &   0.77  &   0.88  &   1.00  &   0.76  &   0.84  &   0.86  &   0.87     \\ \hline 
+                    VLIW  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00     \\ \hline 
+                    Saclar  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00     \\ \hline 
+                \end{tabular}
+            }
+    \end{table}
     \end{frame}
 
     \subsection{Synthesis Result and Analysis}
 
     \begin{frame}{Area}
-        
+        \begin{figure}[t]
+            \begin{center}
+                \subfigure[BLAS benchmark suite]
+                {
+                    \label{chart:area:blas}
+                    \includegraphics[width=0.48\textwidth]{charts/area_blas.eps}
+                }
+                \subfigure[General benchmark suite]
+                {
+                    \label{chart:area:general}
+                    \includegraphics[width=0.48\textwidth]{charts/area_general.eps}
+                }
+            \end{center}
+        \end{figure}
     \end{frame}
 
     \begin{frame}{Power Dissipation}
-        
+        \begin{figure}[t]
+            \begin{center}
+                \subfigure[BLAS benchmark suite]
+                {
+                    \label{chart:power:blas}
+                    \includegraphics[width=0.48\textwidth]{charts/power_blas.eps}
+                }
+                \subfigure[General benchmark suite]
+                {
+                    \label{chart:power:general}
+                    \includegraphics[width=0.48\textwidth]{charts/power_general.eps}
+                }
+            \end{center}
+        \end{figure}
     \end{frame}
 
     \begin{frame}{Static Power Dissipation}
-        
+        \begin{figure}[t]
+            \begin{center}
+                \subfigure[BLAS benchmark suite]
+                {
+                    \label{chart:leakage:blas}
+                    \includegraphics[width=0.48\textwidth]{charts/leakage_blas.eps}
+                }
+                \subfigure[General benchmark suite]
+                {
+                    \label{chart:leakage:general}
+                    \includegraphics[width=0.48\textwidth]{charts/leakage_general.eps}
+                }
+            \end{center}
+        \end{figure}
     \end{frame}
 
     \section{Conclusion and Future Work}
-    \begin{frame}{Conclusion Remarks (1/2)}
-        
-    \end{frame}
-    \begin{frame}{Conclusion Remarks (2/2)}
-        
-    \end{frame}
-    \begin{frame}{Future Work (1/2)}
-        
+    \begin{frame}{Conclusion Remarks}
+        \begin{itemize}
+            \item Proposed DeAr DSP achieves power-efficient, flexibility and high OPC by leveraging the novel HDFG-based scheduling.
+            \item Compared with VLIW and ASIP respectively, DeAr saves:
+                \begin{itemize}
+                    \item 35.4\%--21.1\% and 21.2--5.3\% of area, 22.7\%--15.1\% and 46.9\%--2.8\% of power dissipation in BLAS.
+                    \item 35.2\%--21.6\% and 33.5\%--4.7\% of area, 18.5\%--10.4\% and 19.7\%--1.5\% of power dissipation in GDSPK.
+                \end{itemize}
+            \item The compact design endows DeAr good scalability for multi-core architecture.
+            \item To demonstrate the compatibility of DeAr with HSA standard, we present:
+                \begin{itemize}
+                    \item The architecture framework of an HSA platform integrated with a multi-core DeAr.
+                    \item The software framework of a HSA-compatible DeAr compiler.
+                \end{itemize}
+        \end{itemize}
     \end{frame}
 
-    \begin{frame}{Future Work (2/2)}
-        
+    \begin{frame}{Future Work}
+        \begin{columns}
+            \begin{column}{0.5\textwidth}
+                
+            \end{column}
+            \begin{column}{0.5\textwidth}
+                
+            \end{column}
+        \end{columns}
+    
     \end{frame}
 
     \begin{frame}[plain,c]
