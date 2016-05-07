@@ -23,6 +23,8 @@
 \usepackage{amssymb}
 \usepackage[noend]{algpseudocode}
 \usepackage{wallpaper}
+\usepackage[backend=bibtex,sorting=none,maxcitenames=5,maxbibnames=5,hyperref=true,block=none,firstinits=true]{biblatex}
+\bibliography{oral}
 \algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
@@ -41,7 +43,9 @@
 \usetheme{Madrid} % origin
 \setbeamercolor{structure}{fg=violet}
 
-\author{Chi-Ming~Lee}
+\author{ 
+    Chi-Ming Lee
+}
 
 \institute[NTHU EE] % (optional, but mostly needed)
 {
@@ -114,7 +118,7 @@
                         \item ASIP: good power-efficiency and bad flexibility
                     \end{itemize}
                 }
-            \item \large{\textbf{Achieving both of them is a challenge!}}
+            \item \large{\textbf{ACHIEVING BOTH OF THEM IS A CHALLENGE!}}
         \end{itemize}
     \end{frame}
 
@@ -176,7 +180,7 @@
                     \end{itemize}
                 }
             \item {
-                    We also propose a framework to integrate DeAr DSP with HSA.
+                    We also propose a framework to integrate DeAr DSP with HSA~\cite{systemspec}.
                     \begin{itemize}
                         \item {
                                 HSA compatible system integration framework.
@@ -213,7 +217,7 @@
            \end{column}
            \begin{column}{0.6\textwidth}
               \begin{itemize}
-                  \item Each function unit (FU) works independently with dedicated ports in RF (worst-case port count).
+                  \item Each function unit (FU) works independently with dedicated ports in RF
                   \item Pros:
                       \begin{itemize}
                           \item Multi-issue datapath \\ $\implies$ high OPC
@@ -221,7 +225,7 @@
                       \end{itemize}
                  \item Cons:
                      \begin{itemize}
-                         \item Large port count in RF \\ $\implies$ Severe cost in power and area
+                         \item Worst-case port count in RF \\ $\implies$ Severe cost in power and area
                      \end{itemize}
               \end{itemize} 
            \end{column}
@@ -230,21 +234,22 @@
 
     \begin{frame}{Application Specific Instruction Set Processor (ASIP)}
         \begin{columns}
-            \begin{column}{0.4\textwidth}
+            \begin{column}{0.45\textwidth}
                 \begin{figure}[!ht]
                     \centering
                     \includegraphics[width=0.9\linewidth]{./figs/cascade.eps}
                     \caption{ASIP example}
                 \end{figure}
             \end{column}
-            \begin{column}{0.6\textwidth}
+            \begin{column}{0.55\textwidth}
                \begin{itemize}
-                   \item FUs are configured or cascaded in a special manner (special-case port count).
+                   \item Composite-ALU ASIP proposed by Ou~\textit{et. al.}~\cite{cascade}
+                   \item FUs are configured or cascaded in a special manner
                    \item Pros:
                        \begin{itemize}
                            \item Multi-issue datapath \\ $\implies$ high OPC
-                           \item Medium port count in RF \\ $\implies$ Acceptable cost in power and area
-                           \item Inherent forwarding path between FUs \\ $\implies$ Reducing cost in power
+                           \item Special-case port count in RF \\ $\implies$ Less cost in power and area
+                           \item Inherent FU forwarding path \\ $\implies$ Reducing cost in power
                        \end{itemize}
                    \item Cons:
                        \begin{itemize}
@@ -301,7 +306,7 @@
 
     \begin{frame}{Execution Hierarchy}
         \begin{itemize}
-            \item Work-item: the finest execution unit with dedicated registers.
+            \item Work-item: the primitive execution unit with dedicated registers.
             \item Work-group: a set of work-items sharing local memory (on-chip buffer)
             \item Grid: Assembly of all work-items and work-groups in the program context.
         \end{itemize}
@@ -324,7 +329,7 @@
     \section{Design and Implementation}
     \subsection{Proposed Architecture}
 
-    \begin{frame}{System Integration (1/2)}
+    \begin{frame}{System Integration Framework (1/2)}
         \begin{columns}
             \begin{column}{0.6\textwidth}
                 \begin{figure}[!ht] 
@@ -333,19 +338,21 @@
                     \label{fig:archi}
                 \end{figure}
             \end{column}
-            \begin{column}{0.4\textwidth}
-            Key components:
-                \begin{itemize}
-                    \item Host port interface~\cite{hpi}
-                    \item SC-based DMA engine~\cite{sc}
-                    \item Shared L1 program cache~\cite{kelly2004shared}
-                \end{itemize}
+            \begin{column}{0.40\textwidth}
+                \begin{block}{Key components}
+                    \begin{itemize}
+                        \item Multi-core DeAr with shared L1 I-cache~\cite{kelly2004shared}
+                        \item Host port interface~\cite{hpi}
+                        \item SC-based direct memory access engine~\cite{sc}
+                    \end{itemize}
+                \end{block}
             \end{column}
         \end{columns}
     \end{frame}
 
-    \begin{frame}{System Integration (2/2)}
+    \begin{frame}{System Integration Framework (2/2)}
         \begin{itemize}
+            \item Multi-core DeAr with shared L1 I-cache --- fitting HSA SPMD programming model and eliminating program data duplication
             \item Host port interface (HPI)
                 \begin{itemize}
                     \item Enabling host direct access to DeAr
@@ -354,14 +361,19 @@
             \item SC-based DMA engine
                 \begin{itemize}
                     \item Initiating data transfer and transforming data layout on-the-fly
-                    \item Improving data locality in DeAr --- coalescing access
+                    \item Improving data locality for DeAr by coalescing access pattern
+                    \item Multiple Load/Store (L/S) instructions can be merged into one
                 \end{itemize}
-            \item Shared L1 program cache --- fitting SPMD programming model
         \end{itemize}
     \end{frame}
 
     \begin{frame}{Concepts for Acceleration}
-        Key: Offloading a work-item to two DeAr threads.\\
+        %\centering
+        %    \textbf{Key: Offloading a work-item to two DeAr threads.}\\
+        \begin{itemize}
+            \item Conventional architectures: Referring to a work-item as a thread
+            \item Proposed architecture: \textbf{Offloading a work-item to two DeAr threads.}\\
+        \end{itemize}
         \begin{figure}[!ht]
             \begin{center}
                 \subfigure[Execution flow of an HSA work-item]
@@ -390,13 +402,14 @@
                     \includegraphics[width=1.0\textwidth]{./figs/micro.eps}
                 \end{figure}
             \end{column}
-            \begin{column}{0.4\textwidth}
-                Key components:
-                \begin{itemize}
-                    \item Sequential-access Banked RF
-                    \item Accumulator latches
-                    \item Transport Triggered Data Bus
-                \end{itemize}    
+            \begin{column}{0.35\textwidth}
+                \begin{block}{Key components}
+                    \begin{itemize}
+                        \item Sequential-access Banked RF
+                        \item Transport Triggered Data Bus
+                        \item Accumulator latches
+                    \end{itemize}    
+                \end{block}
             \end{column}
         \end{columns}
     \end{frame}
@@ -405,12 +418,12 @@
         \begin{itemize}
             \item Sequential-access Banked RF (SBRF)
                 \begin{itemize}
-                    \item Physical and symmetric separation for threads
                     \item Load/store queues buffer memory transfer data
                     \item Stack memory stores intermediate data
+                    \item Physical and symmetric separation for threads
                     \item Implicit access reducing code size
                 \end{itemize}
-            \item Accumulator latches (ACCs) --- buffering arithmetic results for future reuse
+            \item Accumulator latches (ACCs) i\\ --- buffering arithmetic results for future reuse
             \item Transport-triggered Data Bus (TTDB)
                 \begin{itemize}
                     \item Flexible data transport between ACCs and FUs
@@ -472,12 +485,12 @@
     \subsection{Software Design and Implementation}
     \begin{frame}{Software Framework}
         \begin{enumerate}
-            \item Compilation
+            \item Compilation (front-end)
                 \begin{itemize}
                     \item DeAr users program in high level languages (OpenCL or C++)
-                    \item Off-line compiler~\ref{cloc} from HSA foundation compiles them to HSAIL
+                    \item Off-line compiler~\cite{cloc} from HSA foundation compiles them to HSAIL
                 \end{itemize}
-            \item Finalization
+            \item Finalization (front-end)
                 \begin{itemize}
                     \item Converting HSAIL to data flow graph (DFG)
                         \begin{itemize}
@@ -486,7 +499,7 @@
                         \end{itemize}
                     \item Converting DFG to hierarchical data flow graph (HDFG)
                 \end{itemize}
-            \item HDFG-based scheduling
+            \item HDFG-based scheduling (back-end)
                 \begin{itemize}
                     \item OPC optimization --- inter-tree and intra-tree parallelism
                     \item Power optimization --- exhaustive forwarding
@@ -628,8 +641,8 @@
 
     \begin{frame}{HDFG-based scheduling: DP-based ALU-Allocation}
         \begin{itemize}
-            \item Analyzing operation-lists of two threads by Dynamic programming (DP)
-            \item DP determines which thread stalls at conflict, and achieved optimized OPC
+            \item Analyzing operation-lists of two threads by Dynamic programming (DP) and performing ALU-allocation
+            \item DP determines which thread stalls at conflict, achieving optimal OPC
             \item An example where two threads have MMMAAA in their operation-lists
         \end{itemize}
         \begin{figure}[!ht]
@@ -690,7 +703,7 @@
         \begin{itemize}
             \item Three primitive operations --- addition, multiplication and shifting.
             \item BLAS --- classic matrix/vector library for wireless communication.
-            \item GDSPK --- common DSP filters and transformations.
+            \item GDSPK --- common DSP filters and transformation algorithms.
         \end{itemize}
         \begin{table}[!ht]
             \centering
@@ -753,6 +766,10 @@
                 \end{tabular}
             }
         \end{table}
+        \begin{itemize}
+            \item VLIW benefits from most flexible datapath so it achieves best OPC.
+            \item By leveraging HDFG-based scheduling, DeAr have only 1.11\% and 4.26\% loss.
+        \end{itemize}
 
     \end{frame}
 
@@ -779,7 +796,11 @@
                     Saclar  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00  &   1.00     \\ \hline 
                 \end{tabular}
             }
-    \end{table}
+        \end{table}
+        \begin{itemize}
+            \item Under assumption of single cycle, VLIW and scalar lack forwarding mechanism
+            \item DeAr achieves lowest RF access rate by leveraging HDFG-based scheduling.
+        \end{itemize}
     \end{frame}
 
     \subsection{Synthesis Result and Analysis}
@@ -799,6 +820,11 @@
                 }
             \end{center}
         \end{figure}
+        \begin{itemize}
+            \item DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, 
+                or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%, because of banked RF and lower decode complexity.
+            \item Scalar suffers from low OPC and lead to dramatic growth while throughput is above 500 MOPS.
+        \end{itemize}
     \end{frame}
 
     \begin{frame}{Power Dissipation}
@@ -816,6 +842,11 @@
                 }
             \end{center}
         \end{figure}
+        \begin{itemize}
+            \item Linear growth regardless of design indicates the domination of dynamic power.
+            \item DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, 
+                or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%, because of lower area and RF access rate.
+        \end{itemize}
     \end{frame}
 
     \begin{frame}{Static Power Dissipation}
@@ -833,15 +864,19 @@
                 }
             \end{center}
         \end{figure}
+        \begin{itemize}
+            \item Very high correlation with area evaluation.
+            \item DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, 
+                or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%,
+        \end{itemize}
     \end{frame}
-
     \section{Conclusion and Future Work}
     \begin{frame}{Conclusion Remarks}
         \begin{itemize}
             \item Proposed DeAr DSP achieves power-efficient, flexibility and high OPC by leveraging the novel HDFG-based scheduling.
             \item Compared with VLIW and ASIP respectively, DeAr saves:
                 \begin{itemize}
-                    \item 35.4\%--21.1\% and 21.2--5.3\% of area, 22.7\%--15.1\% and 46.9\%--2.8\% of power dissipation in BLAS.
+                    \item 35.4\%--21.1\% and 21.2\%--5.3\% of area, 22.7\%--15.1\% and 46.9\%--2.8\% of power dissipation in BLAS.
                     \item 35.2\%--21.6\% and 33.5\%--4.7\% of area, 18.5\%--10.4\% and 19.7\%--1.5\% of power dissipation in GDSPK.
                 \end{itemize}
             \item The compact design endows DeAr good scalability for multi-core architecture.
@@ -854,14 +889,20 @@
     \end{frame}
 
     \begin{frame}{Future Work}
-        \begin{columns}
-            \begin{column}{0.5\textwidth}
-                
-            \end{column}
-            \begin{column}{0.5\textwidth}
-                
-            \end{column}
-        \end{columns}
+        \begin{itemize}
+            \item Implementation of SC-based DMA engine~\cite{sc}
+                \begin{itemize}
+                    \item Coalescing data layout and merging several L/S instructions into one.
+                    \item Needing more studies for trading-off among throughput, power and flexibility. 
+                \end{itemize}
+            \item Using unused bits to enhance current DeAr ISA (interrupt, special function, etc.)
+            \item Conducting system level emulation with HSAemu~\cite{hsaemu} to evaluate the memory hierarchy and multi-core design for DeAr.
+            \item Exploring the possibilities of applying DeAr to GPU.
+                \begin{itemize}
+                    \item Efficient DeAr core is a potential alternative to RISC shader
+                    \item Dynamic massive threads management is the main challenge
+                \end{itemize}
+        \end{itemize}
     
     \end{frame}
 
@@ -869,6 +910,12 @@
         \centering
         \Huge{Thank You!}
     \end{frame}
+
+    \begin{frame}[allowframebreaks]{Reference}
+        \printbibliography
+    \end{frame}
+
+
 \end{CJK}
 \end{document}
 

@@ -15,10 +15,10 @@ all: $(TAR).tex $(TAR).bib
 test: $(TAR).tex
 	-pdflatex $(TAR)
 
-oral: oral.tex $(TAR).bib
-#	-pdflatex $@
-#	-bibtex $(TAR)
-#	-pdflatex $@
+oral: oral.tex oral.bib
+	-pdflatex $@
+	-bibtex $@
+	-pdflatex $@
 	pdflatex $@
 	evince oral.pdf
 
