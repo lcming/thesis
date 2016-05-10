@@ -344,21 +344,32 @@
 
             \subsection{Hardware Design and Implementation}
             \begin{frame}{Basic Design Considerations}
+                Considering a datapath with one adder, multiplier and shifter, We want... \\
                 \begin{itemize}
                     \item Multi-issue capability of VLIW but with low cost in RF
                         \begin{itemize}
-                            \item Partitioning RF to multiple banks
-                            \item Specializing purpose for each bank
+                            \item Partition RF to multiple banks
+                            \item Specialize purpose of each bank --- load, store or intermediate bank
                         \end{itemize}
                     \item Forwarding mechanism of ASIP but with flexibility
                         \begin{itemize}
-                            \item Buffering FU results with dedicated accumulators
-                            \item Programmable data transportation from accumulators to FUs
+                            \item Buffer FU result with dedicated accumulator
+                            \item Support programmable data transportation from accumulator to FU
+                        \end{itemize}
+                    \item Simpler compiler design for banked RF
+                        \begin{itemize}
+                            \item Use one load, store and intermediate bank per instruction stream 
+                            \item Let instruction streams work independently --- simultaneous multi-threading (SMT)
+                        \end{itemize}
+                    \item Best trading-off for SMT width
+                        \begin{itemize}
+                            \item Dual-thread $\implies$ six banks in RF
                         \end{itemize}
                 \end{itemize}
+                That's DeAr!
             \end{frame}
 
-            \begin{frame}{Micro-architecture}
+            \begin{frame}{DeAr Micro-architecture}
                 \begin{columns}
                     \begin{column}{0.6\textwidth}
                         \begin{figure}[!ht] 
@@ -376,6 +387,19 @@
                         \end{block}
                     \end{column}
                 \end{columns}
+            \end{frame}
+
+            \begin{frame}{Advanced Design Considerations}
+                \begin{itemize}
+                \item Data flow of DSP application is often binary tree like 
+                    \begin{itemize}
+                        \item Matrix, FIR, convolution, etc
+                    \end{itemize}
+                \end{itemize}
+
+                %\item Finding out best SMT width
+                %\item Reducing code size and decode complexity
+                %\item Combining multiple load/store (L/S) instructions into one
             \end{frame}
 
             %\begin{frame}{Micro-architecture (2/2)}
