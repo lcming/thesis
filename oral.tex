@@ -23,6 +23,7 @@
 \usepackage{amssymb}
 \usepackage[noend]{algpseudocode}
 \usepackage{wallpaper}
+\usepackage{animate}
 \usepackage[backend=bibtex,sorting=none,maxcitenames=5,maxbibnames=5,hyperref=true,block=none,firstinits=true]{biblatex}
 \bibliography{oral}
 \algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
@@ -346,27 +347,24 @@
             \begin{frame}{Basic Design Considerations}
                 Considering a datapath with one adder, multiplier and shifter, We want... \\
                 \begin{itemize}
-                    \item Multi-issue capability of VLIW but with low cost in RF
+                    \item \textbf{Multi-issue} capability of VLIW but \textbf{low cost} in RF
                         \begin{itemize}
-                            \item Partition RF to multiple banks
-                            \item Specialize purpose of each bank --- load, store or intermediate bank
+                            \item Partition RF to \textbf{multi-bank}
+                            \item Specialize purpose of each bank --- \textbf{load, store or intermediate bank}
                         \end{itemize}
-                    \item Forwarding mechanism of ASIP but with flexibility
+                    \item \textbf{Forwarding} mechanism of ASIP but \textbf{flexibility}
                         \begin{itemize}
-                            \item Buffer FU result with dedicated accumulator
-                            \item Support programmable data transportation from accumulator to FU
+                            \item Buffer FU result with dedicated latch
+                            \item \textbf{Program data transportation} from latch to FU
                         \end{itemize}
                     \item Simpler compiler design for banked RF
                         \begin{itemize}
                             \item Use one load, store and intermediate bank per instruction stream 
-                            \item Let instruction streams work independently --- simultaneous multi-threading (SMT)
+                            \item Let instruction streams work independently --- \textbf{simultaneous multi-threading} (SMT)
                         \end{itemize}
-                    \item Best trading-off for SMT width
-                        \begin{itemize}
-                            \item Dual-thread $\implies$ six banks in RF
-                        \end{itemize}
+                    \item Best trading-off for SMT width --- \textbf{dual-thread}
                 \end{itemize}
-                That's DeAr!
+                \large{That's \textbf{D}ual-thr\textbf{e}ad \textbf{Ar}chitecture}
             \end{frame}
 
             \begin{frame}{DeAr Micro-architecture}
@@ -380,7 +378,14 @@
                     \begin{column}{0.35\textwidth}
                         \begin{block}<2->{Key components}
                             \begin{itemize}
-                                \item <3->{Banked RF}
+                                \item <3->
+                                {
+                                    \begin{itemize}
+                                        \item Two load-banks
+                                        \item Two store-banks
+                                        \item Two intermediate-banks
+                                    \end{itemize}
+                                }
                                 \item <4->{Transport Triggered Data Bus}
                                 \item <5->{Accumulator latches}
                             \end{itemize}    
@@ -391,15 +396,20 @@
 
             \begin{frame}{Advanced Design Considerations}
                 \begin{itemize}
-                \item Data flow of DSP application is often binary tree like 
-                    \begin{itemize}
-                        \item Matrix, FIR, convolution, etc
-                    \end{itemize}
+                    \item Data flow is often binary tree like and used exactly once (vector, matrix, convolution, etc)
+                        \begin{itemize}
+                            \item Load data in use-order $\implies$ load bank is first-in first-out (FIFO)
+                            \item Store data in WB-order $\implies$ store bank is first-in first-out (FIFO)
+                            \item Post-order process binary tree $\implies$ intermediate bank is last-in first-out (LIFO)
+                        \end{itemize}
+                    \item Replacing random-access memory with queues and stacks
+                        \begin{itemize}
+                            \item Fewer bits to access RF $\implies$ better code density, lower decode complexity
+                            \item Sequential load/store (L/S) $\implies$ burst memory transfer
+                        \end{itemize}
                 \end{itemize}
+                \animategraphics[loop,controls,width=\linewidth]{12}{./figs/tree.gif}{0}{16}
 
-                %\item Finding out best SMT width
-                %\item Reducing code size and decode complexity
-                %\item Combining multiple load/store (L/S) instructions into one
             \end{frame}
 
             %\begin{frame}{Micro-architecture (2/2)}
