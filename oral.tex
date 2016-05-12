@@ -126,36 +126,53 @@
     \end{frame}
 
     \begin{frame}{Motivation (2/2)}
-        \begin{itemize}
-            \item <2->{
-                    Heterogeneous computing, a system with multiple types of processors, is gaining momentum
-                    \begin{itemize}
-                        \item {
-                                CPU handles control-intensive tasks
-                            }
-                        \item {
-                                DSP, GPU and FPGA handles data-intensive tasks for acceleration
-                            }
-                    \end{itemize}
-                }
-            \item <3->{
-                    Industry standard for heterogeneous computing, \textit{Heterogeneous System Architecture}~\cite{systemspec} emerged in 2012.
-                    \begin{itemize}
-                        \item {
-                                Proposed by leading semiconductor companies%, AMD, ARM, MediaTek, Samsung, Texas Instrument, etc, 
-                            }
-                        \item {
-                                Has opened a new era for embedded computing %platforms.
-                            }
-                    \end{itemize}
-                }
-            \item <4->{
-                    Designing a novel DSP which is also compatible with HSA...
-                }
-        \end{itemize}
-        \vspace{1em}
-        \centering
-        \only <5->{\large{\textbf{A TIGER WITH WINGS!!}}}
+                \begin{itemize}
+                    \item <2->{
+                            Heterogeneous computing is gaining momentum
+                            \begin{itemize}
+                                \item {
+                                        CPU handles control-intensive tasks
+                                    }
+                                \item {
+                                        DSP, GPU and FPGA handles data-intensive tasks for acceleration
+                                    }
+                            \end{itemize}
+                        }
+                \end{itemize}
+                \begin{columns}
+                    \begin{column}{0.75\textwidth}
+                        \begin{itemize}
+                            \item <3->{
+                                    Industry standard for heterogeneous computing, \textit{Heterogeneous System Architecture}~\cite{systemspec} emerged in 2012.
+                                    \begin{itemize}
+                                        \item {
+                                                Proposed by leading semiconductor companies%, AMD, ARM, MediaTek, Samsung, Texas Instrument, etc, 
+                                            }
+                                        \item {
+                                                Has opened a new era for embedded computing %platforms.
+                                            }
+                                    \end{itemize}
+                                }
+                        \end{itemize}
+                    \end{column}
+                    \begin{column}{0.25\textwidth}
+                        \only<3->
+                        {
+                            \begin{figure}[!ht]
+                                \centering
+                                \includegraphics[width=\textwidth]{./assets/hsa.jpg}
+                            \end{figure}
+                        }
+                    \end{column}
+                \end{columns}
+                \begin{itemize}
+                    \item <4->{
+                            Designing a novel DSP which is also compatible with HSA...
+                        }
+                \end{itemize}
+                \vspace{1em}
+                \centering
+                \only <5->{\large{\textbf{A TIGER WITH WINGS!!}}}
     \end{frame}
 
 
@@ -164,24 +181,24 @@
     \begin{frame}{Contribution}
         \begin{itemize}
             \item <2->{
-                    We present \textbf{Dual-thread Architecture} (\textbf{DeAr}) DSP, which achieves both power-efficiency and flexibility.
-                    \begin{itemize}
-                        \item {
-                                Simultaneous Multi-threading 
-                            }
-                        \item {
-                                Flexible forwarding bus
-                            }
-                        \item {
-                                Multi-banked RF with implicit addressing
-                            }
-                    \end{itemize}
+                    We present \textbf{Dual-thread Architecture} (\textbf{DeAr}) DSP, which achieves both \textbf{power-efficiency} and \textbf{flexibility}
+                    %\begin{itemize}
+                    %    \item {
+                    %            Simultaneous Multi-threading 
+                    %        }
+                    %    \item {
+                    %            Flexible forwarding bus
+                    %        }
+                    %    \item {
+                    %            Multi-banked RF with implicit addressing
+                    %        }
+                    %\end{itemize}
                 }
             \item <3->{
                     A novel scheduling algorithm, HDFG-based scheduling is proposed
                     \begin{itemize}
                         \item Beyond data flow graph (DFG) analysis
-                        \item Optimizing \textbf{power dissipation}, \textbf{flexibility} and \textbf{Operations per Cycle} (OPC)
+                        \item Optimizing \textbf{power}, \textbf{flexibility} and \textbf{Operations per Cycle} (OPC)
                     \end{itemize}
                 }
             \item <4->{
@@ -222,7 +239,7 @@
                     \end{column}
                     \begin{column}{0.6\textwidth}
                         \begin{itemize}
-                            \item <2-> {Each function unit (FU) works independently with dedicated ports in RF
+                            \item <2-> {Each function unit (FU) works independently with dedicated RF ports
                                 }
                             \item <3-> {Pros:
                                     \begin{itemize}
@@ -293,7 +310,7 @@
                     \item <3->{Heterogeneous System Architecture Intermediate Language (HSAIL)
                             \begin{itemize}
                                 \item Providing an unified programming language %of heterogeneous cores
-                                \item Single Program Multiple Data (SPMD) programming model
+                                \item Single Program Multiple Data (SPMD)
                             \end{itemize}
                         }
                     \item <4->{Shared Virtual Memory (SVM)
@@ -328,7 +345,7 @@
                 \begin{itemize}
                     \item <2-> {Work-item: primitive execution unit with dedicated registers}
                     \item <3-> {Work-group: a set of work-items sharing local memory}
-                    \item <4-> {Grid: Assembly of all work-groups in the context}
+                    \item <4-> {Grid: assembly of all work-groups in the context}
                 \end{itemize}
             \end{frame}
 
@@ -345,17 +362,17 @@
 
             \subsection{Hardware Design and Implementation}
             \begin{frame}{Basic Design Considerations}
-                Considering a datapath with one adder, multiplier and shifter, We want... \\
+                Considering a datapath with one adder, multiplier and shifter, we want... \\
                 \begin{itemize}
                     \item \textbf{Multi-issue} capability of VLIW but \textbf{low cost} in RF
                         \begin{itemize}
-                            \item Partition RF to \textbf{multi-bank}
+                            \item Partition RF to multi-bank
                             \item Specialize purpose of each bank --- \textbf{load, store or intermediate bank}
                         \end{itemize}
                     \item \textbf{Forwarding} mechanism of ASIP but \textbf{flexibility}
                         \begin{itemize}
                             \item Buffer FU result with dedicated latch
-                            \item \textbf{Program data transportation} from latch to FU
+                            \item Program data transportation from latch to FU
                         \end{itemize}
                     \item Simpler compiler design for banked RF
                         \begin{itemize}
@@ -364,7 +381,7 @@
                         \end{itemize}
                     \item Best trading-off for SMT width --- \textbf{dual-thread}
                 \end{itemize}
-                \large{That's \textbf{D}ual-thr\textbf{e}ad \textbf{Ar}chitecture}
+                \large{That's "D"ual-thr"e"ad "Ar"chitecture --- DeAr}
             \end{frame}
 
             \begin{frame}{DeAr Micro-architecture}
@@ -380,10 +397,11 @@
                             \begin{itemize}
                                 \item <3->
                                 {
+                                    Six-bank RF
                                     \begin{itemize}
                                         \item Two load-banks
                                         \item Two store-banks
-                                        \item Two intermediate-banks
+                                        \item Two i.m.-banks
                                     \end{itemize}
                                 }
                                 \item <4->{Transport Triggered Data Bus}
@@ -414,6 +432,26 @@
                 }
             \end{frame}
 
+            \begin{frame}{DeAr Micro-architecture with SBRF}
+                \begin{columns}
+                    \begin{column}{0.6\textwidth}
+                        \begin{figure}[!ht] 
+                            \centering
+                            \includegraphics[width=1.0\textwidth]{./figs/micro.eps}
+                        \end{figure}
+                    \end{column}
+                    \begin{column}{0.35\textwidth}
+                        \begin{block}<2->{SBRF}
+                            \begin{itemize}
+                                \item Two load-queues
+                                \item Two store-queues
+                                \item Two i.m.-stacks
+                            \end{itemize}    
+                        \end{block}
+                    \end{column}
+                \end{columns}
+            \end{frame}
+
             %\begin{frame}{Micro-architecture (2/2)}
             %    \begin{itemize}
             %        \item <2->{Sequential-access Banked RF (SBRF)
@@ -435,10 +473,10 @@
             %\end{frame}
 
             \begin{frame}{Instruction Set Architecture (1/2)}
-                Each DeAr instruction is composed of two portions:
+                Each instruction is composed of two portions:
                 \begin{itemize}
                     \item <2->{Stack control portion: manipulating the stack memory}
-                    \item <3->{RISC-fashion portion: a subset of common RISC ISA}
+                    \item <3->{RISC-fashion portion: a subset of RISC ISA}
                 \end{itemize}
                 \begin{table}[ht!]
                     \centering
@@ -507,18 +545,18 @@
 
             \begin{frame}{Integrating DeAr with HSA (2/3)}
                 \begin{itemize}
-                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\cite{kelly2004shared} --- fitting HSA SPMD programming model and eliminating program data duplication}
+                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\cite{kelly2004shared} --- fitting HSA SPMD and eliminating program duplication}
                     \item <3-> {Host port interface (HPI)~\cite{hpi}
                             \begin{itemize}
                                 \item Enabling host direct access to DeAr
-                                \item Offloading MMU, AQL and SC control overhead to host
+                                \item Offloading MMU, AQL and SC management overhead to host
                             \end{itemize}
                         }
                     \item <4-> {SC-based DMA engine~\cite{sc}
                             \begin{itemize}
-                                \item Performing data transfer and converting data layout on-the-fly
-                                \item Improving data locality for DeAr by coalescing access pattern
-                                \item Multiple Load/Store (L/S) instructions can be merged into one
+                                \item Performing data transfer and layout conversion on-the-fly
+                                \item Coalescing access pattern --- spacial locality
+                                \item Burst memory transfer
                             \end{itemize}
                         }
                 \end{itemize}
@@ -552,8 +590,8 @@
                 \begin{enumerate}
                     \item <2->{Compilation (front-end)
                             \begin{itemize}
-                                \item DeAr users program in high level languages (OpenCL or C++)
-                                \item Off-line compiler~\cite{cloc} from HSA foundation compiles them to HSAIL
+                                \item Users program in high level languages (OpenCL or C++)
+                                \item Off-line compiler~\cite{cloc} compiles them to HSAIL
                             \end{itemize}
                         }
                     \item <3->{Finalization (front-end)
@@ -570,7 +608,7 @@
                             \begin{itemize}
                                 \item OPC optimization --- inter-tree and intra-tree parallelism
                                 \item Power optimization --- exhaustive forwarding
-                                \item Memory footprint optimization --- LIFO fashion and minimum stack consumption
+                                %\item Memory footprint optimization --- LIFO fashion and minimum stack consumption
                                 \item Code generation
                             \end{itemize}
                         }
@@ -598,7 +636,7 @@
                             \item <2->{RDA retrieves use-define chains.}
                             \item <3->{SSA renames variables.
                                 \begin{itemize}
-                                    \item Give a new name to each LHS variable
+                                    \item Assign new name to each LHS variable
                                     \item Update corresponding RHS based on RDA
                                 \end{itemize}
                             }
@@ -669,20 +707,20 @@
                 \begin{itemize}
                     \item <3->{A $BT$ without in-edges is free to be scheduled to a thread
                         \begin{itemize}
-                            \item Operations in $BT$ are turned into a list
-                            \item The thread executes operations on the list one by one
+                            \item Operations in $BT$ are turned into list (post-order)
+                            \item Thread executes operations on list one by one
                         \end{itemize}
                     }
                 \item <4->{Two free $BT$s are \textbf{parallelizable} --- \textbf{inter-tree parallelism}
                         \begin{itemize}
-                            \item Processed by two threads respectively and concurrently.
+                            \item Processing respectively and concurrently.
                             \item Proceeding until all $BT$ are consumed
                         \end{itemize}
                     }
                 \end{itemize}
                 \only <5->{But sometimes...}
                 \begin{itemize}
-                    \item <6->{Only one $BT$ exists in HDFG at beginning}
+                    \item <6->{Only one $BT$ exists in HDFG}
                     \item <7->{One $BT$ remains after scheduling}
                     \item <8->{One partial $BT$ remains after scheduling}
                 \end{itemize}
@@ -697,20 +735,20 @@
                     \end{column}
                     \begin{column}{0.65\textwidth}
                         \begin{itemize}
-                            \item <2->{Partitioning $bt$ into three parts --- root, left and right-subtrees
+                            \item <2->{Partitioning $BT$ into three parts --- root, left and right-subtrees
                                 \begin{itemize}
                                     \item Root: can only be handled sequentially
-                                    \item Left and right-subtrees --- \textbf{intra-tree parallelism}, processed by two threads concurrently
+                                    \item Left and right-subtrees --- \textbf{intra-tree parallelism}, processing concurrently
                                 \end{itemize}
                             }
-                        \item <3->{Imbalance subtree size lead to smaller $bt$ remaining after scheduling}
+                        \item <3->{Imbalance subtree lead to partial $BT$ remaining after scheduling}
                         \item <4->{Recursively partitioning and scheduling until completion}
                         \end{itemize} 
                         \vspace{1em} 
                         \only<5->{Parallelism is good, but how to handle \textbf{ALU conflict}?\\}
                         \vspace{1em} 
                         \centering
-                        \only<6->{\textbf{DP-based ALU-allocation!}}
+                        \only<6->{\textbf{Dynamic programming (DP) based ALU-allocation!}}
                     \end{column}
                 \end{columns}
             \end{frame}
@@ -848,10 +886,10 @@
                     }
                 \end{table}
                 \begin{itemize}
-                    \item <2->{VLIW benefits from most flexible datapath so it achieves best OPC.}
-                    \item <3->{Composite-ALU OPC is impacted by matchability between ALU order and benchmark characteristic.}
-                    \item <4->{By leveraging HDFG-based scheduling, DeAr have only 1.11\% and 4.26\% loss against VLIW,
-                        and remove redundant connection in RF.}
+                    \item <2->{VLIW benefits from most flexible datapath so it achieves best OPC}
+                    \item <3->{Composite-ALU OPC is impacted by matchability between ALU order and benchmark characteristic}
+                    \item <4->{DeAr have only 1.11\% and 4.26\% loss against VLIW, 
+                        and outperforms ASIP by 75.2\%--12.7\% and 21.7\%--16.3\%}
                 \end{itemize}
 
             \end{frame}
@@ -881,9 +919,10 @@
                     }
                 \end{table}
                 \begin{itemize}
-                    \item <2->{Under assumption of single cycle, VLIW and scalar lack forwarding mechanism so have worst access rate.}
-                    \item <3->{Composite-ALU forwarding capability is limited by the cascaded order and length.}
-                    \item <4->{DeAr achieves lowest RF access rate by leveraging HDFG-based scheduling.}
+                    \item <2->{Under assumption of single cycle, VLIW and scalar lack forwarding mechanism so have worst access rate}
+                    \item <3->{Composite-ALU forwarding capability is limited by the cascaded order and length}
+                    \item <4->{DeAr saves either 23\% and 27\% RF access against VLIW,
+                            or saves 30.3\%--10.4\% and 16.1\%--11.0\% against ASIP}
                 \end{itemize}
             \end{frame}
 
@@ -960,18 +999,18 @@
             \section{Conclusion and Future Work}
             \begin{frame}{Conclusion Remarks}
                 \begin{itemize}
-                    \item <2->{Proposed DeAr DSP achieves power-efficient, flexibility and high OPC by leveraging the novel HDFG-based scheduling.}
+                    \item <2->{Proposed DeAr DSP achieves power-efficient, flexibility by leveraging the novel HDFG-based scheduling}
                     \item <3->{Compared with VLIW and ASIP respectively, DeAr saves:
                             \begin{itemize}
                                 \item 35.4\%--21.1\% and 21.2\%--5.3\% of area, 22.7\%--15.1\% and 46.9\%--2.8\% of power dissipation in BLAS.
                                 \item 35.2\%--21.6\% and 33.5\%--4.7\% of area, 18.5\%--10.4\% and 19.7\%--1.5\% of power dissipation in GDSPK.
                             \end{itemize}
                         }
-                    \item <4->{The compact design endows DeAr good scalability for multi-core architecture.}
+                    \item <4->{The compact design endows DeAr good scalability for multi-core architecture}
                     \item <5->{To demonstrate the compatibility of DeAr with HSA standard, we present:
                             \begin{itemize}
-                                \item The architecture framework of an HSA platform integrated with a multi-core DeAr.
-                                \item The software framework of a HSA-compatible DeAr compiler.
+                                \item Architecture framework of HSA platform integrated with multi-core DeAr
+                                \item Software framework of HSA-compatible DeAr compiler
                             \end{itemize}
                         }
                 \end{itemize}
@@ -981,7 +1020,7 @@
                 \begin{itemize}
                     \item <2->{Implementation of SC-based DMA engine~\cite{sc}
                             \begin{itemize}
-                                \item Coalescing data layout and merging several L/S instructions into one.
+                                \item Coalescing data layout and merging several L/S instructions into one
                                 \item Needing more studies for trading-off among throughput, power and flexibility. 
                             \end{itemize}
                         }
