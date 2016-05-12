@@ -64,7 +64,7 @@
 }
 
 \begin{document}
-\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
+%\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
 \begin{CJK}{UTF8}{bkai}
 
     \title[DeAr DSP]{ DeAr: 適用於異質系統架構之高效率且彈性的數位訊號處理器設計}
@@ -398,18 +398,20 @@
                 \begin{itemize}
                     \item Data flow is often binary tree like and used exactly once (vector, matrix, convolution, etc)
                         \begin{itemize}
-                            \item Load data in use-order $\implies$ load bank is first-in first-out (FIFO)
-                            \item Store data in WB-order $\implies$ store bank is first-in first-out (FIFO)
-                            \item Post-order process binary tree $\implies$ intermediate bank is last-in first-out (LIFO)
+                            \item Load data in use-order $\implies$ load-bank is first-in first-out (FIFO)
+                            \item Store data in WB-order $\implies$ store-bank is first-in first-out (FIFO)
+                            \item Post-order traversal $\implies$ i.m.-bank is last-in first-out (LIFO)
                         \end{itemize}
                     \item Replacing random-access memory with queues and stacks
                         \begin{itemize}
-                            \item Fewer bits to access RF $\implies$ better code density, lower decode complexity
+                            \item Fewer bits in RF $\implies$ better code density, lower decode burden
                             \item Sequential load/store (L/S) $\implies$ burst memory transfer
                         \end{itemize}
                 \end{itemize}
-                \animategraphics[loop,controls,width=\linewidth]{12}{./figs/tree.gif}{0}{16}
-
+                \centering
+                {
+                    \animategraphics[loop,controls,width=0.8\linewidth]{12}{./gif/tree-}{0}{10}
+                }
             \end{frame}
 
             %\begin{frame}{Micro-architecture (2/2)}
