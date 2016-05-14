@@ -24,7 +24,7 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{wallpaper}
 \usepackage{animate}
-\usepackage[backend=bibtex,sorting=none,maxcitenames=5,maxbibnames=5,hyperref=true,block=none,firstinits=true]{biblatex}
+\usepackage[backend=bibtex,sorting=none,maxcitenames=1,maxbibnames=1,hyperref=true,block=none,firstinits=true]{biblatex}
 \bibliography{oral}
 \algdef{SE}[DOWHILE]{Do}{DoWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
@@ -88,10 +88,12 @@
 
     \begin{frame}{Motivation (1/2)}
         \begin{itemize}
-            \item <2->{
+            \pause
+            \item {
                     Evolution of wireless standards drives the quest for a new Digital Signal Processor (DSP)
                 }
-            \item <3->{
+            \pause
+            \item {
                     E.g., LTE-A demands 10 times transmission rate than LTE
                     \begin{itemize}
                         \item {
@@ -105,14 +107,16 @@
                             }
                     \end{itemize}
                 }
-            \item <4->{ 
+            \pause
+            \item { 
                     DSP datapath has gone beyond scalar for higher throughput
                     \begin{itemize}
                         \item Very Long Instruction Word (VLIW)
                         \item Application Specific Instruction-set Processor (ASIP)
                     \end{itemize}
                 }
-            \item <5->{
+            \pause
+            \item {
                     Unfortunately, VLIW and ASIP are opposite extreme cases...
                     \begin{itemize}
                         \item VLIW: good flexibility and bad power-efficiency
@@ -121,13 +125,15 @@
                 }
         \end{itemize}
         \vspace{1em}
+        \pause
         \centering
-        \only <6->{\large{\textbf{ACHIEVING BOTH FLEXIBILITY AND POWER-EFFICIENCY IS A CHALLENGE!}}}
+        \large{\textbf{ACHIEVING BOTH FLEXIBILITY AND POWER-EFFICIENCY IS A CHALLENGE!}}
     \end{frame}
 
     \begin{frame}{Motivation (2/2)}
                 \begin{itemize}
-                    \item <2->{
+                    \pause
+                    \item {
                             Heterogeneous computing is gaining momentum
                             \begin{itemize}
                                 \item {
@@ -139,11 +145,12 @@
                             \end{itemize}
                         }
                 \end{itemize}
+                \pause
                 \begin{columns}
                     \begin{column}{0.75\textwidth}
                         \begin{itemize}
-                            \item <3->{
-                                    Industry standard for heterogeneous computing, \textit{Heterogeneous System Architecture}~\cite{systemspec} emerged in 2012.
+                            \item {
+                                    Industry standard for heterogeneous computing, \textit{Heterogeneous System Architecture}\footnotemark emerged in 2012.
                                     \begin{itemize}
                                         \item {
                                                 Proposed by leading semiconductor companies%, AMD, ARM, MediaTek, Samsung, Texas Instrument, etc, 
@@ -156,23 +163,23 @@
                         \end{itemize}
                     \end{column}
                     \begin{column}{0.25\textwidth}
-                        \only<3->
-                        {
                             \begin{figure}[!ht]
                                 \centering
                                 \includegraphics[width=\textwidth]{./assets/hsa.jpg}
                             \end{figure}
-                        }
                     \end{column}
                 \end{columns}
                 \begin{itemize}
-                    \item <4->{
+                    \pause
+                    \item {
                             Designing a novel DSP which is also compatible with HSA...
                         }
                 \end{itemize}
                 \vspace{1em}
+                \pause
                 \centering
-                \only <5->{\large{\textbf{A TIGER WITH WINGS!!}}}
+                \large{\textbf{A TIGER WITH WINGS!!}}
+                \footnotetext{\fullcite{systemspec}}
     \end{frame}
 
 
@@ -269,7 +276,7 @@
                     \end{column}
                     \begin{column}{0.55\textwidth}
                         \begin{itemize}
-                            \item <2-> {Composite-ALU ASIP proposed by Ou~\textit{et. al.}~\cite{cascade}}
+                            \item <2-> {Composite-ALU ASIP proposed by Ou~\textit{et. al.}\footnotemark}
                             \item <3-> {FUs are configured or cascaded in a special manner}
                             \item <4-> {Pros:
                                 \begin{itemize}
@@ -286,6 +293,7 @@
                         \end{itemize} 
                     \end{column}
                 \end{columns} 
+                \footnotetext{\fullcite{cascade}} 
             \end{frame}
             %\begin{frame}{Transport-triggered Architecture (TTA)}
             %    \begin{itemize}
@@ -413,23 +421,22 @@
             \end{frame}
 
             \begin{frame}{Advanced Design Considerations}
-                \begin{itemize}
-                    \item Data flow is often binary tree like and used exactly once (vector, matrix, convolution, etc)
-                        \begin{itemize}
-                            \item Load data in use-order $\implies$ load-bank is first-in first-out (FIFO)
-                            \item Store data in WB-order $\implies$ store-bank is first-in first-out (FIFO)
-                            \item Post-order traversal $\implies$ i.m.-bank is last-in first-out (LIFO)
-                        \end{itemize}
-                    \item Replacing random-access memory with queues and stacks
-                        \begin{itemize}
-                            \item Fewer bits in RF $\implies$ better code density, lower decode burden
-                            \item Sequential load/store (L/S) $\implies$ burst memory transfer
-                        \end{itemize}
-                \end{itemize}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=0.8\linewidth]{12}{./gif/tree-}{0}{10}
+                    \animategraphics[loop,controls,width=\linewidth]{12}{./gif/tree-}{0}{10}
                 }
+                \pause
+                \begin{itemize}
+                    \item {Data flow is often binary tree like and used exactly once (vector, matrix, convolution, etc)
+                        \begin{itemize}
+                                \pause
+                                \item Load data in use-order $\implies$ load-bank is FIFO
+                                \pause
+                                \item Store data in WB-order $\implies$ store-bank is FIFO
+                                \pause
+                                \item Post-order traversal $\implies$ i.m.-bank is LIFO
+                        \end{itemize}}
+                \end{itemize}
             \end{frame}
 
             \begin{frame}{DeAr Micro-architecture with SBRF}
@@ -441,11 +448,13 @@
                         \end{figure}
                     \end{column}
                     \begin{column}{0.35\textwidth}
-                        \begin{block}<2->{SBRF}
+                        \begin{block}<2->{Sequential-access Banked RF (SBRF)}
                             \begin{itemize}
-                                \item Two load-queues
-                                \item Two store-queues
-                                \item Two i.m.-stacks
+                                \item <3->{Replacing banks with queues and stacks}
+                                \item <4->{Fewer control bits\\
+                                    $\implies$ better code density, lower decode burden}
+                                \item <5->{Sequential load/store \\
+                                    $\implies$ burst memory transaction}
                             \end{itemize}    
                         \end{block}
                     \end{column}
@@ -475,9 +484,12 @@
             \begin{frame}{Instruction Set Architecture (1/2)}
                 Each instruction is composed of two portions:
                 \begin{itemize}
-                    \item <2->{Stack control portion: manipulating the stack memory}
-                    \item <3->{RISC-fashion portion: a subset of RISC ISA}
+                    \pause
+                    \item {Stack control portion: manipulating the stack memory}
+                    \pause
+                    \item {RISC-fashion portion: a subset of RISC ISA}
                 \end{itemize}
+                \pause
                 \begin{table}[ht!]
                     \centering
                     \caption{Stack access portion of a DeAr instruction}
@@ -510,8 +522,8 @@
                                                                                                    & MUL & \textbf{d} = \textbf{s} $\times$ \textbf{t} & \\ \cline{2-3} 
                                                                                                    & SHL & \textbf{d} = \textbf{s} $<<$ \textbf{t} & \\ \cline{2-3}
                                                                                                    & SHR & \textbf{d} = \textbf{s} $>>$ \textbf{t} & \\ \cline{2-3}
-                                                                                                   & MV  & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} << 0 & \\ \cline{2-3} 
-                                                                                                   & NOP & \begin{tabular}[c]{@{}l@{}}1. disable write back \\ 2. clock-gate the accumulator \end{tabular}& \\ \hline
+                                                                                                   & MV  & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} $<<$ 0 & \\ \cline{2-3} 
+                                                                                                   & NOP & \begin{tabular}[c]{@{}l@{}}1. disable write back \\ 2. accumulator data remain\end{tabular}& \\ \hline
                         \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ B type \end{tabular}}          & JMP & pc = pc + \textbf{a}  & \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ Instruction unit \end{tabular}} \\ \cline{2-3}
                                                                                                           & BZ  & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() == stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \cline{2-3}
                                                                                                           & BNZ & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() != stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \hline
@@ -525,6 +537,7 @@
             \begin{frame}{Integrating DeAr with HSA (1/3)}
                 \begin{columns}
                     \begin{column}{0.6\textwidth}
+                        \vspace{-1em}
                         \begin{figure}[!ht] 
                             \centering
                             \includegraphics[width=1.0\textwidth]{./figs/archi.eps}
@@ -545,28 +558,24 @@
 
             \begin{frame}{Integrating DeAr with HSA (2/3)}
                 \begin{itemize}
-                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\cite{kelly2004shared} --- fitting HSA SPMD and eliminating program duplication}
-                    \item <3-> {Host port interface (HPI)~\cite{hpi}
+                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
+                    \item <3-> {Host port interface (HPI)~\footfullcite{hpi}
                             \begin{itemize}
                                 \item Enabling host direct access to DeAr
                                 \item Offloading MMU, AQL and SC management overhead to host
                             \end{itemize}
                         }
-                    \item <4-> {SC-based DMA engine~\cite{sc}
+                    \item <4-> {SC-based DMA engine~\footfullcite{sc}
                             \begin{itemize}
                                 \item Performing data transfer and layout conversion on-the-fly
                                 \item Coalescing access pattern --- spacial locality
-                                \item Burst memory transfer
+                                \item RF-level burst transaction
                             \end{itemize}
                         }
                 \end{itemize}
             \end{frame}
 
             \begin{frame}{Integrating DeAr with HSA (3/3)}
-                \begin{itemize}
-                    \item <2-> {Conventional architectures: referring to a work-item as a thread}
-                    \item <3-> {DeAr: offloading a work-item to two DeAr threads\\ --- \textbf{FINER PARALLELISM}}
-                \end{itemize}
                 \begin{figure}[!ht]
                     \begin{center}
                         \setcounter{subfigure}{0}
@@ -583,28 +592,32 @@
                         }
                     \end{center}
                 \end{figure}
+                \begin{itemize}
+                    \item <2-> {Conventional architectures: referring to a work-item as a thread}
+                    \item <3-> {DeAr: offloading a work-item to two DeAr threads\\ --- \textbf{FINER PARALLELISM}}
+                \end{itemize}
             \end{frame}
 
             \subsection{Software Design and Implementation}
             \begin{frame}{Software Framework}
                 \begin{enumerate}
-                    \item <2->{Compilation (front-end)
+                    \item <2->{Compilation
                             \begin{itemize}
                                 \item Users program in high level languages (OpenCL or C++)
-                                \item Off-line compiler~\cite{cloc} compiles them to HSAIL
+                                \item Off-line compiler~\footfullcite{cloc} compiles them to HSAIL
                             \end{itemize}
                         }
-                    \item <3->{Finalization (front-end)
+                    \item <3->{Finalization
                             \begin{itemize}
                                 \item Converting HSAIL to data flow graph (DFG)
-                                    \begin{itemize}
-                                        \item Reaching definition analysis (RDA)
-                                        \item Single static assignment (SSA)
-                                    \end{itemize}
+                            %        \begin{itemize}
+                            %            \item Reaching definition analysis (RDA)
+                            %            \item Single static assignment (SSA)
+                            %        \end{itemize}
                                 \item Converting DFG to hierarchical data flow graph (HDFG)
                             \end{itemize}
                         }
-                    \item <4->{HDFG-based scheduling (back-end)
+                    \item <4->{HDFG-based scheduling
                             \begin{itemize}
                                 \item OPC optimization --- inter-tree and intra-tree parallelism
                                 \item Power optimization --- exhaustive forwarding
@@ -618,32 +631,34 @@
 
             \begin{frame}{Finalization: Converting HSAIL to DFG}
                 % \begin{algorithm}[H] \fontsize{10pt}{10pt}\selectfont  
+                \vspace{-1em}
                 \begin{columns}
-                    \begin{column}{0.45\textwidth}
+                    \begin{column}{0.4\textwidth}
                         \begin{block}{HSAIL: sum of products}
                             ld\_global\_u32 \$s2, [\$d0]; \\ 
                             ld\_global\_u32 \$s3, [\$d1]; \\ 
-                            ld\_global\_u32 \$s2, [\$d2]; \\
-                            ld\_global\_u32 \$s3, [\$d3]; \\
+                            ld\_global\_u32 \$s5, [\$d2]; \\
+                            ld\_global\_u32 \$s6, [\$d3]; \\
                             mul\_u32 \$s1, \$s2, \$s3; \\
                             mul\_u32 \$s4, \$s5, \$s6; \\
                             add\_u32 \$s7, \$s1, \$s4; \\
                             st\_global\_u32 \$s7, [\$d4]; \\
                         \end{block} 
                     \end{column}
-                    \begin{column}{0.55\textwidth}
+                    \begin{column}{0.6\textwidth}
+                        \vspace{-0.5em}
                         \begin{enumerate}
-                            \item <2->{RDA retrieves use-define chains.}
-                            \item <3->{SSA renames variables.
+                            \item <2->{\textit{Reaching~definition~analysis}\footnotemark retrieves use-define chains}
+                            \item <3->{\textit{Static single assignment}\footnotemark renames variables
                                 \begin{itemize}
-                                    \item Assign new name to each LHS variable
-                                    \item Update corresponding RHS based on RDA
+                                    \item Assign unique name to each LHS variable
+                                    \item Update RHS based on use-define chains
                                 \end{itemize}
                             }
                         \item <4->{Re-traversing new code
                                 \begin{itemize}
-                                    \item Store assignments in $V_{OP}$
-                                    \item Store dependencies in $E_{OP}$
+                                    \item Store LHS variables in $V_{OP}$
+                                    \item Store use-define chain in $E_{OP}$
                                 \end{itemize}
                             }
                         \item <5->{DFG: $G = (V_{OP}, E_{OP})$ is obtained.
@@ -655,18 +670,13 @@
                         \end{enumerate}
                     \end{column}
                 \end{columns}
+                \vspace{-1em}
+                \footnotetext{\fullcite{rda}}
+                \footnotetext{\fullcite{ssa}}
             \end{frame}
 
             \begin{frame}{Finalization: Converting DFG to HDFG}
-                \begin{itemize}
-                    \item <2->{Conventional DSP program analysis: data flow graph (DFG) analysis}
-                    \item <3->{We propose \textbf{Hierarchical data flow graph (HDFG)} \\
-                            %--- providing abundant information for optimizations
-                        }
-                    \item <4->{After conversion, HDFG: $\bar{G} = (V_{BT}, E_{BT})$ is obtained. \\
-                            --- \textbf{vertex}: binary tree $BT$, \textbf{edge}: data flow cross $BT$
-                        }
-                \end{itemize}
+                \vspace{-1em}
                 \setcounter{subfigure}{0}
                 \begin{figure}[!ht]
                     \begin{center}
@@ -681,7 +691,17 @@
                             \includegraphics[width=0.32\textwidth]{figs/hdfg.eps}
                         }
                     \end{center}
-                \end{figure}
+                \end{figure}%
+                \vspace{-1em}
+                \begin{itemize}
+                    \item <2->{Conventional DSP program analysis: data flow graph (DFG) analysis}
+                    \item <3->{We propose \textbf{Hierarchical data flow graph (HDFG)} \\
+                            %--- providing abundant information for optimizations
+                        }
+                    \item <4->{After conversion, HDFG: $\bar{G} = (V_{BT}, E_{BT})$ is obtained. \\
+                            --- \textbf{vertex}: binary tree $BT$, \textbf{edge}: data flow cross $BT$
+                        }
+                \end{itemize}
             \end{frame}
 
             %\begin{frame}{Compilation: Properties of HDFG}
@@ -702,59 +722,87 @@
 
 
 
-            \begin{frame}{HDFG-based scheduling: Inter-tree parallelism}
-                \only <2->{\textbf{Achieving high OPC by exploring parallelism in HDFG}}
+            \begin{frame}{HDFG-based Scheduling: Inter-tree Parallelism}
+                \pause
+                \textbf{Achieving high OPC by exploring parallelism in HDFG}
                 \begin{itemize}
-                    \item <3->{A $BT$ without in-edges is free to be scheduled to a thread
-                        \begin{itemize}
-                            \item Operations in $BT$ are turned into list (post-order)
-                            \item Thread executes operations on list one by one
-                        \end{itemize}
-                    }
-                \item <4->{Two free $BT$s are \textbf{parallelizable} --- \textbf{inter-tree parallelism}
-                        \begin{itemize}
-                            \item Processing respectively and concurrently.
-                            \item Proceeding until all $BT$ are consumed
-                        \end{itemize}
-                    }
+                        \pause
+                    \item {$BT$ without in-edges is free to be scheduled to a thread
+                            \begin{itemize}
+                                \item Operations in $BT$ are turned into list (post-order)
+                                \item Thread executes operations on list one by one
+                            \end{itemize}
+                        }
+                        \pause
+                    \item {Two free $BT$s are \textbf{parallelizable} --- \textbf{inter-tree parallelism}
+                            \begin{itemize}
+                                \item Processing respectively and concurrently.
+                                \item Proceeding until all $BT$ are consumed
+                            \end{itemize}
+                        }
                 \end{itemize}
-                \only <5->{But sometimes...}
+                \pause
+                But sometimes...
                 \begin{itemize}
-                    \item <6->{Only one $BT$ exists in HDFG}
-                    \item <7->{One $BT$ remains after scheduling}
-                    \item <8->{One partial $BT$ remains after scheduling}
+                    \pause
+                    \item {Only one $BT$ exists in HDFG}
+                    \pause
+                    \item {One $BT$ remains after scheduling}
+                    \pause
+                    \item {One partial $BT$ remains after scheduling}
                 \end{itemize}
+                \pause
                 \vspace{1em}
                 \centering
-                \only<9->{\textbf{Exploring intra-tree parallelism!}}
+                \large{\textbf{Exploring intra-tree parallelism!}}
             \end{frame}
 
-            \begin{frame}{HDFG-based scheduling: Intra-tree parallelism}
+            \begin{frame}{HDFG-based Scheduling: Intra-tree Parallelism}
                 \begin{columns}
-                    \begin{column}{0.35\textwidth}
+                    \begin{column}{0.45\textwidth}
+                        \begin{figure}[!ht] 
+                            \centering
+                            \includegraphics[width=1.0\textwidth]{./figs/partition}
+                            \label{fig:archi}
+                        \end{figure}
                     \end{column}
-                    \begin{column}{0.65\textwidth}
+                    \begin{column}{0.6\textwidth}
                         \begin{itemize}
-                            \item <2->{Partitioning $BT$ into three parts --- root, left and right-subtrees
+                            \pause
+                            \item {Partitioning $BT$ into three parts --- root, left and right-subtrees
                                 \begin{itemize}
-                                    \item Root: can only be handled sequentially
-                                    \item Left and right-subtrees --- \textbf{intra-tree parallelism}, processing concurrently
+                                    \item Left and right-subtrees --- \textbf{intra-tree parallelism}
+                                    \item Root: handled sequentially
                                 \end{itemize}
                             }
-                        \item <3->{Imbalance subtree lead to partial $BT$ remaining after scheduling}
-                        \item <4->{Recursively partitioning and scheduling until completion}
+                        \pause
+                        \item {Imbalance subtree $implies$ partial $BT$ remaining}
+                        \pause
+                        \item {Recursively partitioning and scheduling}
                         \end{itemize} 
+                        \pause
                         \vspace{1em} 
-                        \only<5->{Parallelism is good, but how to handle \textbf{ALU conflict}?\\}
+                        Parallelism is good, but how to handle \textbf{ALU conflict}?\\
+                        \pause
                         \vspace{1em} 
                         \centering
-                        \only<6->{\textbf{Dynamic programming (DP) based ALU-allocation!}}
+                        \large{\textbf{Dynamic programming (DP) based ALU-allocation!}}
                     \end{column}
                 \end{columns}
             \end{frame}
 
-            \begin{frame}{HDFG-based scheduling: DP-based ALU-Allocation}
+            \begin{frame}{HDFG-based Scheduling: DP-based ALU-Allocation}
+                \begin{itemize}
+                    \pause
+                    \item {Analyzing two threads by \textit{Dynamic Programming}\footnotemark (DP)}
+                    \pause
+                    \item {DP determines which thread stalls at conflict, achieving \textbf{optimal OPC}}
+                    \pause
+                    \item {Example shows two threads have MMMAAA to process}
+                \end{itemize}
                     \setcounter{subfigure}{0}
+                    \pause
+                    \vspace{-1em}
                     \begin{figure}[!ht]
                         \begin{center}
                             \subfigure[Stage 1: scoring table modeling]
@@ -777,13 +825,21 @@
                         \end{center}
                         \label{fig:alloc}
                     \end{figure}
-                \begin{itemize}
-                    \item <2-> {Analyzing operation-lists of two threads by Dynamic programming (DP) and performing ALU-allocation}
-                    \item <3-> {DP determines which thread stalls at conflict, achieving optimal OPC}
-                    \item <4-> {An example where two threads have MMMAAA in their operation-lists}
-                \end{itemize}
+                \footnotetext{\fullcite{dp}}
             \end{frame}
 
+            \begin{frame}{HDFG-based Scheduling: Power Optimization}
+                \begin{itemize}
+                    \item POP followed by PUSH $\implies$ MODIFY
+                    \item Forwarding data from $OP$ to $OP$ within $SN$
+                    \item Forwarding data from child $SN$ to patent $SN$
+                \end{itemize}
+                \begin{figure}[!ht] 
+                    \centering
+                    \includegraphics[width=0.8\textwidth]{./figs/power_opt}
+                    \label{fig:archi}
+                \end{figure}
+            \end{frame}
             %\begin{frame}{HDFG-based scheduling: HFPT sort}
             %    \begin{figure}[!h]
             %        \begin{center}
@@ -841,8 +897,11 @@
                     }
                 \end{table}
                 \begin{itemize}
+                    \pause
                     \item Three primitive operations --- addition, multiplication and shifting.
+                    \pause
                     \item BLAS --- classic matrix/vector library for wireless communication.
+                    \pause
                     \item GDSPK --- common DSP filters and transformation algorithms.
                 \end{itemize}
             \end{frame}
@@ -859,9 +918,10 @@
                 \end{itemize}
             \end{frame}
 
-            \subsection{Pre-synthesis Analysis}
+            \subsection{Scheduling Result and Analysis}
 
             \begin{frame}{Operations per Cycle}
+                \vspace{-2em}
                 \begin{table}[!ht]
                     \centering
                     \resizebox{\columnwidth}{!}
@@ -885,16 +945,18 @@
                         \end{tabular}
                     }
                 \end{table}
+                \vspace{-1em}
                 \begin{itemize}
                     \item <2->{VLIW benefits from most flexible datapath so it achieves best OPC}
                     \item <3->{Composite-ALU OPC is impacted by matchability between ALU order and benchmark characteristic}
-                    \item <4->{DeAr have only 1.11\% and 4.26\% loss against VLIW, 
+                    \item <4->{DeAr has only 1.11\% and 4.26\% loss against VLIW, 
                         and outperforms ASIP by 75.2\%--12.7\% and 21.7\%--16.3\%}
                 \end{itemize}
 
             \end{frame}
 
             \begin{frame}{Register File Access Rate}
+                \vspace{-2em}
                 \begin{table}[!ht]
                     \centering
                     \resizebox{\columnwidth}{!}
@@ -918,8 +980,9 @@
                         \end{tabular}
                     }
                 \end{table}
+                \vspace{-1em}
                 \begin{itemize}
-                    \item <2->{Under assumption of single cycle, VLIW and scalar lack forwarding mechanism so have worst access rate}
+                    \item <2->{VLIW and scalar lack forwarding mechanism so have worst access rate}
                     \item <3->{Composite-ALU forwarding capability is limited by the cascaded order and length}
                     \item <4->{DeAr saves either 23\% and 27\% RF access against VLIW,
                             or saves 30.3\%--10.4\% and 16.1\%--11.0\% against ASIP}
@@ -1018,14 +1081,14 @@
 
             \begin{frame}{Future Work}
                 \begin{itemize}
-                    \item <2->{Implementation of SC-based DMA engine~\cite{sc}
+                    \item <2->{Implementation of SC-based DMA engine
                             \begin{itemize}
                                 \item Coalescing data layout and merging several L/S instructions into one
                                 \item Needing more studies for trading-off among throughput, power and flexibility. 
                             \end{itemize}
                         }
                     \item <3->{Using unused bits to enhance current DeAr ISA (interrupt, special function, etc.)}
-                    \item <4->{Conducting system level emulation with HSAemu~\cite{hsaemu} to evaluate the memory hierarchy and multi-core design for DeAr.}
+                    \item <4->{Conducting system level emulation with HSAemu~\footfullcite{hsaemu} to evaluate the memory hierarchy and multi-core design for DeAr.}
                     \item <5->{Exploring the possibilities of applying DeAr to GPU.
                             \begin{itemize}
                                 \item Efficient DeAr core is a potential alternative to RISC shader

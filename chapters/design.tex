@@ -412,7 +412,7 @@ The whole process of the HSAIL transformation contains two phases elaborated as 
 \begin{itemize}
     \item \textbf{Phase-1: Convert HSAIL to DFGs by SSA} \\\indent
         Details of phase-1 are shown in Algorithm~\ref{alg:2dfg}.
-        Single static assignment (SSA)~\cite{ssa} is a popular form of intermediate representation (IR), which simplifies the work of compiler.
+        Static single assignment (SSA)~\cite{ssa} is a popular form of intermediate representation (IR), which simplifies the work of compiler.
         The SSA form specifies that each variable must be assigned exactly once, which is the key distinction from HSAIL.
         The conversion is initialized by performing the reaching definition analysis \cite{rda} as shown in Line~\ref{line:rda}.
         Next, for each assignment in the code, we give a new name to the LHS variable, and update corresponding new names of RHS variables indicated by reaching definition analysis.
