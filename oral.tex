@@ -427,7 +427,7 @@
             \begin{frame}{Advanced Design Considerations}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1032}
+                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1}
                 }
                 \pause
                 \begin{itemize}
@@ -583,12 +583,15 @@
             \begin{frame}{Integrating DeAr with HSA (3/3)}
                         \begin{figure}[!ht]
                             \centering
-                                \includegraphics[width=0.6\textwidth]{figs/bb2.eps}
+                                \includegraphics[width=0.6\textwidth]{figs/bb3.eps}
                         \end{figure}
                         \begin{itemize}
-                            \item <2-> {Conventional architectures: referring to a work-item as a thread}
-                            \item <3-> {DeAr: offloading a work-item to two DeAr threads}
+                            \pause
+                            \item {Conventional datapath: referring to a work-item as a thread}
+                            \pause
+                            \item {DeAr: offloading a work-item to two DeAr threads}
                         \end{itemize}
+                        \pause
                         \begin{center}
                             \large{\textbf{FINER PARALLELISM!!}}
                         \end{center}
