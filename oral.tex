@@ -11,6 +11,7 @@
 % notice. 
 
 \documentclass{beamer}
+%\documentclass[handout]{beamer}
 
 \usepackage{xcolor}
 \usepackage{CJKutf8}
@@ -44,8 +45,8 @@
 \usetheme{Madrid} % origin
 \setbeamercolor{structure}{fg=violet}
 
-\author{ 
-    Chi-Ming Lee
+\author[Chi-Ming~Lee]{ 
+    Chi-Ming~Lee\\{\small Advisor: Yarsun~Hsu}
 }
 
 \institute[NTHU EE] % (optional, but mostly needed)
@@ -97,13 +98,13 @@
                     E.g., LTE-A demands 10 times transmission rate than LTE
                     \begin{itemize}
                         \item {
-                                Heavy arithmetic (throughput)
+                                Heavy arithmetic --- \textbf{throughput}
                             }
                         \item {
-                                Fast evolving demodulation algorithms (flexibility)
+                                Fast evolving demodulation algorithms --- \textbf{flexibility}
                             }
                         \item {
-                                Endurance still matters (power-efficiency)
+                                Endurance still matters --- \textbf{power-efficiency}
                             }
                     \end{itemize}
                 }
@@ -117,10 +118,10 @@
                 }
             \pause
             \item {
-                    Unfortunately, VLIW and ASIP are opposite extreme cases...
+                    Unfortunately, VLIW and ASIP are \textbf{opposite} extreme cases...
                     \begin{itemize}
-                        \item VLIW: good flexibility and bad power-efficiency
-                        \item ASIP: good power-efficiency and bad flexibility
+                        \item VLIW: good flexibility, bad power-efficiency
+                        \item ASIP: good power-efficiency, bad flexibility
                     \end{itemize}
                 }
         \end{itemize}
@@ -278,7 +279,7 @@
                             \item <4-> {Pros:
                                 \begin{itemize}
                                     \item Composite operation support \\ $\implies$ High OPC
-                                    \item Special-case port count in RF \\ $\implies$ Less cost in power and area
+                                    \item Medium port count in RF \\ $\implies$ Less cost in power and area
                                     \item Inherent FU forwarding path \\ $\implies$ Reducing power cost
                                 \end{itemize}
                                 }
@@ -305,45 +306,56 @@
             %\end{frame}
 
             \subsection{Heterogeneous System Architecture}
-            \begin{frame}{Key Concepts of HSA}
-                \begin{itemize}
-                    \item <2->{Heterogeneous multi-core platform
-                            \begin{itemize}
-                                \item {
-                                        CPU handles control-intensive tasks
-                                    }
-                                \item {
-                                        DSP, GPU and FPGA handles data-intensive tasks for acceleration
-                                    }
-                            \end{itemize}
-                        }
-                    \item <3->{Heterogeneous System Architecture Intermediate Language (HSAIL)
-                            \begin{itemize}
-                                \item Providing an unified programming language %of heterogeneous cores
-                                \item Single Program Multiple Data (SPMD)
-                            \end{itemize}
-                        }
-                    \item <4->{Shared Virtual Memory (SVM)
-                            \begin{itemize}
-                                \item Eliminating redundant transfer among agents
-                                \item Passing pointers instead --- alleviating communication overhead
-                            \end{itemize}
-                        }
-                    \item <5->{Architectural Queuing Language (AQL)
-                            \begin{itemize}
-                                \item Communication protocol for agents via AQL-queues
-                                \item Task dispatching, information exchanging, synchronization, etc.
-                            \end{itemize}
-                        }
-                \end{itemize} 
-            \end{frame}
+            %\begin{frame}{Key Concepts of HSA}
+            %    \begin{itemize}
+            %        \item <2->{Heterogeneous multi-core platform
+            %                \begin{itemize}
+            %                    \item {
+            %                            CPU handles control-intensive tasks
+            %                        }
+            %                    \item {
+            %                            DSP, GPU and FPGA handles data-intensive tasks for acceleration
+            %                        }
+            %                \end{itemize}
+            %            }
+            %        \item <3->{Heterogeneous System Architecture Intermediate Language (HSAIL)
+            %                \begin{itemize}
+            %                    \item Providing an unified programming language %of heterogeneous cores
+            %                    \item Single Program Multiple Data (SPMD)
+            %                \end{itemize}
+            %            }
+            %        \item <4->{Shared Virtual Memory (SVM)
+            %                \begin{itemize}
+            %                    \item Eliminating redundant transfer among agents
+            %                    \item Passing pointers instead --- alleviating communication overhead
+            %                \end{itemize}
+            %            }
+            %        \item <5->{Architectural Queuing Language (AQL)
+            %                \begin{itemize}
+            %                    \item Communication protocol for agents via AQL-queues
+            %                    \item Task dispatching, information exchanging, synchronization, etc.
+            %                \end{itemize}
+            %            }
+            %    \end{itemize} 
+            %\end{frame}
 
-            \begin{frame}{HSA Platform Example}
+            %\begin{frame}{HSA Platform Example}
+            \begin{frame}{Key Concepts of HSA}
+                \vspace{-1em}
                 \begin{figure}[!ht]
                     \centering
-                    \includegraphics[width=0.8\textwidth]{./figs/systemspec.eps}
+                    \includegraphics[width=0.6\textwidth]{./figs/systemspec.eps}
                     \label{fig:systemspec}
                 \end{figure}
+                \vspace{-1em}
+                \begin{itemize}
+                    \pause
+                    \item Heterogeneous System Architecture Intermediate Language (HSAIL) --- Single Program Multiple Data (SPMD) 
+                    \pause
+                    \item Architectural Queuing Language (AQL) --- agents comm. protocol
+                    \pause
+                    \item Shared Virtual Memory (SVM) --- avoiding data duplication
+                \end{itemize}
             \end{frame}
 
             \begin{frame}{Execution Hierarchy}
@@ -372,25 +384,31 @@
 
             \subsection{Hardware Design and Implementation}
             \begin{frame}{Basic Design Considerations}
+                \pause
                 Considering a datapath with one adder, multiplier and shifter, we want... \\
                 \begin{itemize}
+                    \pause
                     \item \textbf{Multi-issue} capability of VLIW but \textbf{low cost} in RF
                         \begin{itemize}
                             \item Partition RF to multi-bank
                             \item Specialize purpose of each bank --- \textbf{load, store or intermediate bank}
                         \end{itemize}
+                    \pause
                     \item \textbf{Forwarding} mechanism of ASIP but \textbf{flexibility}
                         \begin{itemize}
                             \item Buffer FU result with dedicated latch
                             \item Program data transportation from latch to FU
                         \end{itemize}
+                    \pause
                     \item Simpler compiler design for banked RF
                         \begin{itemize}
                             \item Use one load, store and intermediate bank per instruction stream 
                             \item Let instruction streams work independently --- \textbf{simultaneous multi-threading} (SMT)
                         \end{itemize}
+                    \pause
                     \item Best trading-off for SMT width --- \textbf{dual-thread}
                 \end{itemize}
+                \pause
                 \begin{center}
                 {\large{That's "D"ual-thr"e"ad "Ar"chitecture --- \textbf{DeAr}}}
                 \end{center}
@@ -416,8 +434,8 @@
                                         \item Two i.m.-banks
                                     \end{itemize}
                                 }
-                                \item <4->{Transport Triggered Data Bus}
-                                \item <5->{Accumulator latches}
+                                \item <4->{Accumulator latches}
+                                \item <5->{Transport Triggered Data Bus}
                             \end{itemize}    
                         \end{block}
                     \end{column}
@@ -485,74 +503,74 @@
             %    \end{itemize}
             %\end{frame}
 
-            \begin{frame}{Instruction Set Architecture (1/2)}
-                \pause
-                Each instruction is composed of two portions:
-                \begin{itemize}
-                    \pause
-                    \item {Stack control portion: manipulating the stack memory}
-                    \pause
-                    \item {RISC-fashion portion: a subset of RISC ISA}
-                \end{itemize}
-                \pause
-                \begin{table}[ht!]
-                    \centering
-                    \caption{Stack access portion of a DeAr instruction}
-                    \resizebox{0.9\textwidth}{!}
-                    {
-                        \begin{tabular}{|l|l|l|}
-                            \hline
-                            \multicolumn{1}{|c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Note}} \\ \hline
-                        PUSH & \begin{tabular}[c]{@{}l@{}}1. Add the head address by 1\\ 2. Write the new data to the head address\end{tabular} & \multirow{2}{*}{ \parbox{5cm}{A "pop" followed by a "push" is equivalent to a "modify"} } \\ \cline{1-2}
-                        POP                               & \begin{tabular}[c]{@{}l@{}}1. Subtract the head address by 1\\ 2. Invalidate the previous head data\end{tabular} & \\ \hline
-                            MODIFY                            & Modify the head data to to the new data & The head address remains \\ \hline
-                            STALL                               & No operation & The head address and data remain \\ \hline
-                        \end{tabular}
-                    }
-                \end{table}
-            \end{frame}
-
-
-            \begin{frame}{Instruction Set Architecture (2/2)}
-                \begin{table}[ht!]
-                    \centering
-                    \caption{RISC-fashion portion of a DeAr instruction}
-                    \resizebox{0.8\textwidth}{!}
-                    {
-                        \begin{tabular}{|c|l|l|c|}
-                            \hline
-                            \multicolumn{1}{|c|}{\textbf{Category}} & \multicolumn{1}{c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Target}} \\ \hline
-                        \multirow{7}{*}{ \begin{tabular}[c]{@{}l@{}} \\ A type \end{tabular}}      & ADD & \textbf{d} = \textbf{s} + \textbf{t}  & \multirow{7}{*}{\begin{tabular}[c]{@{}l@{}} \\ Datapath \end{tabular}}  \\ \cline{2-3}
-                                                                                                   & SUB & \textbf{d} = \textbf{s} $-$ \textbf{t} & \\ \cline{2-3} 
-                                                                                                   & MUL & \textbf{d} = \textbf{s} $\times$ \textbf{t} & \\ \cline{2-3} 
-                                                                                                   & SHL & \textbf{d} = \textbf{s} $<<$ \textbf{t} & \\ \cline{2-3}
-                                                                                                   & SHR & \textbf{d} = \textbf{s} $>>$ \textbf{t} & \\ \cline{2-3}
-                                                                                                   & MV  & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} $<<$ 0 & \\ \cline{2-3} 
-                                                                                                   & NOP & \begin{tabular}[c]{@{}l@{}}1. disable write back \\ 2. accumulator data remain\end{tabular}& \\ \hline
-                        \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ B type \end{tabular}}          & JMP & pc = pc + \textbf{a}  & \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ Instruction unit \end{tabular}} \\ \cline{2-3}
-                                                                                                          & BZ  & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() == stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \cline{2-3}
-                                                                                                          & BNZ & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() != stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \hline
-                        \multirow{2}{*}{ \begin{tabular}[c]{@{}l@{}} \\ M type \end{tabular}}           & LD  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ load\_queue.push (memory[\textbf{a}]) \end{tabular}& \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}} \\  Load/store unit \end{tabular}} \\ \cline{2-3} 
-                                                                                                        & ST  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ memory[\textbf{a}] = store\_queue.pop() \end{tabular}& \\ \hline
-                        \end{tabular}
-                    }
-                \end{table}
-            \end{frame}
+%            \begin{frame}{Instruction Set Architecture (1/2)}
+%                \pause
+%                Each instruction is composed of two portions:
+%                \begin{itemize}
+%                    \pause
+%                    \item {Stack control portion: manipulating the stack memory}
+%                    \pause
+%                    \item {RISC-fashion portion: a subset of RISC ISA}
+%                \end{itemize}
+%                \pause
+%                \begin{table}[ht!]
+%                    \centering
+%                    \caption{Stack access portion of a DeAr instruction}
+%                    \resizebox{0.9\textwidth}{!}
+%                    {
+%                        \begin{tabular}{|l|l|l|}
+%                            \hline
+%                            \multicolumn{1}{|c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Note}} \\ \hline
+%                        PUSH & \begin{tabular}[c]{@{}l@{}}1. Add the head address by 1\\ 2. Write the new data to the head address\end{tabular} & \multirow{2}{*}{ \parbox{5cm}{A "pop" followed by a "push" is equivalent to a "modify"} } \\ \cline{1-2}
+%                        POP                               & \begin{tabular}[c]{@{}l@{}}1. Subtract the head address by 1\\ 2. Invalidate the previous head data\end{tabular} & \\ \hline
+%                            MODIFY                            & Modify the head data to to the new data & The head address remains \\ \hline
+%                            STALL                               & No operation & The head address and data remain \\ \hline
+%                        \end{tabular}
+%                    }
+%                \end{table}
+%            \end{frame}
+%
+%
+%            \begin{frame}{Instruction Set Architecture (2/2)}
+%                \begin{table}[ht!]
+%                    \centering
+%                    \caption{RISC-fashion portion of a DeAr instruction}
+%                    \resizebox{0.8\textwidth}{!}
+%                    {
+%                        \begin{tabular}{|c|l|l|c|}
+%                            \hline
+%                            \multicolumn{1}{|c|}{\textbf{Category}} & \multicolumn{1}{c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Target}} \\ \hline
+%                        \multirow{7}{*}{ \begin{tabular}[c]{@{}l@{}} \\ A type \end{tabular}}      & ADD & \textbf{d} = \textbf{s} + \textbf{t}  & \multirow{7}{*}{\begin{tabular}[c]{@{}l@{}} \\ Datapath \end{tabular}}  \\ \cline{2-3}
+%                                                                                                   & SUB & \textbf{d} = \textbf{s} $-$ \textbf{t} & \\ \cline{2-3} 
+%                                                                                                   & MUL & \textbf{d} = \textbf{s} $\times$ \textbf{t} & \\ \cline{2-3} 
+%                                                                                                   & SHL & \textbf{d} = \textbf{s} $<<$ \textbf{t} & \\ \cline{2-3}
+%                                                                                                   & SHR & \textbf{d} = \textbf{s} $>>$ \textbf{t} & \\ \cline{2-3}
+%                                                                                                   & MV  & \textbf{d} = \textbf{s} + 0 or \textbf{d} = \textbf{s} $<<$ 0 & \\ \cline{2-3} 
+%                                                                                                   & NOP & \begin{tabular}[c]{@{}l@{}}1. disable write back \\ 2. accumulator data remain\end{tabular}& \\ \hline
+%                        \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ B type \end{tabular}}          & JMP & pc = pc + \textbf{a}  & \multirow{3}{*}{ \begin{tabular}[c]{@{}l@{}} \\ \\ Instruction unit \end{tabular}} \\ \cline{2-3}
+%                                                                                                          & BZ  & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() == stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \cline{2-3}
+%                                                                                                          & BNZ & \begin{tabular}[c]{@{}l@{}} \textit{if}(stack1.read() != stack2.read())\\ \ \ \ \ \ \ \ pc = pc + \textbf{a} \end{tabular} & \\ \hline
+%                        \multirow{2}{*}{ \begin{tabular}[c]{@{}l@{}} \\ M type \end{tabular}}           & LD  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ load\_queue.push (memory[\textbf{a}]) \end{tabular}& \multirow{2}{*}{\begin{tabular}[c]{@{}l@{}} \\  Load/store unit \end{tabular}} \\ \cline{2-3} 
+%                                                                                                        & ST  & \begin{tabular}[c]{@{}l@{}} \textit{repeat}(\textbf{r})\\ \ \ \ \ \ \ \ memory[\textbf{a}] = store\_queue.pop() \end{tabular}& \\ \hline
+%                        \end{tabular}
+%                    }
+%                \end{table}
+%            \end{frame}
 
             \begin{frame}{Integrating DeAr with HSA (1/3)}
                 \begin{itemize}
                     \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
-                    \item <3-> {Host port interface (HPI)~\footfullcite{hpi}
-                            \begin{itemize}
-                                \item Enabling host direct access to DeAr
-                                \item Offloading MMU, AQL and SC management overhead to host
-                            \end{itemize}
-                        }
-                    \item <4-> {SC-based DMA engine~\footfullcite{sc}
+                    \item <3-> {SC-based DMA engine~\footfullcite{sc}
                             \begin{itemize}
                                 \item Performing data transfer and layout conversion on-the-fly
                                 \item Coalescing access pattern --- spacial locality
                                 \item RF-level burst transaction
+                            \end{itemize}
+                        }
+                    \item <4-> {Host port interface (HPI)~\footfullcite{hpi}
+                            \begin{itemize}
+                                \item Enabling host direct access to DeAr
+                                \item Offloading MMU, AQL and SC management overhead to host
                             \end{itemize}
                         }
                 \end{itemize}
@@ -572,8 +590,8 @@
                         \begin{block}<2->{Key components}
                             \begin{itemize}
                                 \item <3->{Multi-core DeAr with shared L1 I-cache}
-                                \item <4->{Host port interface}
-                                \item <5->{SC-based direct memory access engine}
+                                \item <4->{SC-based direct memory access engine}
+                                \item <5->{Host port interface}
                             \end{itemize}
                         \end{block}
                     \end{column}
@@ -746,11 +764,11 @@
                 But sometimes...
                 \begin{itemize}
                     \pause
-                    \item {Only one $BT$ exists in HDFG}
-                    \pause
-                    \item {One $BT$ remains after scheduling}
-                    \pause
-                    \item {One partial $BT$ remains after scheduling}
+                    \item {Only one $BT$ exists/remains in HDFG}
+                    %\pause
+                    %\item {One $BT$ remains after scheduling}
+                    %\pause
+                    %\item {One partial $BT$ remains after scheduling}
                 \end{itemize}
                 \pause
                 %\vspace{1em}
