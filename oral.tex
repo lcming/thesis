@@ -137,12 +137,7 @@
                     \item {
                             Heterogeneous computing is gaining momentum
                             \begin{itemize}
-                                \item {
-                                        CPU handles control-intensive tasks
-                                    }
-                                \item {
-                                        DSP, GPU and FPGA handles data-intensive tasks for acceleration
-                                    }
+                                \item Particular processors (agents) handles particular tasks --- better power efficiency
                             \end{itemize}
                         }
                 \end{itemize}
@@ -282,7 +277,7 @@
                             \item <3-> {FUs are configured or cascaded in a special manner}
                             \item <4-> {Pros:
                                 \begin{itemize}
-                                    \item Composite operation support \\ $\implies$ high OPC
+                                    \item Composite operation support \\ $\implies$ High OPC
                                     \item Special-case port count in RF \\ $\implies$ Less cost in power and area
                                     \item Inherent FU forwarding path \\ $\implies$ Reducing power cost
                                 \end{itemize}
@@ -314,7 +309,12 @@
                 \begin{itemize}
                     \item <2->{Heterogeneous multi-core platform
                             \begin{itemize}
-                                \item Particular processors (agents) handles particular tasks% --- better power efficiency
+                                \item {
+                                        CPU handles control-intensive tasks
+                                    }
+                                \item {
+                                        DSP, GPU and FPGA handles data-intensive tasks for acceleration
+                                    }
                             \end{itemize}
                         }
                     \item <3->{Heterogeneous System Architecture Intermediate Language (HSAIL)
@@ -431,7 +431,7 @@
                 }
                 \pause
                 \begin{itemize}
-                    \item {Data flow is often binary tree like and used exactly once (vector, matrix, convolution, etc)
+                    \item {Data flow is often binary tree like (vector, matrix, convolution, etc)
                         \begin{itemize}
                                 \pause
                                 \item Load data in use-order $\implies$ load-bank is FIFO
@@ -486,6 +486,7 @@
             %\end{frame}
 
             \begin{frame}{Instruction Set Architecture (1/2)}
+                \pause
                 Each instruction is composed of two portions:
                 \begin{itemize}
                     \pause
@@ -539,6 +540,25 @@
             \end{frame}
 
             \begin{frame}{Integrating DeAr with HSA (1/3)}
+                \begin{itemize}
+                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
+                    \item <3-> {Host port interface (HPI)~\footfullcite{hpi}
+                            \begin{itemize}
+                                \item Enabling host direct access to DeAr
+                                \item Offloading MMU, AQL and SC management overhead to host
+                            \end{itemize}
+                        }
+                    \item <4-> {SC-based DMA engine~\footfullcite{sc}
+                            \begin{itemize}
+                                \item Performing data transfer and layout conversion on-the-fly
+                                \item Coalescing access pattern --- spacial locality
+                                \item RF-level burst transaction
+                            \end{itemize}
+                        }
+                \end{itemize}
+            \end{frame}
+
+            \begin{frame}{Integrating DeAr with HSA (2/3)}
                 \begin{columns}
                     \begin{column}{0.6\textwidth}
                         \vspace{-1em}
@@ -560,46 +580,18 @@
                 \end{columns}
             \end{frame}
 
-            \begin{frame}{Integrating DeAr with HSA (2/3)}
-                \begin{itemize}
-                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
-                    \item <3-> {Host port interface (HPI)~\footfullcite{hpi}
-                            \begin{itemize}
-                                \item Enabling host direct access to DeAr
-                                \item Offloading MMU, AQL and SC management overhead to host
-                            \end{itemize}
-                        }
-                    \item <4-> {SC-based DMA engine~\footfullcite{sc}
-                            \begin{itemize}
-                                \item Performing data transfer and layout conversion on-the-fly
-                                \item Coalescing access pattern --- spacial locality
-                                \item RF-level burst transaction
-                            \end{itemize}
-                        }
-                \end{itemize}
-            \end{frame}
-
             \begin{frame}{Integrating DeAr with HSA (3/3)}
-                \begin{figure}[!ht]
-                    \begin{center}
-                        \setcounter{subfigure}{0}
-                        \subfigure[Execution flow of an HSA work-item]
-                        {
-                            \label{fig:bb:1}
-                            \includegraphics[width=0.33\textwidth]{figs/bb.eps}
-                        }
-                        \hfill
-                        \subfigure[Accelerating the execution of a Basic block]
-                        {
-                            \label{fig:bb:2}
-                            \includegraphics[width=0.55\textwidth]{figs/bb2.eps}
-                        }
-                    \end{center}
-                \end{figure}
-                \begin{itemize}
-                    \item <2-> {Conventional architectures: referring to a work-item as a thread}
-                    \item <3-> {DeAr: offloading a work-item to two DeAr threads\\ --- \textbf{FINER PARALLELISM}}
-                \end{itemize}
+                        \begin{figure}[!ht]
+                            \centering
+                                \includegraphics[width=0.6\textwidth]{figs/bb2.eps}
+                        \end{figure}
+                        \begin{itemize}
+                            \item <2-> {Conventional architectures: referring to a work-item as a thread}
+                            \item <3-> {DeAr: offloading a work-item to two DeAr threads}
+                        \end{itemize}
+                        \begin{center}
+                            \large{\textbf{FINER PARALLELISM!!}}
+                        \end{center}
             \end{frame}
 
             \subsection{Software Design and Implementation}
