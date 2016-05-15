@@ -124,10 +124,11 @@
                     \end{itemize}
                 }
         \end{itemize}
-        \vspace{1em}
+        %\vspace{1em}
         \pause
-        \centering
+        \begin{center}
         \large{\textbf{ACHIEVING BOTH FLEXIBILITY AND POWER-EFFICIENCY IS A CHALLENGE!}}
+        \end{center}
     \end{frame}
 
     \begin{frame}{Motivation (2/2)}
@@ -175,10 +176,11 @@
                             Designing a novel DSP which is also compatible with HSA...
                         }
                 \end{itemize}
-                \vspace{1em}
+                %\vspace{1em}
                 \pause
-                \centering
-                \large{\textbf{A TIGER WITH WINGS!!}}
+                \begin{center}
+                {\large{\textbf{A TIGER WITH WINGS!!}}}
+                \end{center}
                 \footnotetext{\fullcite{systemspec}}
     \end{frame}
 
@@ -389,7 +391,9 @@
                         \end{itemize}
                     \item Best trading-off for SMT width --- \textbf{dual-thread}
                 \end{itemize}
-                \large{That's "D"ual-thr"e"ad "Ar"chitecture --- DeAr}
+                \begin{center}
+                {\large{That's "D"ual-thr"e"ad "Ar"chitecture --- \textbf{DeAr}}}
+                \end{center}
             \end{frame}
 
             \begin{frame}{DeAr Micro-architecture}
@@ -423,7 +427,7 @@
             \begin{frame}{Advanced Design Considerations}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=\linewidth]{12}{./gif/tree-}{0}{10}
+                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1032}
                 }
                 \pause
                 \begin{itemize}
@@ -724,7 +728,9 @@
 
             \begin{frame}{HDFG-based Scheduling: Inter-tree Parallelism}
                 \pause
+                \begin{center}
                 \textbf{Achieving high OPC by exploring parallelism in HDFG}
+                \end{center}
                 \begin{itemize}
                         \pause
                     \item {$BT$ without in-edges is free to be scheduled to a thread
@@ -752,9 +758,10 @@
                     \item {One partial $BT$ remains after scheduling}
                 \end{itemize}
                 \pause
-                \vspace{1em}
-                \centering
-                \large{\textbf{Exploring intra-tree parallelism!}}
+                %\vspace{1em}
+                \begin{center}
+                {{\textbf{Exploring intra-tree parallelism!}}}
+                \end{center}
             \end{frame}
 
             \begin{frame}{HDFG-based Scheduling: Intra-tree Parallelism}
@@ -786,7 +793,7 @@
                         \pause
                         \vspace{1em} 
                         \centering
-                        \large{\textbf{Dynamic programming (DP) based ALU-allocation!}}
+                        {\large{\textbf{Dynamic programming (DP) based ALU-allocation!}}}
                     \end{column}
                 \end{columns}
             \end{frame}
