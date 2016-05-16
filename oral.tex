@@ -65,7 +65,7 @@
 }
 
 \begin{document}
-\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
+%\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
 \begin{CJK}{UTF8}{bkai}
 
     \title[DeAr DSP]{ DeAr: 適用於異質系統架構之高效率且彈性的數位訊號處理器設計}
@@ -272,10 +272,11 @@
                             \caption{ASIP datapath}
                         \end{figure}
                     \end{column}
-                    \begin{column}{0.55\textwidth}
+                    \begin{column}{0.6\textwidth}
+                        \vspace{-0.5em}
                         \begin{itemize}
                             \item <2-> {Composite-ALU ASIP proposed by Ou~\textit{et. al.}\footnotemark}
-                            \item <3-> {FUs are configured or cascaded in a special manner}
+                            \item <3-> {FUs are configured in a special manner}
                             \item <4-> {Pros:
                                 \begin{itemize}
                                     \item Composite operation support \\ $\implies$ High OPC
@@ -286,6 +287,7 @@
                             \item <5-> {Cons:
                                 \begin{itemize}
                                     \item Fitting particular applications only \\ $\implies$ Poor flexibility
+                                    \item Long critical path
                                 \end{itemize}
                                 }
                         \end{itemize} 
@@ -397,13 +399,13 @@
                     \item \textbf{Forwarding} mechanism of ASIP but \textbf{flexibility}
                         \begin{itemize}
                             \item Buffer FU result with dedicated latch
-                            \item Program data transportation from latch to FU
+                            \item Programmable data transport from latch to FU
                         \end{itemize}
                     \pause
                     \item Simpler compiler design for banked RF
                         \begin{itemize}
-                            \item Use one load, store and intermediate bank per instruction stream 
-                            \item Let instruction streams work independently --- \textbf{simultaneous multi-threading} (SMT)
+                            \item One load, store and intermediate bank per instruction stream 
+                            \item Instruction streams work independently --- \textbf{simultaneous multi-threading} (SMT)
                         \end{itemize}
                     \pause
                     \item Best trading-off for SMT width --- \textbf{dual-thread}
@@ -419,7 +421,7 @@
                     \begin{column}{0.6\textwidth}
                         \begin{figure}[!ht] 
                             \centering
-                            \includegraphics[width=1.0\textwidth]{./figs/micro.eps}
+                            \includegraphics[width=1.0\textwidth]{./figs/_micro.eps}
                         \end{figure}
                     \end{column}
                     \begin{column}{0.35\textwidth}
@@ -445,18 +447,18 @@
             \begin{frame}{Advanced Design Considerations}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{987}
+                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1}
                 }
                 \pause
                 \begin{itemize}
                     \item {Data flow is often binary tree like (vector, matrix, convolution, etc)
                         \begin{itemize}
                                 \pause
-                                \item Load data in use-order $\implies$ load-bank is FIFO
+                            \item Load in use-order $\implies$ load-bank is FIFO (queue)
                                 \pause
-                                \item Store data in WB-order $\implies$ store-bank is FIFO
+                            \item Store in WB-order $\implies$ store-bank is FIFO (queue)
                                 \pause
-                                \item Post-order traversal $\implies$ i.m.-bank is LIFO
+                            \item Compute in post-order $\implies$ i.m.-bank is LIFO (stack)
                         \end{itemize}}
                 \end{itemize}
             \end{frame}
@@ -559,18 +561,18 @@
 
             \begin{frame}{Integrating DeAr with HSA (1/3)}
                 \begin{itemize}
-                    \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
+                    \item <2-> {Multi-core DeAr with shared I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and \textbf{avoiding program duplication}}
                     \item <3-> {SC-based direct memory access (DMA) engine~\footfullcite{sc}
                             \begin{itemize}
-                                \item Performing data transfer and layout conversion on-the-fly
-                                \item Coalescing access pattern and creating spacial locality
-                                \item RF-level burst transaction
+                                \item Performing data transfer and \textbf{layout conversion} on-the-fly
+                                \item \textbf{Coalescing} access pattern and creating \textbf{spacial locality}
+                                \item Enabling \textbf{burst L/S} transaction
                             \end{itemize}
                         }
                     \item <4-> {Host port interface (HPI)~\footfullcite{hpi}
                             \begin{itemize}
                                 \item Enabling host direct access to DeAr
-                                \item Offloading MMU, AQL and SC management overhead to host
+                                \item Offloading MMU, AQL and SC \textbf{management overhead to host}
                             \end{itemize}
                         }
                 \end{itemize}
@@ -589,7 +591,7 @@
                     \begin{column}{0.40\textwidth}
                         \begin{block}<2->{Key Components}
                             \begin{itemize}
-                                \item <3->{Multi-core DeAr with shared L1 I-cache}
+                                \item <3->{Multi-core DeAr with shared I-cache}
                                 \item <4->{SC-based direct memory access engine}
                                 \item <5->{Host port interface}
                             \end{itemize}
@@ -740,23 +742,21 @@
 
 
             \begin{frame}{HDFG-based Scheduling: Inter-tree Parallelism}
-                \pause
-                \begin{center}
-                \textbf{Achieving high OPC by exploring parallelism in HDFG}
-                \end{center}
                 \begin{itemize}
+                        \pause
+                    \item \textbf{Achieving high OPC by exploring parallelism in HDFG}
                         \pause
                     \item {$BT$ without in-edges is free to be scheduled to a thread
                             \begin{itemize}
                                 \item Operations in $BT$ are turned into list (post-order)
-                                \item Thread executes operations on list one by one
+                                \item Thread executes them one by one
                             \end{itemize}
                         }
                         \pause
                     \item {Two free $BT$s are \textbf{parallelizable} --- \textbf{inter-tree parallelism}
                             \begin{itemize}
-                                \item Processing respectively and concurrently.
-                                \item Proceeding until all $BT$ are consumed
+                                \item Execute them concurrently
+                                \item Find new one until all $BT$s are consumed
                             \end{itemize}
                         }
                 \end{itemize}
@@ -789,7 +789,7 @@
                     \begin{column}{0.6\textwidth}
                         \begin{itemize}
                             \pause
-                            \item {Partitioning $BT$ into three parts --- root, left and right-subtrees
+                            \item {Partition $BT$ into three parts --- root, left and right-subtrees
                                 \begin{itemize}
                                     \item Left and right-subtrees --- \textbf{intra-tree parallelism}
                                     \item Root: handled sequentially
@@ -798,7 +798,7 @@
                         \pause
                         \item {Imbalance subtree $\implies$ partial $BT$ remaining}
                         \pause
-                        \item {Recursively partitioning and scheduling}
+                        \item {Recursively partition and schedule}
                         \end{itemize} 
                         \pause
                         \vspace{1em} 
@@ -814,7 +814,7 @@
             \begin{frame}{HDFG-based Scheduling: DP-based ALU-Allocation}
                 \begin{itemize}
                     \pause
-                    \item {Analyzing two threads by \textit{Dynamic Programming}\footnotemark (DP)}
+                    \item {Analyze two threads by \textit{Dynamic Programming}\footnotemark (DP)}
                     \pause
                     \item {DP determines which thread stalls at conflict, achieving \textbf{optimal OPC}}
                     \pause
@@ -850,10 +850,23 @@
 
             \begin{frame}{HDFG-based Scheduling: Power Optimization}
                 \begin{itemize}
-                    \item POP followed by PUSH $\implies$ MODIFY
-                    \item Forwarding data from $OP$ to $OP$ within $SN$
-                    \item Forwarding data from child $SN$ to patent $SN$
+                    \pause
+                    \item {
+                            Simplify stack operations
+                            \begin{itemize}
+                                \item POP followed by PUSH $\implies$ MODIFY
+                            \end{itemize}
+                        }
+                    \pause
+                    \item {
+                            Avoid write back 
+                            \begin{itemize}
+                                \item Forward data from $OP$ to $OP$ within $SN$
+                                \item Forward data from child $SN$ to patent $SN$
+                            \end{itemize}
+                        }
                 \end{itemize}
+                \pause
                 \begin{figure}[!ht] 
                     \centering
                     \includegraphics[width=0.8\textwidth]{./figs/power_opt}
@@ -920,9 +933,9 @@
                     \pause
                     \item Three primitive operations --- addition, multiplication and shifting.
                     \pause
-                    \item BLAS --- classic matrix/vector library for wireless communication.
+                    \item BLAS --- matrix/vector library for wireless communication.
                     \pause
-                    \item GDSPK --- common DSP filters and transformation algorithms.
+                    \item GDSPK --- crucial DSP filters and transformation algorithms.
                 \end{itemize}
             \end{frame}
 
@@ -933,7 +946,7 @@
                 \end{figure}
                 \begin{itemize}
                     \item <2->{DUT is replaced with \textbf{DeAr}, \textbf{scalar}, \textbf{VLIW} and \textbf{composite-ALU} (cascade-ALU ASIP) in accordance.}
-                    \item <3->{Composite-ALU is evaluated with best two ALU configurations (MSA and AMS) respectively.}
+                    \item <3->{Composite-ALU is evaluated with best two ALU configurations, \textbf{MSA and AMS} respectively.}
                     \item <4->{Designs have compatible RF (32 cells) and ALU resources (one adder, multiplier and shifter).}
                 \end{itemize}
             \end{frame}
@@ -968,9 +981,9 @@
                 \vspace{-1em}
                 \begin{itemize}
                     \item <2->{VLIW benefits from most flexible datapath so it achieves best OPC}
-                    \item <3->{Composite-ALU OPC is impacted by matchability between ALU order and benchmark characteristic}
+                    \item <3->{Composite-ALU OPC is \textbf{impacted by matchability} between ALU order and benchmark characteristic}
                     \item <4->{DeAr has only 1.11\% and 4.26\% loss against VLIW, 
-                        and outperforms ASIP by 75.2\%--12.7\% and 21.7\%--16.3\%}
+                                and outperforms Composite-ALU by \textbf{75.2\%--12.7\%} and \textbf{21.7\%--16.3\%}}
                 \end{itemize}
 
             \end{frame}
@@ -1002,10 +1015,10 @@
                 \end{table}
                 \vspace{-1em}
                 \begin{itemize}
-                    \item <2->{VLIW and scalar lack forwarding mechanism so have worst access rate}
-                    \item <3->{Composite-ALU forwarding capability is limited by the cascaded order and length}
-                    \item <4->{DeAr saves either 23\% and 27\% RF access against VLIW,
-                            or saves 30.3\%--10.4\% and 16.1\%--11.0\% against ASIP}
+                    \item <2->{VLIW and scalar lack forwarding mechanism so have \textbf{worst result}}
+                    \item <3->{Composite-ALU forwarding capability \textbf{is limited} by the cascaded order and length}
+                    \item <4->{DeAr saves either \textbf{31\%} and \textbf{27\%} RF access against VLIW,
+                                or saves \textbf{30.3\%--10.4\%} and \textbf{16.1\%--11.0\%} against Composite-ALU}
                 \end{itemize}
             \end{frame}
 
@@ -1028,9 +1041,9 @@
                     \end{center}
                 \end{figure}
                 \begin{itemize}
-                    \item <2->{DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, 
-                           ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%, because of banked RF and lower decode complexity.}
-                    \item <3->{Scalar suffers from low OPC and lead to dramatic growth while throughput is above 500 MOPS.}
+                    \item <2->{DeAr outperforms either VLIW by \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%}, 
+                                or Composite-ALU by \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%}}
+                    \item <3->{\textbf{Long critical path} (Composite-ALU) and \textbf{low OPC} (scalar) lead to \textbf{sharp growth} and \textbf{synthesis fail}}
                 \end{itemize}
             \end{frame}
 
@@ -1051,49 +1064,49 @@
                     \end{center}
                 \end{figure}
                 \begin{itemize}
-                    \item <2->{Linear growth regardless of design indicates the domination of dynamic power.}
-                    \item <3->{DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, 
-                            or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%, because of lower area and RF access rate.}
+                    \item <2->{DeAr outperforms either VLIW by \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%}, 
+                            or Composite-ALU by \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%}}
+                    \item <3->{Linear growth regardless of design indicates the \textbf{domination of dynamic power}}
                 \end{itemize}
             \end{frame}
 
-            \begin{frame}{Static Power Dissipation}
-                \setcounter{subfigure}{0}
-                \begin{figure}[t]
-                    \begin{center}
-                        \subfigure[BLAS benchmark suite]
-                        {
-                            \label{chart:leakage:blas}
-                            \includegraphics[width=0.48\textwidth]{charts/leakage_blas.eps}
-                        }
-                        \subfigure[General benchmark suite]
-                        {
-                            \label{chart:leakage:general}
-                            \includegraphics[width=0.48\textwidth]{charts/leakage_general.eps}
-                        }
-                    \end{center}
-                \end{figure}
-                \begin{itemize}
-                    \item <2->{Very high correlation with area evaluation.}
-                    \item <3->{DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%}
-                \end{itemize}
-            \end{frame}
+           % \begin{frame}{Static Power Dissipation}
+           %     \setcounter{subfigure}{0}
+           %     \begin{figure}[t]
+           %         \begin{center}
+           %             \subfigure[BLAS benchmark suite]
+           %             {
+           %                 \label{chart:leakage:blas}
+           %                 \includegraphics[width=0.48\textwidth]{charts/leakage_blas.eps}
+           %             }
+           %             \subfigure[General benchmark suite]
+           %             {
+           %                 \label{chart:leakage:general}
+           %                 \includegraphics[width=0.48\textwidth]{charts/leakage_general.eps}
+           %             }
+           %         \end{center}
+           %     \end{figure}
+           %     \begin{itemize}
+           %         \item <2->{Very high correlation with area evaluation.}
+           %         \item <3->{DeAr outperforms either VLIW by 35.4\%--21.1\% and 35.2\%--21.6\%, or ASIP by 21.2\%--5.3\% and 33.5\%--4.7\%}
+           %     \end{itemize}
+           % \end{frame}
 
             \section{Conclusion and Future Work}
             \begin{frame}{Conclusion Remarks}
                 \begin{itemize}
-                    \item <2->{Proposed DeAr DSP achieves power-efficient, flexibility by leveraging the novel HDFG-based scheduling}
+                    \item <2->{Proposed DeAr DSP achieves \textbf{power-efficient} and \textbf{flexibility} by leveraging the novel \textbf{HDFG-based scheduling}}
                     \item <3->{Compared with VLIW and ASIP respectively, DeAr saves:
                             \begin{itemize}
-                                \item 35.4\%--21.1\% and 21.2\%--5.3\% of area, 22.7\%--15.1\% and 46.9\%--2.8\% of power dissipation in BLAS.
-                                \item 35.2\%--21.6\% and 33.5\%--4.7\% of area, 18.5\%--10.4\% and 19.7\%--1.5\% of power dissipation in GDSPK.
+                                \item \textbf{35.4\%--21.1\%} and \textbf{21.2\%--5.3\%} of area, \textbf{22.7\%--15.1\%} and \textbf{46.9\%--2.8\%} of power dissipation in BLAS.
+                                \item \textbf{35.2\%--21.6\%} and \textbf{33.5\%--4.7\%} of area, \textbf{18.5\%--10.4\%} and \textbf{19.7\%--1.5\%} of power dissipation in GDSPK.
                             \end{itemize}
                         }
-                    \item <4->{The compact design endows DeAr good scalability for multi-core architecture}
-                    \item <5->{To demonstrate the compatibility of DeAr with HSA standard, we present:
+                    \item <4->{The compact design endows DeAr \textbf{good scalability} for multi-core architecture}
+                    \item <5->{To demonstrate \textbf{HSA compatibility} of DeAr, we present:
                             \begin{itemize}
-                                \item Architecture framework of HSA platform integrated with multi-core DeAr
-                                \item Software framework of HSA-compatible DeAr compiler
+                                \item Architecture framework for integrating DeAr with HSA platform
+                                \item Software framework for HSA-compatible DeAr compiler
                             \end{itemize}
                         }
                 \end{itemize}
@@ -1120,8 +1133,9 @@
             \end{frame}
 
             \begin{frame}[plain,c]
+                \huge{This is the end of the presentation...}
                 \begin{center}
-                \Huge{Thank You!}
+                    \Huge{\textit{Thanks for Your Attention!}}
                 \end{center}
             \end{frame}
 
