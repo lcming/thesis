@@ -423,7 +423,7 @@
                         \end{figure}
                     \end{column}
                     \begin{column}{0.35\textwidth}
-                        \begin{block}<2->{Key components}
+                        \begin{block}<2->{Key Components}
                             \begin{itemize}
                                 \item <3->
                                 {
@@ -434,8 +434,8 @@
                                         \item Two i.m.-banks
                                     \end{itemize}
                                 }
-                                \item <4->{Accumulator latches}
-                                \item <5->{Transport Triggered Data Bus}
+                                \item <4->{Accumulator Latches}
+                                \item <5->{Transport-triggered Data Bus}
                             \end{itemize}    
                         \end{block}
                     \end{column}
@@ -560,10 +560,10 @@
             \begin{frame}{Integrating DeAr with HSA (1/3)}
                 \begin{itemize}
                     \item <2-> {Multi-core DeAr with shared L1 I-cache~\footfullcite{kelly2004shared} --- fitting HSA SPMD and avoiding program duplication}
-                    \item <3-> {SC-based DMA engine~\footfullcite{sc}
+                    \item <3-> {SC-based direct memory access (DMA) engine~\footfullcite{sc}
                             \begin{itemize}
                                 \item Performing data transfer and layout conversion on-the-fly
-                                \item Coalescing access pattern --- spacial locality
+                                \item Coalescing access pattern and creating spacial locality
                                 \item RF-level burst transaction
                             \end{itemize}
                         }
@@ -587,7 +587,7 @@
                         \end{figure}
                     \end{column}
                     \begin{column}{0.40\textwidth}
-                        \begin{block}<2->{Key components}
+                        \begin{block}<2->{Key Components}
                             \begin{itemize}
                                 \item <3->{Multi-core DeAr with shared L1 I-cache}
                                 \item <4->{SC-based direct memory access engine}
