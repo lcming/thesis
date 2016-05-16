@@ -65,7 +65,7 @@
 }
 
 \begin{document}
-%\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
+\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
 \begin{CJK}{UTF8}{bkai}
 
     \title[DeAr DSP]{ DeAr: 適用於異質系統架構之高效率且彈性的數位訊號處理器設計}
@@ -210,10 +210,10 @@
                     We also propose a framework to integrate DeAr with HSA
                     \begin{itemize}
                         \item {
-                                Architecture framework
+                                Architecture
                             }
                         \item {
-                                Compilation framework
+                                Compilation
                             }
                     \end{itemize}
                 }
@@ -254,7 +254,7 @@
                                 }
                             \item <4-> {Cons:
                                     \begin{itemize}
-                                        \item Worst-case port count in RF \\ $\implies$ Severe cost in power and area
+                                        \item Large port count in RF \\ $\implies$ Severe cost in power and area
                                         \item Write back for every operation \\ $\implies$ Increasing power cost
                                     \end{itemize}
                                 }
@@ -385,7 +385,7 @@
             \subsection{Hardware Design and Implementation}
             \begin{frame}{Basic Design Considerations}
                 \pause
-                Considering a datapath with one adder, multiplier and shifter, we want... \\
+                Consider a datapath with one adder, multiplier and shifter, we want... \\
                 \begin{itemize}
                     \pause
                     \item \textbf{Multi-issue} capability of VLIW but \textbf{low cost} in RF
@@ -445,7 +445,7 @@
             \begin{frame}{Advanced Design Considerations}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1}
+                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{987}
                 }
                 \pause
                 \begin{itemize}
@@ -667,10 +667,10 @@
                         \begin{enumerate}
                             \item <2->{\textit{Reaching~definition~analysis}\footnotemark retrieves use-define chains}
                             \item <3->{\textit{Static single assignment}\footnotemark renames variables
-                                \begin{itemize}
-                                    \item Assign unique name to each LHS variable
-                                    \item Update RHS based on use-define chains
-                                \end{itemize}
+                                %\begin{itemize}
+                                %    \item Assign unique name to each LHS variable
+                                %    \item Update RHS based on use-define chains
+                                %\end{itemize}
                             }
                         \item <4->{Re-traversing new code
                                 \begin{itemize}
@@ -796,7 +796,7 @@
                                 \end{itemize}
                             }
                         \pause
-                        \item {Imbalance subtree $implies$ partial $BT$ remaining}
+                        \item {Imbalance subtree $\implies$ partial $BT$ remaining}
                         \pause
                         \item {Recursively partitioning and scheduling}
                         \end{itemize} 
