@@ -118,7 +118,7 @@
                 }
             \pause
             \item {
-                    Unfortunately, VLIW and ASIP are \textbf{opposite} extreme cases...
+                    Unfortunately, VLIW and ASIP are \textbf{opposite extreme} cases...
                     \begin{itemize}
                         \item VLIW: good flexibility, bad power-efficiency
                         \item ASIP: good power-efficiency, bad flexibility
@@ -447,7 +447,7 @@
             \begin{frame}{Advanced Design Considerations}
                 \centering
                 {
-                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{1}
+                    \animategraphics[loop,controls,width=\linewidth]{36}{./gif/tree-}{0}{987}
                 }
                 \pause
                 \begin{itemize}
@@ -859,7 +859,7 @@
                         }
                     \pause
                     \item {
-                            Avoid write back 
+                            Exhaustive data forwarding
                             \begin{itemize}
                                 \item Forward data from $OP$ to $OP$ within $SN$
                                 \item Forward data from child $SN$ to patent $SN$
@@ -907,6 +907,20 @@
             %        \item <4->{Benchmarking multi-core DSP is still an open field of study~\cite{landscape}}
             %    \end{itemize}       
             %\end{frame}
+
+            \begin{frame}{Simulation Environment}
+                \begin{figure}[!ht] 
+                    \centering
+                    \includegraphics[width=0.45\textwidth]{./figs/sim.eps}
+                \end{figure}
+                \begin{itemize}
+                    \item <2->{DUT is replaced with \textbf{DeAr}, \textbf{scalar}, \textbf{VLIW} and \textbf{composite-ALU} (cascade-ALU ASIP) in accordance.}
+                    \item <3->{Composite-ALU is evaluated with best two ALU configurations, \textbf{MSA and AMS} respectively.}
+                    \item <4->{Designs have compatible RF (32 cells) and ALU resources (one adder, multiplier and shifter).}
+                \end{itemize}
+            \end{frame}
+
+
             \begin{frame}{Simulation Benchmark Suites}
                 \begin{table}[!ht]
                     \centering
@@ -936,18 +950,6 @@
                     \item BLAS --- matrix/vector library for wireless communication.
                     \pause
                     \item GDSPK --- crucial DSP filters and transformation algorithms.
-                \end{itemize}
-            \end{frame}
-
-            \begin{frame}{Simulation Environment}
-                \begin{figure}[!ht] 
-                    \centering
-                    \includegraphics[width=0.45\textwidth]{./figs/sim.eps}
-                \end{figure}
-                \begin{itemize}
-                    \item <2->{DUT is replaced with \textbf{DeAr}, \textbf{scalar}, \textbf{VLIW} and \textbf{composite-ALU} (cascade-ALU ASIP) in accordance.}
-                    \item <3->{Composite-ALU is evaluated with best two ALU configurations, \textbf{MSA and AMS} respectively.}
-                    \item <4->{Designs have compatible RF (32 cells) and ALU resources (one adder, multiplier and shifter).}
                 \end{itemize}
             \end{frame}
 
