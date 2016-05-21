@@ -55,7 +55,7 @@
     National Tsing Hua University
 }
 
-\date{\today}
+\date{May 23, 2016}
 
 \AtBeginSubsection[]
 {
@@ -65,7 +65,7 @@
 }
 
 \begin{document}
-%\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
+\setbeamertemplate{background canvas}{\CenterWallPaper{.30}{./assets/nthu_watermark.eps}}
 \begin{CJK}{UTF8}{bkai}
 
     \title[DeAr DSP]{ DeAr: 適用於異質系統架構之高效率且彈性的數位訊號處理器設計}
@@ -97,12 +97,15 @@
             \item {
                     E.g., LTE-A demands 10 times transmission rate than LTE
                     \begin{itemize}
+                        \pause
                         \item {
                                 Heavy arithmetic --- \textbf{throughput}
                             }
+                        \pause
                         \item {
                                 Fast evolving demodulation algorithms --- \textbf{flexibility}
                             }
+                        \pause
                         \item {
                                 Endurance still matters --- \textbf{power-efficiency}
                             }
@@ -112,7 +115,9 @@
             \item { 
                     DSP datapath has gone beyond scalar for higher throughput
                     \begin{itemize}
+                        \pause
                         \item Very Long Instruction Word (VLIW)
+                    `   \pause
                         \item Application Specific Instruction-set Processor (ASIP)
                     \end{itemize}
                 }
@@ -984,8 +989,10 @@
                 \begin{itemize}
                     \item <2->{VLIW benefits from most flexible datapath so it achieves best OPC}
                     \item <3->{Composite-ALU OPC is \textbf{impacted by matchability} between ALU order and benchmark characteristic}
-                    \item <4->{DeAr has only 1.11\% and 4.26\% loss against VLIW, 
-                                and outperforms Composite-ALU by \textbf{75.2\%--12.7\%} and \textbf{21.7\%--16.3\%}}
+                    \item <4->{DeAr has only 1.11\% and 4.26\% loss to VLIW, 
+                                and outperforms AMS by \textbf{75.2\%} and \textbf{21.7\%},
+                                    MSA by \textbf{12.7\%} and \textbf{16.3\%}
+                                }
                 \end{itemize}
 
             \end{frame}
@@ -1019,8 +1026,11 @@
                 \begin{itemize}
                     \item <2->{VLIW and scalar lack forwarding mechanism so have \textbf{worst result}}
                     \item <3->{Composite-ALU forwarding capability \textbf{is limited} by the cascaded order and length}
-                    \item <4->{DeAr saves either \textbf{31\%} and \textbf{27\%} RF access against VLIW,
-                                or saves \textbf{30.3\%--10.4\%} and \textbf{16.1\%--11.0\%} against Composite-ALU}
+                    \item <4->{DeAr saves \textbf{31\%} and \textbf{27\%} of RF access from VLIW,
+                                \textbf{30.3\%} and \textbf{16.1\%} from AMS,
+                                    \textbf{10.4\%} and \textbf{11.0\%} from MAS}
+                    %\item <4->{DeAr saves either \textbf{31\%} and \textbf{27\%} of RF access against VLIW,
+                    %            or saves \textbf{30.3\%--10.4\%} and \textbf{16.1\%--11.0\%} against Composite-ALU}
                 \end{itemize}
             \end{frame}
 
@@ -1035,7 +1045,7 @@
                             \label{chart:area:blas}
                             \includegraphics[width=0.48\textwidth]{charts/area_blas.eps}
                         }
-                        \subfigure[General benchmark suite]
+                        \subfigure[GDSPK benchmark suite]
                         {
                             \label{chart:area:general}
                             \includegraphics[width=0.48\textwidth]{charts/area_general.eps}
@@ -1043,9 +1053,9 @@
                     \end{center}
                 \end{figure}
                 \begin{itemize}
-                    \item <2->{DeAr outperforms either VLIW by \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%}, 
-                                or Composite-ALU by \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%}}
-                    \item <3->{\textbf{Long critical path} (Composite-ALU) and \textbf{low OPC} (scalar) lead to \textbf{sharp growth} and \textbf{synthesis fail}}
+                    \item <2->{\textbf{Long critical path} (Composite-ALU) and \textbf{low OPC} (scalar) lead to \textbf{sharp growth} and \textbf{synthesis fail}}
+                    \item <3->{DeAr saves either \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%} of area from VLIW, 
+                                or \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%} from Composite-ALU, due to proposed \textbf{SBRF}}
                 \end{itemize}
             \end{frame}
 
@@ -1058,7 +1068,7 @@
                             \label{chart:power:blas}
                             \includegraphics[width=0.48\textwidth]{charts/power_blas.eps}
                         }
-                        \subfigure[General benchmark suite]
+                        \subfigure[GDSPK benchmark suite]
                         {
                             \label{chart:power:general}
                             \includegraphics[width=0.48\textwidth]{charts/power_general.eps}
@@ -1066,9 +1076,9 @@
                     \end{center}
                 \end{figure}
                 \begin{itemize}
-                    \item <2->{DeAr outperforms either VLIW by \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%}, 
-                            or Composite-ALU by \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%}}
-                    \item <3->{Linear growth regardless of design indicates the \textbf{domination of dynamic power}}
+                    \item <2->{Linear growth regardless of design indicates the \textbf{domination of dynamic power}}
+                    \item <3->{DeAr saves either \textbf{35.4\%--21.1\%} and \textbf{35.2\%--21.6\%} of power from VLIW, 
+                                or \textbf{21.2\%--5.3\%} and \textbf{33.5\%--4.7\%} from Composite-ALU, due to \textbf{low RF access rate and area} }
                 \end{itemize}
             \end{frame}
 
