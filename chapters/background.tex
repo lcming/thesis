@@ -15,7 +15,7 @@
         Functional units are not able to work concurrently due to the limitation of the single-issue datapath.
         This can be resolved by designing a multi-issue datapath with either hardware (i.e., superscalar) or software (i.e., VLIW) instruction scheduling.
         In the field of DSP design, adopting the VLIW architecture is a preferable strategy, 
-        because hardware simplicity matters than portability and many optimization approaches can be applied in compilation stages. 
+        because hardware simplicity matters more than portability and many optimization approaches can be applied in compilation stages. 
         Fig.~\ref{fig:vliw} illustrates a 3-way issue VLIW datapath, where three instructions can be dispatched at a cycle.
         The number of ports on RF is scaled up with the issue-width, and the compiler is responsible for performing static scheduling to avoid resources conflict among operations.
         \vspace{\textfig}
