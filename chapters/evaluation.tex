@@ -32,12 +32,12 @@ where each subprogram/kernel consists of three primitive operations, addition, m
     }
 \end{table}
 \\\indent Fig.~\ref{fig:sim} shows the simulation environment of the experiment, 
-where DeAr, scalar, VLIW, and composite-ALU architectures (a class of ASIP) \cite{cascade} were evaluated for comparison. 
+where DeAr, scalar, VLIW, and composite-ALU datapaths (a class of ASIP) \cite{cascade} were evaluated for comparison. 
 The instruction unit provides stimulus to the design under test (DUT) from instruction memory (IM),
 and the L/S unit handles data between the DUT and data memory (DM).
-The DUT was replaced in accordance with DeAr and other architectures, 
+The DUT was replaced in accordance with DeAr and other datapaths, 
 which have identical ALU composed of one adder, one multiplier and one shifter.
-Note that we implemented the composite-ALU architecture based on best two ALU configurations (or ALU order), MSA and AMS, described in \cite{cascade}.
+Note that we implemented composite-ALU datapath based on best two ALU configurations (or ALU order), MSA and AMS, described in \cite{cascade}.
 Please also refer to Fig.~\ref{fig:vliw} and Fig.~\ref{fig:cascade} for details of VLIW and composite-ALU respectively.
 \vspace{\textfig}
 \begin{figure}[!ht] 
@@ -47,20 +47,20 @@ Please also refer to Fig.~\ref{fig:vliw} and Fig.~\ref{fig:cascade} for details 
     \label{fig:sim}
 \end{figure}
 \\\indent 
-It is important to note that we focused on single-core architectures instead of the multi-core ones in the experiment.
+It is important to note that we focused on single-core architecture instead of the multi-core ones in the experiment.
 Currently, benchmark results of multi-core systems are highly correlated with the amount of optimization applied to the interconnection and the memory subsystem~\cite{trends}.
 Moreover, the programming language also plays a crucial role in multi-core system performance, 
 but popular ones such as CUDA, OpenCL and OpenMP are still contending for adoption as the industry standard.
 Consequently, the development of a fair benchmark for multi-core DSP platforms is still an open field of study~\cite{landscape}.
-Owing to aforementioned issues, we believe benchmarking the single-core DSPs can present more objective evaluation, 
+Owing to aforementioned issues, we believe benchmarking the single-core DSPs can present more objective evaluation.
 \section{Scheduling Result and Analysis}
 {
     \subsection{Operations per Cycle}
     Operations per cycle (OPC) evaluates the utilization rate of the ALU.
-    This metric is obtained by statically scheduling operations of a DSP kernel for various architectures.
+    This metric is obtained by statically scheduling operations of a DSP kernel for various datapaths.
     Under the performance requirement of target applications, OPC helps to determine the timing constraint for hardware synthesis, 
     where higher OPC brings looser timing constraint, which reduces the cost of post-synthesis hardware.
-    Table~\ref{tab:opc} profiles OPC of the DSP cores with the assumption that every operation consumes exactly one clock cycle.
+    Table~\ref{tab:opc} profiles OPC of the DSP datapaths with the assumption that every operation consumes exactly one clock cycle.
     The OPC of the scalar processor is fixed to 1.0 because of the limitation of the single-issue datapath.
     On the contrary, benefiting from the wide issue-width and large port number of RF, VLIW gains the best OPC in all benchmarks.
     \\\indent
@@ -68,7 +68,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     and thus it is not possible for DeAr to out-perform the VLIW in regard to OPC.
     Nevertheless, by leveraging the proposed HDFG-based scheduling,  
     DeAr still gains approximate OPC of the VLIW, with only 1.11\% and 4.26\% loss in BLAS and GDSPK respectively.
-    On the other hand, the OPC of composite FU architecture is highly correlated with the cascade order and the benchmark characteristic. 
+    On the other hand, the OPC of composite FU datapath is highly correlated with the cascade order and the benchmark characteristic. 
     On average, the MSA order gains better OPC than the AMS order does, 
     but the former still underperforms VLIW by 12.3\% and 17.7\% in BLAS and GDSPK respectively.
     \begin{table}[!ht]
@@ -101,10 +101,10 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     \end{table}
     \subsection{Register file access rate}
     RF access rate provides a quantitative measurement of the RF activity, 
-    which makes up the majority of dynamic power dissipation in DSP cores.
+    which makes up the majority of dynamic power dissipation in DSP datapaths.
     It is calculated dividing the actual number of RF file accesses by the worst case number of accesses.
-    Table~\ref{tab:rpd} profiles the RF access rate of each architecture in regard to various benchmarks.
-    Under the assumption of single cycle datapaths, conventional architectures, scalar and VLIW, 
+    Table~\ref{tab:rpd} profiles the RF access rate of each datapath in regard to various benchmarks.
+    Under the assumption of single cycle, conventional datapath, scalar and VLIW, 
     lack bypassing capability and write back the arithmetic result every cycle.
     We refer to the RF access number of such a scenario as the worst case, 
     and thus their RF access rate is fixed to 1.0.
@@ -146,18 +146,18 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     and measured their area and power dissipation with Synopsys Design Compiler and Synopsys Prime Time under the throughput constraint based on Table~\ref{tab:opc}.
     Synthesis failures owing to timing violation reported by the tool would remain corresponding fields empty in the figures.
     \subsection{Area}
-    Fig.~\ref{chart:area} shows the synthesis area of DSP cores regarding to the BLAS (a) and GDSPK (b) benchmark suites.
+    Fig.~\ref{chart:area} shows the synthesis area of DSP datapaths regarding to the BLAS (a) and GDSPK (b) benchmark suites.
     The proposed DeAr save 24.5\%--21.1\% and 24.9\%--21.6\% of area in BLAS and GDSPK respectively compared with VLIW.
-    The area of the VLIW architecture is dominated by RF, 
+    The area of the VLIW datapath is dominated by RF, 
     which demands complicated interconnection among ports and registers to facilitate centralized organization.
     By contrast, DeAr, which trades off the connectivity by adopting the banked RF, can thus achieve significant area reduction.
     Since the RF access latency is not critical to both VLIW and DeAr, 
     the correlation between throughput and the save area percentage achieved by DeAr is inconspicuous.
     \\\indent Besides, DeAr reduces 21.2\%--5.6\% (BLAS) and 33.5\%--4.8\% (GDSPK) of area against composite-ALU using MSA.
     When compared with AMS, the saved percentage became 17.2\%--5.3\% (BLAS) and 10.5\%--4.7\% (GDSPK).
-    Composite-ALU architectures reduces area by using fewer ports in the RF.
+    Composite-ALU datapath reduces area by using fewer ports in the RF.
     Nevertheless, the area burden caused by the centralized RF still exists.
-    Another drawback of composite-ALU architectures is the long critical path in ALU, 
+    Another drawback of composite-ALU datapath is the long critical path in ALU, 
     which leads to sharp area growth as throughput increasing.
     \\\indent Benefiting from the simplicity of its datapath, 
     scalar costs lowest area when while throughput is low.
@@ -179,7 +179,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
                 \includegraphics[width=0.48\textwidth]{charts/area_general.eps}
             }
         \end{center}
-        \caption{Synthesis area of the DSP cores}
+        \caption{Synthesis area of the DSP datapaths}
         \label{chart:area}
     \end{figure}
     \subsection{Power dissipation}
@@ -189,7 +189,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
     As a result, we focus on the analysis of the dynamic power, 
     which is proportional to the product of clock rate $f$, logic switching rate $\alpha$ and the load $C_L$ of each cell.
     \\\indent
-    Fig.~\ref{chart:area} shows the power dissipation of DSP cores regarding to the BLAS~(a) and GDSPK~(b) benchmark suites.
+    Fig.~\ref{chart:area} shows the power dissipation of DSP datapaths regarding to the BLAS~(a) and GDSPK~(b) benchmark suites.
     Generally, they grow at various slopes with throughput, which has a factor of $f$, 
     and the near-linear growth indicates the domination of dynamic power.
     DeAr saves 22.7\%--15.1\% (BLAS) and 18.5\%--10.4\% (GDSPK) of power compared with VLIW.
@@ -225,13 +225,13 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
                 \includegraphics[width=0.48\textwidth]{charts/power_general.eps}
             }
         \end{center}
-        \caption{Power dissipation of the DSP cores}
+        \caption{Power dissipation of the DSP datapaths}
         \label{chart:area}
     \end{figure}
     \subsection{Static Power Dissipation}
     The evaluation of static power dissipation can present rough patterns of total power dissipation in more advanced CMOS technologies, 
     where the static portion of power usually exceeds the dynamic one.
-    Fig.~\ref{chart:leakage} shows the static power dissipation of DSP cores in regard to the BLAS~(a) and GDSPK~(b) benchmark suites.
+    Fig.~\ref{chart:leakage} shows the static power dissipation of DSP datapaths in regard to the BLAS~(a) and GDSPK~(b) benchmark suites.
     The fact that the growth pattern of Fig.~\ref{chart:leakage} is similar to the one of Fig~\ref{chart:area} regardless of the design indicates a high correlation between static power and area.
     As a result, compared with VLIW, DeAr saves 30.1\%--22.7\% (BLAS) and 29.6\%--21.9\% (GDSPK) of static power, 
     which are approximate to the save percentage of area, 24.5\%--21.1\% and 24.9\%--21.6\%.
@@ -265,7 +265,7 @@ Owing to aforementioned issues, we believe benchmarking the single-core DSPs can
                 \includegraphics[width=0.48\textwidth]{charts/leakage_general.eps}
             }
         \end{center}
-        \caption{Leakage power dissipation of DSP cores}
+        \caption{Leakage power dissipation of DSP datapaths}
         \label{chart:leakage}
     \end{figure}
 }

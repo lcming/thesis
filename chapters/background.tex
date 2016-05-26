@@ -9,9 +9,9 @@
         \\\indent
         The single-issue reduced instruction set computer (scalar), introduced in 1980s \cite{risc}, has become a popular template for DSP owing to its simplicity.
         The key concept of scalar is designing an ISA with primitive and orthogonal instructions which demand simpler datapath.
-        By taking the advantage of the regularity in its datapath, pipelining technique can thus be adopt to achieve the application requirement.
+        By taking the advantage of the regularity in its datapath, pipelining technique can thus be adopted to achieve the application requirement.
         However, two drawbacks still exist in scalar. 
-        The first its lack of instruction-level parallelism (ILP). 
+        The first one is its lack of instruction-level parallelism (ILP). 
         Functional units are not able to work concurrently due to the limitation of the single-issue datapath.
         This can be resolved by designing a multi-issue datapath with either hardware (i.e., superscalar) or software (i.e., VLIW) instruction scheduling.
         In the field of DSP design, adopting the VLIW architecture is a preferable strategy, 
@@ -22,7 +22,7 @@
         \begin{figure}[!ht] 
             \centering
             \includegraphics[width=0.5\textwidth]{./figs/vliw.eps}
-            \caption{Basic VLIW datapah}
+            \caption{Basic VLIW datapath}
             \label{fig:vliw}
         \end{figure}
         \\\indent
@@ -41,7 +41,7 @@
         \end{figure}
         \\\indent
         Another approach that enables forwarding mechanism even further is shown in Fig.~\ref{fig:tta}, where FUs, RF and load/store units are linked by an interconnection network (ICN).
-        Such an architecture makes a significant distinction from scalar because only a "move" instruction is needed. 
+        Such architecture makes a significant distinction from scalar because only a "move" instruction is needed. 
         All computation can be completed by moving operands on the interconnection network, avoiding WB as much as possible.
         \vspace{\textfig}
         \begin{figure}[!ht] 
@@ -105,13 +105,13 @@
         %\subsection{Clustered Register Files}
         %\subsection{Distributed Register Files}
     \section{Heterogeneous System Architecture}
-    \textit{Heterogeneous System Architecture} (HSA) presents an unified view of various computing devices, 
+    \textit{Heterogeneous System Architecture} (HSA) presents a unified view of various computing devices, 
     such as CPU, DSP, GPU and FPGA.
     HSA allows these devices to be integrated in a single system heterogeneously, and even share the same memory virtually or physically.
     Such asymmetry of computing devices in HSA is the key differentiation from conventional symmetric multiprocessing (SMP) \cite{parallel},
     which involves two or more identical processors collaborating with uniform access to the shared memory.
     By adopting HSA, one is able to design a single system that handles wide variety of computational demands efficiently.
-    For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo APU} \cite{carrizo}, featuring HSA 1.0.
+    For example, in 2014, AMD released its fourth generation of the Accelerated Processing Unit (APU), \textit{Carrizo APU} \cite{carrizo} featuring HSA 1.0.
     As illustrated in Fig.~\ref{fig:carrizo}, \textit{Carrizo} is the SoC platform with the 4-core CPU and the GPU with 8 compute units (384 shader cores totally).
     Both of them work with \textit{the Shared Virtual Memory} (SVM) since their MMUs access an identical page table.
     \textit{Carrizo} enables task sharing without data copy between CPUs and GPUs to achieve greater performance.
@@ -133,7 +133,7 @@
         Fig.~\ref{fig:systemspec} illustrates an example of an HSA platform.
         An HSA platform refers to a system involving multiple types of computing devices, 
         which are defined as HSA agents.
-        One of the agents needs to be host CPU, and the other usually serve as kernel agents. 
+        One of the agents needs to be host CPU, and the others usually serve as kernel agents. 
         The host CPU is responsible for running the operating system and setting up \textit{HSA Runtime},
         while kernel agents handle computational tasks from the host CPU.
         HSA requires all HSA agents to be capable of accessing SVM maintained coherently, 
@@ -189,7 +189,7 @@
         The compilation tools are responsible for generating machine code of specific ISAs from high-level language.
         Fig.~\ref{fig:swinf}~(a) illustrates the whole compilation flow of HSA software.
         The programmer develops applications targeting HSA with high-level parallel programming language such as OpenCL, OpenMP or a domain-specific language (DSL).
-        The off-line compiler of the hight-level language translate the code to standard HSAIL kernel accepted by all computing devices in an HSA platform.
+        The off-line compiler of the high-level language translates the code to standard HSAIL kernel accepted by all computing devices in an HSA platform.
         Each kind of the computing devices must be recognized by the finalizer, 
         which is composed of several device-specific HSAIL compilers.
         Depending on which device is going to execute the kernel, 
@@ -204,7 +204,7 @@
         \begin{figure}[!ht] 
             \centering
             \includegraphics[width=0.85\textwidth]{./figs/swinf.eps}
-            \caption{Software Infrastructe of HSA}
+            \caption{Software Infrastructure of HSA}
             \label{fig:swinf}
         \end{figure}
 

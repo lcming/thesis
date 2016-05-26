@@ -16,7 +16,7 @@ They join at the end of the basic block, and perform an identical branch or jump
 The fundamental challenge in SMT is scheduling for threads, 
 which can be resolved by either hardware (dynamic scheduling) or software (static scheduling).
 We apply the latter because the static approach offers more optimization opportunities in scheduling, 
-and the hardware resources can be dedicated to arithmetics.
+and the hardware resources can be dedicated to arithmetic.
 \vspace{\textfig}
 \begin{figure}[!ht]
     \begin{center}
@@ -52,7 +52,7 @@ which reduces the duplication of program memory in the SPMD model.
 The bus interface of the DSP comprises two components, the smart controller (SC) and host port interface (HPI).
 SC, proposed by Hsu \textit{et al.}, is a specialized bus interface IP applied to heterogeneous systems.
 SC not only performs direct memory access (DMA) for the DSP local memory,
-but also re-organize the non-coalescing data transparently to improve the data locality.
+but also re-organizes the non-coalescing data transparently to improve the data locality.
 On the other hand, HPI, which is a common module found in Texas Instruments DSPs~\cite{hpi},
 facilitates the direct access from the GPP to DSP internal resources with purposes below:
 \begin{itemize}
@@ -88,7 +88,7 @@ the compiler can align their simultaneous instructions to adjacent addresses.
 As a result, the instruction unit can serve two DeAr threads by doubling the fetch width instead of duplication of the hardware.
 \\\indent
 Two DeAr threads in a lane share the ALU that commonly exist in a RISC processor.
-The demonstrated example includes an adder, a multiplier and a barrel shifter, which are qualified to perform most benchmarks,
+The demonstrated example includes an adder, a multiplier and a barrel shifter, which are qualified to perform most benchmarks.
 Nevertheless, the configuration of the ALU can be customized to fit the target application.
 The output of each arithmetic unit connects to an accumulator latch, 
 which bypasses the result to ALU inputs.
@@ -126,7 +126,7 @@ For clarity, we summarize the classification of various registers/latches in the
         \hline
         \multicolumn{1}{|c|}{\textbf{Register type}} & \multicolumn{1}{c|}{\textbf{Dedicated to}} & \multicolumn{1}{c|}{\textbf{Description}}                 \\ \hline
         Load-queue                                   & \multirow{3}{*}{a DeAr thread}             & buffers input data received from the main memory          \\ \cline{1-1} \cline{3-3} 
-        Store-queue                                  &                                            & buffers output data sent to the main memroy               \\ \cline{1-1} \cline{3-3} 
+        Store-queue                                  &                                            & buffers output data sent to the main memory               \\ \cline{1-1} \cline{3-3} 
         Stack                                        &                                            & buffers intermediate data of computation                  \\ \hline
         Accumulator                                  & an arithmetic unit                         & buffers the arithmetic result of the previous clock cycle \\ \hline
     \end{tabular}
@@ -225,7 +225,7 @@ We can thus preserve more bits in the memory transfer instruction to address mor
         \multicolumn{1}{|c|}{\textbf{Name}} & \multicolumn{1}{c|}{\textbf{Meaning}} & \multicolumn{1}{c|}{\textbf{Note}} \\ \hline
     PUSH & \begin{tabular}[c]{@{}l@{}}1. Add the head address by 1\\ 2. Write the new data to the head address\end{tabular} & \multirow{2}{*}{ \parbox{5cm}{A "pop" followed by a "push" is equivalent to a "modify"} } \\ \cline{1-2}
     POP                               & \begin{tabular}[c]{@{}l@{}}1. Subtract the head address by 1\\ 2. Invalidate the previous head data\end{tabular} & \\ \hline
-        MODIFY                            & Modify the head data to to the new data & The head address remains \\ \hline
+        MODIFY                            & Modify the head data to the new data & The head address remains \\ \hline
         STALL                               & No operation & The head address and data remain \\ \hline
     \end{tabular}
 \end{table}
@@ -444,7 +444,7 @@ The whole process of the HSAIL transformation contains two phases elaborated as 
         %----------------------------------------
 
     \item \textbf{Phase-2: Hierarchize DFG to HDFG} \\\indent
-        The conversion from DFG to HDFG is is shown in Algorithm~\ref{alg:tohdfg}.
+        The conversion from DFG to HDFG is shown in Algorithm~\ref{alg:tohdfg}.
         In Line~\ref{line:forroots}--\ref{line:forroote}, the algorithm firstly iterates all root operations (i.e., $\textrm{deg}^+(op)=0$ ) in $G$,
         and call the first subroutine, \textproc{Build Binary Tree }, on each root operations.
         Line~\ref{line:bbts}--\ref{line:bbte} show the details of \textproc{Build Binary Tree }.
@@ -473,7 +473,7 @@ The whole process of the HSAIL transformation contains two phases elaborated as 
         \EndFor                                                                    \label{line:forroote}
         \Statex %---------------------------
         \Function   {Build Binary Tree }{$op$}         \label{line:bbts}
-        \State      Initialize a birary tree $bt$
+        \State      Initialize a binary tree $bt$
         \State      $sn \Leftarrow$ \Call{Build Super Node }{$op$}
         \State      Set $sn$ as the root of $bt$
         \State      \Call{Grow Binary Tree }{$sn$}

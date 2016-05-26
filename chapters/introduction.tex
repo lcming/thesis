@@ -3,13 +3,13 @@
     \section{Motivation}
         As wireless communication standard evolves, the demand for a digital signal processing platform that supplies computation with high performance, high flexibility and low power-dissipation is gaining momentum in the mobile industry. 
         Take an example of LTE-advance, which is considered to be the next mainstream mobile wireless technology, it provides 10 times higher transmission throughput than that of LTE~\cite{lte}. 
-        In order to achieve such an enhancement, strategies such as scaling up MIMO system and permitting carrier aggregation~\cite{carrier} that require more sophisticated arithmetics are adopted in LTE-advance.
+        In order to achieve such an enhancement, strategies such as scaling up MIMO system and permitting carrier aggregation~\cite{carrier} that require more sophisticated arithmetic are adopted in LTE-advance.
         Moreover, these algorithms used in LTE-advance demodulation will still change frequently with the protocol specification.
-        Consequently, both power-efficiency and flexibility become crucial considerations in the filed of digital signal processor design. 
-        However, Very Long Instruction Word (VLIW) and Application-Specific Instruction set Processor (ASIP), both of which have been popular architectures for state-of-the-art digital signal processors (DSPs), are considered to be two extremes cases by the hardware designers who would like to trade-off between power-efficiency and flexibility. 
-        VLIW gains good flexibility by allocating each arithmetic unit dedicated control signals and data ports in RF, which result in severe power dissipation. %so it could work orthogonally with each other.
+        Consequently, both power-efficiency and flexibility become crucial considerations in the field of digital signal processor design. 
+        However, Very Long Instruction Word (VLIW) datapath and Application-Specific Instruction set Processor (ASIP) datapath, both of which have been popular prototypes for state-of-the-art digital signal processors (DSPs), are considered to be two extremes cases by the hardware designers who would like to trade-off between power-efficiency and flexibility. 
+        VLIW datapath gains good flexibility by allocating each arithmetic unit dedicated control signals and data ports in RF, which result in severe power dissipation. %so it could work orthogonally with each other.
         On the contrary, ASIP buys the optimized datapath for a specific ISA or algorithm at the expense of flexibility, so good power efficiency can be achieved. 
-        Consequently, improving power-efficiency while keeping datapath flexibility in a DSP for mobile devices has been a challenge.	
+        Consequently, improving power-efficiency as well as keeping datapath flexibility in a DSP for mobile devices has been a challenge.	
         \\\indent 
         On the other hand, heterogeneous computing, which is referred to as a system equipped with multiple types of processors, has opened a new era for digital signal processing. 
         Such an integration of different processors gains performance improvement by taking advantage of particular processing capabilities specialized for certain types of tasks.

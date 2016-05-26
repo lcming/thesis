@@ -31,9 +31,9 @@
 \setlength{\wpXoffset}{0.315cm}
 % Citations
 
-\usepackage[backend=bibtex,sorting=none,maxcitenames=4,maxbibnames=4,hyperref=true,block=none,firstinits=true]{biblatex}
-\bibliography{thesis}
-\renewbibmacro{in:}{}
+%\usepackage[backend=bibtex,sorting=none,maxcitenames=4,maxbibnames=4,hyperref=true,block=none,firstinits=true]{biblatex}
+%\bibliography{thesis}
+%\renewbibmacro{in:}{}
 
 % Figures
 \newcommand\textfig{1cm}
@@ -222,11 +222,15 @@
 
 \clearpage
 
-\addcontentsline{toc}{section}{References}
-\singlespacing
-%\setlength{\parskip}{0pt}
+%\addcontentsline{toc}{section}{References}
+%\singlespacing
+%%\setlength{\parskip}{0pt}
+%
+%\printbibliography
 
-\printbibliography
+\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+\bibliography{IEEEabrv,thesis}
 
 \end{CJK}
 \end{document}
